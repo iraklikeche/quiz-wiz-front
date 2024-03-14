@@ -17,7 +17,7 @@
       <button
         @mouseover="hover = true"
         @mouseleave="hover = false"
-        class="text-[#4b69fd] font-bold text-sm tracking-wider hover:opacity-70 transition-all flex gap-2 items-center"
+        class="text-[#4b69fd] font-bold text-sm tracking-wider transition-all flex gap-2 items-center"
       >
         Log in
         <span :style="{ opacity: hover ? '100' : '0' }" class="transition-all duration-700">
