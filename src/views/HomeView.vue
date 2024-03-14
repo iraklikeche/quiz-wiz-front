@@ -2,9 +2,12 @@
 import quizImage from '@/assets/imgs/quiz-wiz.png'
 import hero from '@/assets/imgs/hero-bg.png'
 import QuizNumbers from '@/components/QuizNumbers.vue'
+import Header from '@/components/Header.vue'
+import Footer from '@/components/Footer.vue'
 </script>
 
 <template>
+  <Header />
   <section class="pt-6 overflow-hidden">
     <main>
       <div class="relative pl-20">
@@ -25,4 +28,5 @@ import QuizNumbers from '@/components/QuizNumbers.vue'
       </div>
     </main>
   </section>
+  <Footer />
 </template>
