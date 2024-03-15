@@ -4,5 +4,3 @@
     <img :src="logo" class="cursor-pointer" />
   </div>
 </template>
-
-<style></style>

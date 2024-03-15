@@ -6,7 +6,7 @@
       <RouterLink :to="{ name: 'home' }">
         <Logo />
       </RouterLink>
-      <button class="text-sm font-semibold text-[#475467]">Quizzes</button>
+      <button class="text-sm font-semibold text-custom-gray">Quizzes</button>
     </div>
     <div class="flex gap-6">
       <button
@@ -15,12 +15,10 @@
         Sign up
       </button>
       <button
-        @mouseover="hover = true"
-        @mouseleave="hover = false"
-        class="text-[#4b69fd] font-bold text-sm tracking-wider transition-all flex gap-2 items-center"
+        class="group text-[#4b69fd] font-bold text-sm tracking-wider transition-all flex gap-2 items-center"
       >
         Log in
-        <span :style="{ opacity: hover ? '100' : '0' }" class="transition-all duration-700">
+        <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-700">
           <LoginArrow />
         </span>
       </button>
@@ -28,11 +26,16 @@
   </nav>
 </template>
 
-<script setup>
-import { ref } from 'vue'
+<script>
 import { RouterLink } from 'vue-router'
 import Logo from '@/components/icons/Logo.vue'
 import LoginArrow from '@/components/icons/LoginArrow.vue'
 
-const hover = ref(false)
+export default {
+  components: {
+    RouterLink,
+    Logo,
+    LoginArrow
+  }
+}
 </script>

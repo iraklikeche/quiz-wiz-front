@@ -4,15 +4,15 @@
       <Logo />
     </RouterLink>
     <FooterList heading="Content">
-      <li class="text-[#475467] text-xs">Quizzes</li>
+      <li class="text-custom-gray text-xs">Quizzes</li>
     </FooterList>
     <FooterList heading="Contact us">
-      <li class="text-[#475467] text-xs">Email: quizwiz@gmail.com</li>
-      <li class="text-[#475467] text-xs">Tel: +995 328989</li>
+      <li class="text-custom-gray text-xs">Email: quizwiz@gmail.com</li>
+      <li class="text-custom-gray text-xs">Tel: +995 328989</li>
     </FooterList>
     <FooterList heading="Social media">
-      <li class="text-[#475467] text-xs">Facebook</li>
-      <li class="text-[#475467] text-xs">LinkedIn</li>
+      <li class="text-custom-gray text-xs">Facebook</li>
+      <li class="text-custom-gray text-xs">LinkedIn</li>
     </FooterList>
   </div>
   <div class="flex items-end justify-end px-24 py-6 border-t-2 border-opacity-25">
@@ -22,9 +22,19 @@
   </div>
 </template>
 
-<script setup>
+<script>
 import Logo from '@/components/icons/Logo.vue'
 import FooterList from '@/components/FooterList.vue'
 
-const year = new Date().getFullYear()
+export default {
+  components: {
+    Logo,
+    FooterList
+  },
+  data() {
+    return {
+      year: new Date().getFullYear()
+    }
+  }
+}
 </script>

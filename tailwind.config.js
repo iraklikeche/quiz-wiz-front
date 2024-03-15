@@ -5,6 +5,9 @@ export default {
     extend: {
       fontFamily: {
         raleway: ['Raleway', 'sans-serif']
+      },
+      colors: {
+        'custom-gray': '#475467'
       }
     }
   },

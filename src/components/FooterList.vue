@@ -7,8 +7,10 @@
   </div>
 </template>
 
-<script setup>
-const props = defineProps({
-  heading: String
-})
+<script>
+export default {
+  props: {
+    heading: String
+  }
+}
 </script>

@@ -9,5 +9,3 @@
     />
   </svg>
 </template>
-scrollBehavior(to, from, savedPosition) { // Always scroll to top when navigating to a new route
-return { top: 0 }; } // This closing bracket ends the scrollBehavior function.

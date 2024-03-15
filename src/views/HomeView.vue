@@ -1,9 +1,23 @@
-<script setup>
-import quizImage from '@/assets/imgs/quiz-wiz.png'
-import hero from '@/assets/imgs/hero-bg.png'
+<script>
 import QuizNumbers from '@/components/QuizNumbers.vue'
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
+import quizImage from '@/assets/imgs/quiz-wiz.png'
+import hero from '@/assets/imgs/hero-bg.png'
+
+export default {
+  components: {
+    QuizNumbers,
+    Header,
+    Footer
+  },
+  data() {
+    return {
+      quizImage,
+      hero
+    }
+  }
+}
 </script>
 
 <template>
