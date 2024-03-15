@@ -1,0 +1,30 @@
+<template>
+  <div :class="['flex flex-col gap-8 font-raleway', customClass]">
+    <p class="text-white text-7xl font-black pl-20">{{ numberOfGames }}</p>
+    <div class="group text-white text-5xl font-black pl-20 flex items-center gap-4 h-4">
+      <span
+        class="border-b-2 border-transparent group-hover:border-white transition-border duration-700"
+      >
+        {{ gameType }}
+      </span>
+      <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+        <ArrowTilted />
+      </span>
+    </div>
+  </div>
+</template>
+
+<script>
+import ArrowTilted from '@/components/icons/ArrowTilted.vue'
+
+export default {
+  components: {
+    ArrowTilted
+  },
+  props: {
+    numberOfGames: String,
+    gameType: String,
+    customClass: String
+  }
+}
+</script>
