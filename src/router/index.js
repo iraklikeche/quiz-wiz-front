@@ -40,6 +40,14 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/SessionView/ResetPasswordView.vue')
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/SessionView/ForgotPasswordView.vue')
     }
   ],
   scrollBehavior(to, from, savedPosition) {

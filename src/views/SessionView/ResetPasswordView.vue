@@ -33,8 +33,7 @@
         />
       </div>
 
-      <div class="flex items-center"></div>
-      <button class="bg-black text-white py-4 rounded-xl font-semibold">Reset Password</button>
+      <button class="bg-black text-white py-4 rounded-xl mt-4 font-semibold">Reset Password</button>
     </form>
     <AccountLinks :question="'Already have account? '" :buttonName="'Log in'" />
   </SessionLayout>
