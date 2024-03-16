@@ -2,18 +2,18 @@
   <SessionLayout
     :image="resetImage"
     :heading="'Reset Password'"
-    :customClass="'flex justify-center'"
+    :customClass="'flex justify-center bg-[#FCE7F1]'"
     :imageClass="'max-w-[29rem] max-h-[27rem]'"
     :headingClass="'mb-2'"
   >
-    <p class="text-[#475467] text-sm mb-12">Please type something you’ll remember</p>
+    <p class="text-custom-gray text-sm mb-12">Please type something you’ll remember</p>
     <form class="flex flex-col gap-5 max-w-[26rem]">
       <div class="flex flex-col relative">
-        <label class="text-[#344054] text-sm mb-1">Password</label>
+        <label class="text-custom-gray text-sm mb-1">Password</label>
         <input
           :type="isPasswordVisible ? 'text' : 'password'"
           placeholder="Must be 3 characters"
-          class="border border-[#D0D5DD] py-4 px-4 rounded-xl focus:border-4 outline-none"
+          class="border border-border-gray py-4 px-4 rounded-xl focus:border-4 outline-none"
         />
         <ShowPassword
           :customClass="'absolute top-[55%] right-[4%] cursor-pointer'"
@@ -21,11 +21,11 @@
         />
       </div>
       <div class="flex flex-col relative">
-        <label class="text-[#344054] text-sm mb-1">Confirm Password</label>
+        <label class="text-custom-gray text-sm mb-1">Confirm Password</label>
         <input
           :type="isConfirmPasswordVisible ? 'text' : 'password'"
           placeholder="Must be 3 characters"
-          class="border border-[#D0D5DD] py-4 px-4 rounded-xl focus:border-4 outline-none"
+          class="border border-border-gray py-4 px-4 rounded-xl focus:border-4 outline-none"
         />
         <ShowPassword
           :customClass="'absolute top-[55%] right-[4%] cursor-pointer'"

@@ -7,7 +7,8 @@ export default {
         raleway: ['Raleway', 'sans-serif']
       },
       colors: {
-        'custom-gray': '#475467'
+        'custom-gray': '#475467',
+        'border-gray': '#D0D5DD'
       }
     }
   },

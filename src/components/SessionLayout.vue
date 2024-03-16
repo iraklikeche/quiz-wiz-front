@@ -1,6 +1,6 @@
 <template>
   <div class="grid grid-cols-[45fr_55fr] h-screen relative">
-    <div :class="['bg-[#EAFAFE] pt-32', customClass]">
+    <div :class="['pt-32', customClass]">
       <img :src="image" :class="[imageClass]" />
     </div>
     <div class="flex gap-20 absolute top-[5%] left-[3%]">

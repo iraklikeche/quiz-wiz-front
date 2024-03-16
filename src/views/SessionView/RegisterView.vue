@@ -1,29 +1,29 @@
 <template>
-  <SessionLayout :image="registerImage" :heading="'Create account'">
+  <SessionLayout :image="registerImage" :heading="'Create account'" :customClass="'bg-[#EAFAFE]'">
     <form class="flex flex-col gap-5 max-w-[26rem]">
       <!-- If it's okay I will leave it so, till I get familiar with vee-validate and later I will extract input and label into separate components to make it more clean and DRY.  -->
       <div class="flex flex-col">
-        <label class="text-[#344054] text-sm mb-1">Username</label>
+        <label class="text-custom-gray text-sm mb-1">Username</label>
         <input
           type="text"
           placeholder="Your username"
-          class="border border-[#D0D5DD] py-4 px-4 rounded-xl focus:border-4 outline-none"
+          class="border border-border-gray py-4 px-4 rounded-xl focus:border-4 outline-none"
         />
       </div>
       <div class="flex flex-col">
-        <label class="text-[#344054] text-sm mb-1">Email</label>
+        <label class="text-custom-gray text-sm mb-1">Email</label>
         <input
           type="email"
           placeholder="example@gmail.com"
-          class="border border-[#D0D5DD] py-4 px-4 rounded-xl focus:border-4 outline-none"
+          class="border border-border-gray py-4 px-4 rounded-xl focus:border-4 outline-none"
         />
       </div>
       <div class="flex flex-col relative">
-        <label class="text-[#344054] text-sm mb-1">Password</label>
+        <label class="text-custom-gray text-sm mb-1">Password</label>
         <input
           :type="isPasswordVisible ? 'text' : 'password'"
           placeholder="Must be 3 characters"
-          class="border border-[#D0D5DD] py-4 px-4 rounded-xl focus:border-4 outline-none"
+          class="border border-border-gray py-4 px-4 rounded-xl focus:border-4 outline-none"
         />
         <ShowPassword
           :customClass="'absolute top-[55%] right-[4%] cursor-pointer'"
@@ -31,11 +31,11 @@
         />
       </div>
       <div class="flex flex-col relative">
-        <label class="text-[#344054] text-sm mb-1">Confirm Password</label>
+        <label class="text-custom-gray text-sm mb-1">Confirm Password</label>
         <input
           :type="isConfirmPasswordVisible ? 'text' : 'password'"
           placeholder="Must be 3 characters"
-          class="border border-[#D0D5DD] py-4 px-4 rounded-xl focus:border-4 outline-none"
+          class="border border-border-gray py-4 px-4 rounded-xl focus:border-4 outline-none"
         />
         <ShowPassword
           :customClass="'absolute top-[55%] right-[4%] cursor-pointer'"
