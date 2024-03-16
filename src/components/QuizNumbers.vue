@@ -1,7 +1,7 @@
 <template>
-  <div :class="['flex flex-col gap-8 font-raleway', customClass]">
-    <p class="text-white text-7xl font-black pl-20">{{ numberOfGames }}</p>
-    <div class="group text-white text-5xl font-black pl-20 flex items-center gap-4 h-4">
+  <div :class="['flex flex-col gap-8 font-raleway pl-24', customClass]">
+    <p class="text-white text-7xl font-black">{{ numberOfGames }}</p>
+    <div class="group text-white text-5xl font-black flex items-center gap-4 h-4">
       <span
         class="border-b-2 border-transparent group-hover:border-white transition-border duration-700"
       >

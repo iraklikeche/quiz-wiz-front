@@ -1,5 +1,5 @@
 <template>
-  <div class="flex gap-32 py-16 pl-20 relative z-50">
+  <div :class="['flex gap-32 py-16 pl-24 relative z-50,', customClass]">
     <RouterLink :to="{ name: 'home' }">
       <Logo />
     </RouterLink>
@@ -16,7 +16,7 @@
     </FooterList>
   </div>
   <div class="flex items-end justify-end px-24 py-6 border-t-2 border-opacity-25">
-    <p class="text-[#667085] text-xs font-medium font-raleway">
+    <p class="text-custom-light-gray text-xs font-medium font-raleway">
       &copy; {{ year }} QW. All rights reserved
     </p>
   </div>
@@ -34,6 +34,12 @@ export default {
   data() {
     return {
       year: new Date().getFullYear()
+    }
+  },
+  props: {
+    customClass: {
+      type: String,
+      default: ''
     }
   }
 }
