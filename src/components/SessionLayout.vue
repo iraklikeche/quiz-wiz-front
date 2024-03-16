@@ -1,7 +1,7 @@
 <template>
   <div class="grid grid-cols-[45fr_55fr] h-screen relative">
-    <div class="bg-[#EAFAFE] pt-32">
-      <img :src="image" />
+    <div :class="['bg-[#EAFAFE] pt-32', customClass]">
+      <img :src="image" :class="[imageClass]" />
     </div>
     <div class="flex gap-20 absolute top-[5%] left-[3%]">
       <RouterLink :to="{ name: 'home' }">
@@ -15,7 +15,7 @@
           <span class="text-sm font-medium text-[#667085]">Back</span>
         </button>
       </div>
-      <div class="pt-10">
+      <div class="pt-10 pl-4">
         <h1 class="text-3xl font-extrabold font-raleway mb-8">{{ heading }}</h1>
         <slot />
       </div>
@@ -35,7 +35,15 @@ export default {
 
   props: {
     image: String,
-    heading: String
+    heading: String,
+    customClass: {
+      type: String,
+      default: ''
+    },
+    imageClass: {
+      type: String,
+      default: ''
+    }
   },
 
   methods: {

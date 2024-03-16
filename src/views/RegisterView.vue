@@ -47,15 +47,10 @@
         <input type="radio" class="scale-150" />
         <label class="text-[#344054] text-sm">I accept the terms and privacy policy</label>
       </div>
-      <button class="bg-black text-white py-4 rounded-xl mt-6">Sign Up</button>
+      <button class="bg-black text-white py-4 rounded-xl mt-6 font-semibold">Sign Up</button>
     </form>
 
-    <div class="mt-8">
-      <p class="text-sm font-semibold">
-        <span class="opacity-70"> Already have account? </span>
-        <RouterLink :to="{ name: 'login' }" class="text-[#4B69FD]">Log in</RouterLink>
-      </p>
-    </div>
+    <AccountLinks :question="'Already have account? '" :buttonName="'Log in'" />
   </SessionLayout>
 </template>
 
@@ -65,13 +60,15 @@ import registerImage from '@/assets/imgs/sessions/register.png'
 import Logo from '@/components/icons/Logo.vue'
 import GoBack from '@/components/icons/GoBack.vue'
 import SessionLayout from '@/components/SessionLayout.vue'
+import AccountLinks from '@/components/AccountLinks.vue'
 
 export default {
   components: {
     ShowPassword,
     Logo,
     GoBack,
-    SessionLayout
+    SessionLayout,
+    AccountLinks
   },
 
   data() {

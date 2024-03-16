@@ -15,14 +15,15 @@
       >
         Sign up
       </RouterLink>
-      <button
+      <RouterLink
+        :to="{ name: 'login' }"
         class="group text-[#4b69fd] font-bold text-sm tracking-wider transition-all flex gap-2 items-center"
       >
         Log in
         <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-700">
           <LoginArrow />
         </span>
-      </button>
+      </RouterLink>
     </div>
   </nav>
 </template>
@@ -40,3 +41,4 @@ export default {
   }
 }
 </script>
+RouterLink,
