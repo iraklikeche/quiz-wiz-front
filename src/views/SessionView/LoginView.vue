@@ -41,7 +41,11 @@
       <button class="bg-black text-white py-4 rounded-xl mt-6 font-semibold">Log in</button>
     </form>
 
-    <AccountLinks :question="'Don’t have an account?'" :buttonName="'Sign up'" />
+    <AccountLinks
+      :question="'Don’t have an account?'"
+      :buttonName="'Sign up'"
+      :linkTo="'register'"
+    />
   </SessionLayout>
 </template>
 

@@ -11,7 +11,7 @@
     </p>
     <form class="flex flex-col gap-5 max-w-[26rem]">
       <div class="flex flex-col">
-        <label class="text-custom-gray text-sm mb-1">Email Adress</label>
+        <label class="text-custom-gray text-sm mb-1">Email Address</label>
         <input
           type="email"
           placeholder="Enter your email address"
