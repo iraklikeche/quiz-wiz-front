@@ -58,7 +58,6 @@ export default {
   methods: {
     togglePassword() {
       this.isPasswordVisible = !this.isPasswordVisible
-      console.log(this.isPasswordVisible)
     }
   }
 }

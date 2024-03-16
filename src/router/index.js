@@ -23,7 +23,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/RegisterView.vue')
+      component: () => import('../views/SessionView/RegisterView.vue')
     },
     {
       path: '/login',
@@ -31,7 +31,15 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/LoginView.vue')
+      component: () => import('../views/SessionView/LoginView.vue')
+    },
+    {
+      path: '/reset',
+      name: 'reset',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/SessionView/ResetPasswordView.vue')
     }
   ],
   scrollBehavior(to, from, savedPosition) {

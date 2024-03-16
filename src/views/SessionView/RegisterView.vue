@@ -94,11 +94,9 @@ export default {
     },
     togglePassword() {
       this.isPasswordVisible = !this.isPasswordVisible
-      console.log(this.isPasswordVisible)
     },
     toggleConfirmPassword() {
       this.isConfirmPasswordVisible = !this.isConfirmPasswordVisible
-      console.log(this.isConfirmPasswordVisible)
     },
     goBack() {
       this.$router.go(-1)

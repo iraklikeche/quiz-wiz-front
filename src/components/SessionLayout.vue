@@ -16,7 +16,7 @@
         </button>
       </div>
       <div class="pt-10 pl-4">
-        <h1 class="text-3xl font-extrabold font-raleway mb-8">{{ heading }}</h1>
+        <h1 :class="['text-3xl font-extrabold font-raleway', headingClass]">{{ heading }}</h1>
         <slot />
       </div>
     </div>
@@ -43,6 +43,10 @@ export default {
     imageClass: {
       type: String,
       default: ''
+    },
+    headingClass: {
+      type: String,
+      default: 'mb-8'
     }
   },
 
