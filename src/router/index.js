@@ -16,6 +16,11 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
+    },
+    {
+      path: '/:catchAll(.*)', // This will match all paths that aren't matched by above routes
+      name: 'notfound',
+      component: () => import('../views/errors/notFound404.vue')
     }
   ],
   scrollBehavior(to, from, savedPosition) {
