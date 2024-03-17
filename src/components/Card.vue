@@ -1,11 +1,18 @@
 <template>
-  <div class="flex flex-col shadow-lg p-6 pb-8">
+  <div
+    class="group flex flex-col shadow-lg p-6 pb-8 border-2 border-black rounded-2xl border-transparent hover:border-black"
+  >
     <div class="w-full flex items-center justify-center">
       <img :src="resetImage" class="max-w-60 max-h-60" />
     </div>
-    <div class="flex flex-col gap-4 mt-8">
+    <div class="flex flex-col gap-4 mt-12">
       <p class="text-custom-blue text-sm font-semibold">Genres</p>
-      <h2 class="text-[#101828] font-semibold text-2xl">Heading</h2>
+      <div class="flex justify-between items-center">
+        <h2 class="text-[#101828] font-semibold text-2xl">Heading</h2>
+        <span class="opacity-0 group-hover:opacity-100"
+          ><ArrowTilted :stroke="'black'" :width="'16'" />
+        </span>
+      </div>
 
       <div class="flex gap-4">
         <InfoDisplay label="Completed" value="DATE">
@@ -30,11 +37,13 @@
 import InfoDisplay from '@/components/icons/InfoDisplay.vue'
 import resetImage from '@/assets/imgs/sessions/reset.png'
 import Complete from '@/components/icons/Complete.vue'
+import ArrowTilted from '@/components/icons/ArrowTilted.vue'
 
 export default {
   components: {
     InfoDisplay,
-    Complete
+    Complete,
+    ArrowTilted
   },
   data() {
     return {
@@ -43,3 +52,4 @@ export default {
   }
 }
 </script>
+import ArrowTiltedVue from '@/components/icons/ArrowTilted.vue'

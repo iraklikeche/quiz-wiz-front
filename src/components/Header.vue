@@ -10,7 +10,7 @@
         >Quizzes</RouterLink
       >
     </div>
-    <div class="flex gap-6">
+    <div class="flex gap-6 items-center">
       <slot />
       <RouterLink
         :to="{ name: 'register' }"

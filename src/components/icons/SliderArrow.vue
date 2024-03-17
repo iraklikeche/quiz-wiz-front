@@ -1,5 +1,12 @@
 <template>
-  <svg width="100" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="38"
+    height="38"
+    viewBox="0 0 38 38"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    class="hover:bg-border-gray rounded-full transition-all"
+  >
     <g filter="url(#filter0_b_1057_87349)">
       <path
         d="M16.5 24L21.5 19L16.5 14"
