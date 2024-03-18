@@ -33,6 +33,11 @@ const router = createRouter({
       path: '/forgot-password',
       name: 'forgot',
       component: () => import('../views/SessionView/ForgotPasswordView.vue')
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'notfound',
+      component: () => import('../views/errors/notFound404.vue')
     }
   ],
   scrollBehavior(to, from, savedPosition) {
