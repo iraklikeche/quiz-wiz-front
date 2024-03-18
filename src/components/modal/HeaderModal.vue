@@ -12,7 +12,7 @@
 
   <div class="flex flex-col">
     <button
-      @click="showRegistrationModal = true"
+      @click="toggleModal('registration', true)"
       class="bg-black text-white w-full py-2 rounded-md mb-2 flex justify-center font-semibold"
     >
       Sign Up
@@ -20,16 +20,16 @@
 
     <TheModal
       :name="'slide-up'"
-      :show="showRegistrationModal"
+      :show="modals.registration"
+      @update:show="toggleModal('registration', $event)"
       :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-[90vh]  transition-transform'"
       :customClasses="'flex justify-center items-end '"
-      @update:show="showRegistrationModal = $event"
     >
       <RegisterView />
     </TheModal>
 
     <button
-      @click="showLoginModal = true"
+      @click="toggleModal('login', true)"
       class="bg-[#4B69FD] bg-opacity-10 w-full py-2 rounded-md text-custom-blue flex justify-center font-semibold"
     >
       Log in
@@ -37,10 +37,10 @@
 
     <TheModal
       :name="'slide-up'"
-      :show="showLoginModal"
+      :show="modals.login"
+      @update:show="toggleModal('login', $event)"
       :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-[90vh]  transition-transform'"
       :customClasses="'flex justify-center items-end '"
-      @update:show="showLoginModal = $event"
     >
       <LoginView />
     </TheModal>
@@ -63,16 +63,20 @@ export default {
     CloseModalBtn
   },
   methods: {
-    updateShowModal(value) {
-      this.$emit('update:show', value)
+    toggleModal(modalName, isVisible) {
+      if (this.modals.hasOwnProperty(modalName)) {
+        this.modals[modalName] = isVisible
+      }
     }
   },
-  emits: ['update:show', 'close'],
+  emits: ['close'],
 
   data() {
     return {
-      showRegistrationModal: false,
-      showLoginModal: false
+      modals: {
+        registration: false,
+        login: false
+      }
     }
   }
 }

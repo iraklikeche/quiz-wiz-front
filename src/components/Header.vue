@@ -67,8 +67,7 @@ export default {
   },
   data() {
     return {
-      showModal: false,
-      showRegistrationModal: false
+      showModal: false
     }
   }
 }

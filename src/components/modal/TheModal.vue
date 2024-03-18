@@ -16,10 +16,6 @@
 export default {
   props: {
     show: Boolean,
-    transitionName: {
-      type: String,
-      default: ''
-    },
     customClasses: {
       type: String
     },
