@@ -8,17 +8,17 @@
   </div>
 </template>
 
-
 <script>
 export default {
   props: {
-    show: Boolean
+    show: Boolean,
+    customClass: String
   },
   emits: ['close'],
   methods: {
     close() {
-      this.$emit('close');
+      this.$emit('close')
     }
   }
-};
+}
 </script>

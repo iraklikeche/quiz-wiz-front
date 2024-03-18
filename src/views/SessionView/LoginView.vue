@@ -5,6 +5,12 @@
     :customClass="'flex justify-center bg-[#FEF6E7]'"
     :imageClass="'max-w-[29rem]'"
   >
+    <AccountLinks
+      :question="'Don’t have an account?'"
+      :buttonName="'Sign up'"
+      :linkTo="'register'"
+      class="block sm:hidden text-center sm:text-left text-lg mb-6 mt-2"
+    />
     <form class="flex flex-col gap-5 max-w-[26rem]">
       <div class="flex flex-col">
         <label class="text-custom-gray text-sm mb-1">Email</label>
@@ -45,6 +51,7 @@
       :question="'Don’t have an account?'"
       :buttonName="'Sign up'"
       :linkTo="'register'"
+      class="hidden sm:block"
     />
   </SessionLayout>
 </template>

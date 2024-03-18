@@ -1,4 +1,8 @@
 <template>
+  <ModalBackdrop :show="showModal" @close="showModal = false">
+    <HeaderModal @close="showModal = false" />
+  </ModalBackdrop>
+
   <nav
     class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-4 sm:px-24 py-4 w-full"
   >
@@ -16,7 +20,7 @@
       <slot />
       <RouterLink
         :to="{ name: 'register' }"
-        class="bg-black px-6 py-2 text-white font-bold text-sm rounded hover:bg-white hover:text-black hover:shadow-black hover:shadow-lg hover:scale-105 duration-300 transition-all"
+        class="bg-black px-6 py-2 shadow-br hover:text-black text-white font-bold text-sm rounded hover:bg-white hover:shadow-lg hover:scale-105 duration-300 transition-all"
       >
         Sign up
       </RouterLink>
@@ -30,23 +34,44 @@
         </span>
       </RouterLink>
     </div>
-    <slot />
+    <div class="sm:hidden">
+      <MobileMenu @click="showModal = true" />
+    </div>
   </nav>
 </template>
 
 <script>
 import { RouterLink } from 'vue-router'
-import Logo from '@/components/icons/Logo.vue'
 import LoginArrow from '@/components/icons/LoginArrow.vue'
 import MobileMenu from '@/components/icons/MobileMenu.vue'
+import CloseModalBtn from '@/components/icons/CloseModalBtn.vue'
+import Logo from '@/components/icons/Logo.vue'
+import ModalBackdrop from '@/components/modal/ModalBackdrop.vue'
+import HeaderModal from '@/components/modal/HeaderModal.vue'
+import RegisterModal from '@/components/modal/RegisterModal.vue'
 
 export default {
   components: {
+    RegisterModal,
+    ModalBackdrop,
+    HeaderModal,
+    CloseModalBtn,
     RouterLink,
     Logo,
     LoginArrow,
     MobileMenu
+  },
+  data() {
+    return {
+      showModal: false,
+      showRegistrationModal: false
+    }
   }
 }
 </script>
-RouterLink,RouterLink,
+
+<style scoped>
+.shadow-br:hover {
+  box-shadow: 6px 5px 2px 0 rgb(0, 0, 0);
+}
+</style>

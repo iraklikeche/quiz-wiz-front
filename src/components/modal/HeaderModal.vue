@@ -14,18 +14,23 @@
     </div>
 
     <div class="flex flex-col">
-      <RouterLink
-        :to="{ name: 'register' }"
+      <button
+        @click="showRegistrationModal = true"
         class="bg-black text-white w-full py-2 rounded-md mb-2 flex justify-center font-semibold"
       >
-        Sign up
-      </RouterLink>
-      <RouterLink
-        :to="{ name: 'login' }"
+        Sign Up
+      </button>
+
+      <RegisterModal :show="showRegistrationModal" @update:show="showRegistrationModal = $event" />
+
+      <button
+        @click="showLoginModal = true"
         class="bg-[#4B69FD] bg-opacity-10 w-full py-2 rounded-md text-custom-blue flex justify-center font-semibold"
       >
         Log in
-      </RouterLink>
+      </button>
+
+      <LoginModal :show="showLoginModal" @update:show="showLoginModal = $event" />
     </div>
   </div>
 </template>
@@ -33,12 +38,24 @@
 <script>
 import Logo from '@/components/icons/Logo.vue'
 import CloseModalBtn from '@/components/icons/CloseModalBtn.vue'
+import RegisterModal from '@/components/modal/RegisterModal.vue'
+import LoginModal from '@/components/modal/LoginModal.vue'
 
 export default {
   components: {
     Logo,
-    CloseModalBtn
+    CloseModalBtn,
+    RegisterModal,
+    LoginModal
   },
-  emits: ['close']
+  methods: {},
+
+  emits: ['close'],
+  data() {
+    return {
+      showRegistrationModal: false,
+      showLoginModal: false
+    }
+  }
 }
 </script>

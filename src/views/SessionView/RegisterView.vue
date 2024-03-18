@@ -1,5 +1,10 @@
 <template>
   <SessionLayout :image="registerImage" :heading="'Create account'" :customClass="'bg-[#EAFAFE]'">
+    <AccountLinks
+      :question="'Already have account? '"
+      :buttonName="'Log in'"
+      class="block sm:hidden text-center sm:text-left mb-12 sm:mb-0"
+    />
     <form class="flex flex-col gap-5 max-w-[26rem]">
       <!-- If it's okay I will leave it so, till I get familiar with vee-validate and later I will extract input and label into separate components to make it more clean and DRY.  -->
       <div class="flex flex-col">
@@ -50,7 +55,11 @@
       <button class="bg-black text-white py-4 rounded-xl mt-6 font-semibold">Sign Up</button>
     </form>
 
-    <AccountLinks :question="'Already have account? '" :buttonName="'Log in'" />
+    <AccountLinks
+      :question="'Already have account? '"
+      :buttonName="'Log in'"
+      class="hidden sm:block"
+    />
   </SessionLayout>
 </template>
 
@@ -104,4 +113,3 @@ export default {
   }
 }
 </script>
-import { RouterLink } from 'vue-router'

@@ -1,22 +1,26 @@
 <template>
-  <div class="grid grid-cols-[45fr_55fr] h-screen relative">
-    <div :class="['pt-32', customClass]">
+  <div class="sm:grid grid-cols-[45fr_55fr] sm:h-screen relative px-6 sm:px-0 flex flex-col">
+    <div :class="['pt-32 hidden sm:block', customClass]">
       <img :src="image" :class="[imageClass]" />
     </div>
-    <div class="flex gap-20 absolute top-[5%] left-[3%]">
+    <div class="hidden sm:flex gap-20 absolute top-[5%] left-[3%]">
       <RouterLink :to="{ name: 'home' }">
         <Logo />
       </RouterLink>
     </div>
-    <div class="flex flex-col pl-20">
+    <div class="flex flex-col sm:pl-20">
       <div class="mt-10">
-        <button class="flex gap-2 items-center" @click="goBack">
+        <button class="sm:flex gap-2 items-center hidden" @click="goBack">
           <GoBack />
           <span class="text-sm font-medium text-custom-light-gray">Back</span>
         </button>
       </div>
-      <div class="pt-10 pl-4">
-        <h1 :class="['text-3xl font-extrabold font-raleway', headingClass]">{{ heading }}</h1>
+      <div class="pt-10 sm:pl-4">
+        <h1
+          :class="['text-3xl font-extrabold font-raleway text-center sm:text-left', headingClass]"
+        >
+          {{ heading }}
+        </h1>
         <slot />
       </div>
     </div>
@@ -46,7 +50,7 @@ export default {
     },
     headingClass: {
       type: String,
-      default: 'mb-8'
+      default: 'mb-4 sm:mb-8'
     }
   },
 

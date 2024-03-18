@@ -7,13 +7,9 @@ import hero from '@/assets/imgs/hero-bg.png'
 import MobileMenu from '@/components/icons/MobileMenu.vue'
 import CloseModalBtn from '@/components/icons/CloseModalBtn.vue'
 import Logo from '@/components/icons/Logo.vue'
-import ModalBackdrop from '@/components/modal/ModalBackdrop.vue'
-import HeaderModal from '@/components/modal/HeaderModal.vue'
 
 export default {
   components: {
-    ModalBackdrop,
-    HeaderModal,
     QuizNumbers,
     Header,
     Footer,
@@ -24,21 +20,14 @@ export default {
   data() {
     return {
       quizImage,
-      hero,
-      showModal: false
+      hero
     }
   }
 }
 </script>
 
 <template>
-  <ModalBackdrop :show="showModal" @close="showModal = false">
-    <HeaderModal @close="showModal = false" />
-  </ModalBackdrop>
-  <Header>
-    <div class="sm:hidden">
-      <MobileMenu @click="showModal = true" /></div
-  ></Header>
+  <Header />
   <section class="pt-6 overflow-hidden">
     <main class="flex flex-col">
       <div class="relative px-10 pr-16 sm:pl-24">
