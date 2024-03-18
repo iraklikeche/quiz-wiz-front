@@ -1,7 +1,12 @@
 <template>
-  <ModalBackdrop :show="showModal" @close="showModal = false">
-    <HeaderModal @close="showModal = false" />
-  </ModalBackdrop>
+  <TheModal
+    :show="showModal"
+    @update:show="showModal = $event"
+    :customClasses="'backdrop-blur-sm'"
+    :modalContentClasses="'bg-white p-6 rounded-lg shadow-lg w-full max-w-xs'"
+  >
+    <HeaderModal @update:show="showModal = false" />
+  </TheModal>
 
   <nav
     class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-4 sm:px-24 py-4 w-full"
@@ -46,20 +51,18 @@ import LoginArrow from '@/components/icons/LoginArrow.vue'
 import MobileMenu from '@/components/icons/MobileMenu.vue'
 import CloseModalBtn from '@/components/icons/CloseModalBtn.vue'
 import Logo from '@/components/icons/Logo.vue'
-import ModalBackdrop from '@/components/modal/ModalBackdrop.vue'
 import HeaderModal from '@/components/modal/HeaderModal.vue'
-import RegisterModal from '@/components/modal/RegisterModal.vue'
+import TheModal from '@/components/modal/TheModal.vue'
 
 export default {
   components: {
-    RegisterModal,
-    ModalBackdrop,
     HeaderModal,
     CloseModalBtn,
     RouterLink,
     Logo,
     LoginArrow,
-    MobileMenu
+    MobileMenu,
+    TheModal
   },
   data() {
     return {

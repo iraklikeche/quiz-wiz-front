@@ -9,7 +9,7 @@
       </RouterLink>
     </div>
     <div class="flex flex-col sm:pl-20">
-      <div class="mt-10">
+      <div class="mt-2 md:mt-10">
         <button class="sm:flex gap-2 items-center hidden" @click="goBack">
           <GoBack />
           <span class="text-sm font-medium text-custom-light-gray">Back</span>
