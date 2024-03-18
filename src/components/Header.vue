@@ -9,7 +9,7 @@
   </TheModal>
 
   <nav
-    class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-4 sm:px-24 py-4 w-full"
+    class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-4 sm:px-12 py-4 w-full"
   >
     <div class="flex gap-20 items-center">
       <RouterLink :to="{ name: 'home' }">
@@ -21,26 +21,29 @@
         >Quizzes</RouterLink
       >
     </div>
-    <div class="sm:flex gap-6 items-center hidden">
+    <div class="flex gap-4 sm:gap-6 items-center">
       <slot />
-      <RouterLink
-        :to="{ name: 'register' }"
-        class="bg-black px-6 py-2 shadow-br hover:text-black text-white font-bold text-sm rounded hover:bg-white hover:shadow-lg hover:scale-105 duration-300 transition-all"
-      >
-        Sign up
-      </RouterLink>
-      <RouterLink
-        :to="{ name: 'login' }"
-        class="group text-[#4b69fd] font-bold text-sm tracking-wider transition-all flex gap-2 items-center"
-      >
-        Log in
-        <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-          <LoginArrow />
-        </span>
-      </RouterLink>
-    </div>
-    <div class="sm:hidden">
-      <MobileMenu @click="showModal = true" />
+      <!-- <div class="sm:flex gap-6 items-center hidden"> -->
+      <div class="sm:flex gap-6 hidden">
+        <RouterLink
+          :to="{ name: 'register' }"
+          class="bg-black px-6 py-2 shadow-br hover:text-black text-white font-bold text-sm rounded hover:bg-white hover:shadow-lg hover:scale-105 duration-300 transition-all"
+        >
+          Sign up
+        </RouterLink>
+        <RouterLink
+          :to="{ name: 'login' }"
+          class="group text-[#4b69fd] font-bold text-sm tracking-wider transition-all flex gap-2 items-center"
+        >
+          Log in
+          <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+            <LoginArrow />
+          </span>
+        </RouterLink>
+      </div>
+      <div class="sm:hidden">
+        <MobileMenu @click="showModal = true" />
+      </div>
     </div>
   </nav>
 </template>
