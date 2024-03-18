@@ -4,18 +4,12 @@ import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import quizImage from '@/assets/imgs/quiz-wiz.png'
 import hero from '@/assets/imgs/hero-bg.png'
-import MobileMenu from '@/components/icons/MobileMenu.vue'
-import CloseModalBtn from '@/components/icons/CloseModalBtn.vue'
-import Logo from '@/components/icons/Logo.vue'
 
 export default {
   components: {
     QuizNumbers,
     Header,
-    Footer,
-    MobileMenu,
-    CloseModalBtn,
-    Logo
+    Footer
   },
   data() {
     return {

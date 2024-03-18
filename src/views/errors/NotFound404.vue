@@ -28,7 +28,6 @@ export default {
     Header,
     Footer,
     GoBackHome
-    // GoHome
   },
   data() {
     return {

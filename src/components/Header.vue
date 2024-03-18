@@ -5,7 +5,8 @@
     :customClasses="'backdrop-blur-sm'"
     :modalContentClasses="'bg-white p-6 rounded-lg shadow-lg w-full max-w-xs'"
   >
-    <HeaderModal @update:show="showModal = false" />
+    <!-- <HeaderModal @update:show="showModal = false" /> -->
+    <HeaderModal @close="showModal = false" />
   </TheModal>
 
   <nav
@@ -23,7 +24,6 @@
     </div>
     <div class="flex gap-4 sm:gap-6 items-center">
       <slot />
-      <!-- <div class="sm:flex gap-6 items-center hidden"> -->
       <div class="sm:flex gap-6 hidden">
         <RouterLink
           :to="{ name: 'register' }"
@@ -52,7 +52,6 @@
 import { RouterLink } from 'vue-router'
 import LoginArrow from '@/components/icons/LoginArrow.vue'
 import MobileMenu from '@/components/icons/MobileMenu.vue'
-import CloseModalBtn from '@/components/icons/CloseModalBtn.vue'
 import Logo from '@/components/icons/Logo.vue'
 import HeaderModal from '@/components/modal/HeaderModal.vue'
 import TheModal from '@/components/modal/TheModal.vue'
@@ -60,7 +59,6 @@ import TheModal from '@/components/modal/TheModal.vue'
 export default {
   components: {
     HeaderModal,
-    CloseModalBtn,
     RouterLink,
     Logo,
     LoginArrow,

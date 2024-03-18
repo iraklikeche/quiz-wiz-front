@@ -35,6 +35,9 @@ export default {
   methods: {
     close() {
       this.$emit('update:show', false)
+    },
+    handleClose() {
+      this.showModal = false
     }
   }
 }

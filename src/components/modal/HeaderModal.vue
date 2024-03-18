@@ -65,7 +65,7 @@ export default {
       this.$emit('update:show', value)
     }
   },
-  emits: ['update:show'],
+  emits: ['update:show', 'close'],
 
   data() {
     return {
