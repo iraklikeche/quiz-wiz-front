@@ -10,7 +10,7 @@
       <div class="flex justify-between items-center">
         <h2 class="text-[#101828] font-semibold text-2xl">Heading</h2>
         <span class="opacity-0 group-hover:opacity-100">
-          <ArrowTiltedBlack />
+          <ArrowTilted class="w-4 stroke-black" />
         </span>
       </div>
 
@@ -37,13 +37,13 @@
 import InfoDisplay from '@/components/icons/InfoDisplay.vue'
 import resetImage from '@/assets/imgs/sessions/reset.png'
 import Complete from '@/components/icons/Complete.vue'
-import ArrowTiltedBlack from '@/components/icons/ArrowTiltedBlack.vue'
+import ArrowTilted from '@/components/icons/ArrowTilted.vue'
 
 export default {
   components: {
     InfoDisplay,
     Complete,
-    ArrowTiltedBlack
+    ArrowTilted
   },
   data() {
     return {

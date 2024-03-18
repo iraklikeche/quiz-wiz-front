@@ -8,7 +8,7 @@
         {{ gameType }}
       </span>
       <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-        <ArrowTilted />
+        <ArrowTilted class="w-7 stroke-white" />
       </span>
     </div>
   </div>
