@@ -10,6 +10,26 @@ const router = createRouter({
       component: HomeView
     },
     {
+      path: '/register',
+      name: 'register',
+      component: () => import('../views/SessionView/RegisterView.vue')
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/SessionView/LoginView.vue')
+    },
+    {
+      path: '/reset',
+      name: 'reset',
+      component: () => import('../views/SessionView/ResetPasswordView.vue')
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot',
+      component: () => import('../views/SessionView/ForgotPasswordView.vue')
+    },
+    {
       path: '/:catchAll(.*)',
       name: 'notfound',
       component: () => import('../views/errors/notFound404.vue')
