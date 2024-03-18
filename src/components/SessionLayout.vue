@@ -12,7 +12,7 @@
       <div class="mt-10">
         <button class="flex gap-2 items-center" @click="goBack">
           <GoBack />
-          <span class="text-sm font-medium text-[#667085]">Back</span>
+          <span class="text-sm font-medium text-custom-light-gray">Back</span>
         </button>
       </div>
       <div class="pt-10 pl-4">

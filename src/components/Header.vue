@@ -2,13 +2,16 @@
   <nav
     class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-24 py-4"
   >
-    <div class="flex gap-20">
+    <div class="flex gap-20 items-center">
       <RouterLink :to="{ name: 'home' }">
         <Logo />
       </RouterLink>
-      <button class="text-sm font-semibold text-custom-gray">Quizzes</button>
+      <RouterLink class="text-sm font-semibold text-custom-gray" :to="{ name: 'quizzes' }"
+        >Quizzes</RouterLink
+      >
     </div>
-    <div class="flex gap-6">
+    <div class="flex gap-6 items-center">
+      <slot />
       <RouterLink
         :to="{ name: 'register' }"
         class="bg-black px-6 py-2 text-white font-bold text-sm rounded hover:bg-white hover:text-black hover:shadow-black hover:shadow-lg hover:scale-105 duration-300 transition-all"
@@ -41,4 +44,4 @@ export default {
   }
 }
 </script>
-RouterLink,
+RouterLink,RouterLink,

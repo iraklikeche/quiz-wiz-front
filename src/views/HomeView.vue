@@ -24,7 +24,7 @@ export default {
   <Header />
   <section class="pt-6 overflow-hidden">
     <main>
-      <div class="relative pl-20">
+      <div class="relative pl-24">
         <img :src="quizImage" class="max-w-2xl 2xl:w-1/2" />
         <img :src="hero" class="absolute top-0 right-0 translate-y-20" />
       </div>
@@ -37,7 +37,7 @@ export default {
         <QuizNumbers
           numberOfGames="25+"
           gameType="different genre"
-          :customClass="'bg-[#4b69fd] pb-20 pt-10'"
+          :customClass="'bg-custom-blue pb-20 pt-10'"
         />
       </div>
     </main>
