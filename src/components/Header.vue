@@ -1,5 +1,6 @@
 <template>
   <TheModal
+    :name="'fade-in'"
     :show="showModal"
     @update:show="showModal = $event"
     :customClasses="'backdrop-blur-sm'"

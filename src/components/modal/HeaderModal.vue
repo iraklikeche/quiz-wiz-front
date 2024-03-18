@@ -19,6 +19,7 @@
     </button>
 
     <TheModal
+      :name="'slide-up'"
       :show="showRegistrationModal"
       :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-[90vh]  transition-transform'"
       :customClasses="'flex justify-center items-end '"
@@ -35,6 +36,7 @@
     </button>
 
     <TheModal
+      :name="'slide-up'"
       :show="showLoginModal"
       :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-[90vh]  transition-transform'"
       :customClasses="'flex justify-center items-end '"

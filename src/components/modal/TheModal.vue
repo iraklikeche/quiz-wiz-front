@@ -20,10 +20,6 @@ export default {
       type: String,
       default: ''
     },
-    backdropBlur: {
-      type: Boolean,
-      default: false
-    },
     customClasses: {
       type: String
     },
@@ -48,7 +44,32 @@ export default {
 .slide-up-leave-active {
   transition: transform 0.3s ease;
 }
-.slide-up-enter, .slide-up-leave-to /* or .fade-enter, .fade-leave-to */ {
+.slide-up-enter,
+.slide-up-leave-to {
   transform: translateY(100%);
+}
+.slide-up-enter-from {
+  transform: translateY(100%);
+}
+.slide-up-enter-to {
+  transform: translateY(0);
+}
+
+.fade-in-enter-active,
+.fade-in-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.fade-in-enter,
+.fade-in-leave-to {
+  transform: translateX(-100%);
+}
+
+.fade-in-enter-from {
+  transform: translateX(-100%);
+}
+
+.fade-in-enter-to {
+  transform: translateX(0);
 }
 </style>
