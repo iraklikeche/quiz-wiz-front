@@ -1,7 +1,7 @@
 <template>
-  <div :class="['flex flex-col gap-8 font-raleway pl-24', customClass]">
+  <div :class="['flex flex-col gap-4 font-raleway px-10 sm:pl-24', customClass]">
     <p class="text-white text-7xl font-black">{{ numberOfGames }}</p>
-    <div class="group text-white text-5xl font-black flex items-center gap-4 h-4">
+    <div class="group text-white text-5xl font-black flex items-center gap-4">
       <span
         class="border-b-2 border-transparent group-hover:border-white transition-border duration-700"
       >
@@ -13,7 +13,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import ArrowTilted from '@/components/icons/ArrowTilted.vue'
 
@@ -24,7 +23,8 @@ export default {
   props: {
     numberOfGames: String,
     gameType: String,
-    customClass: String
+    customClass: String,
+    heightForMobile: String
   }
 }
 </script>

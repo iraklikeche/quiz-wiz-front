@@ -1,16 +1,18 @@
 <template>
   <nav
-    class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-24 py-4"
+    class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-4 sm:px-24 py-4 w-full"
   >
     <div class="flex gap-20 items-center">
       <RouterLink :to="{ name: 'home' }">
         <Logo />
       </RouterLink>
-      <RouterLink class="text-sm font-semibold text-custom-gray" :to="{ name: 'quizzes' }"
+      <RouterLink
+        class="text-sm font-semibold text-custom-gray hidden sm:block"
+        :to="{ name: 'quizzes' }"
         >Quizzes</RouterLink
       >
     </div>
-    <div class="flex gap-6 items-center">
+    <div class="sm:flex gap-6 items-center hidden">
       <slot />
       <RouterLink
         :to="{ name: 'register' }"
@@ -28,6 +30,7 @@
         </span>
       </RouterLink>
     </div>
+    <slot />
   </nav>
 </template>
 
@@ -35,12 +38,14 @@
 import { RouterLink } from 'vue-router'
 import Logo from '@/components/icons/Logo.vue'
 import LoginArrow from '@/components/icons/LoginArrow.vue'
+import MobileMenu from '@/components/icons/MobileMenu.vue'
 
 export default {
   components: {
     RouterLink,
     Logo,
-    LoginArrow
+    LoginArrow,
+    MobileMenu
   }
 }
 </script>
