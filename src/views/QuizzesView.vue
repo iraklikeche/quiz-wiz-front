@@ -24,24 +24,37 @@
   </Header>
   <div class="px-24">
     <div class="flex gap-2 pt-10 items-center justify-between">
-      <ul class="flex gap-8 overflow-x-scroll">
+      <button @click="scrollLeft" class="rotate-180 flex items-center justify-center pt-2">
+        <SliderArrow />
+      </button>
+      <ul class="flex gap-8 overflow-hidden border-b border-gray-300" ref="scrollContainer">
         <li
-          v-for="(genre, index) in 50"
+          v-for="(genre, index) in genres"
           :key="index"
-          class="text-custom-light-gray text-sm font-semibold"
+          class="text-custom-light-gray text-sm font-semibold cursor-pointer pb-2"
+          :class="{
+            'border-b-2': true,
+            'border-transparent': !isSelected(genre),
+            'border-black': isSelected(genre)
+          }"
+          @click="toggleSelection(genre)"
         >
           {{ genre }}
         </li>
       </ul>
-      <button>
+
+      <button @click="scrollRight" class="pb-2">
         <SliderArrow />
       </button>
-      <button
-        class="group flex gap-2 items-center border border-custom-light-gray border-opacity-60 py-2 px-4 rounded-xl hover:bg-[#4B69FD] hover:bg-opacity-10 hover:scale-105 hover:border-custom-blue"
-      >
-        <Filter />
-        <span class="text-sm text-custom-light-gray group-hover:text-custom-blue">Filter</span>
-      </button>
+
+      <div class="pb-2">
+        <button
+          class="group flex gap-2 items-center border border-custom-light-gray border-opacity-60 py-2 px-4 rounded-xl hover:bg-[#4B69FD] hover:bg-opacity-10 hover:scale-105 hover:border-custom-blue"
+        >
+          <Filter />
+          <span class="text-sm text-custom-light-gray group-hover:text-custom-blue">Filter</span>
+        </button>
+      </div>
     </div>
     <div class="grid grid-cols-3 justify-between mt-12 gap-8">
       <!-- Just for testing till I get data from back-end -->
@@ -87,14 +100,41 @@ export default {
     Close
   },
   data() {
+    const genres = Array.from({ length: 50 }, (_, i) => `${i + 1}`)
     return {
       resetImage,
-      isFocused: false
+      genres: genres,
+      selectedItems: [genres[0]],
+      isFocused: false,
+      scrollAmount: 0
     }
   },
   methods: {
     closeInput() {
       console.log('Button is Clicked')
+    },
+    toggleSelection(genre) {
+      const index = this.selectedItems.indexOf(genre)
+      if (index > -1) {
+        this.selectedItems.splice(index, 1)
+      } else {
+        this.selectedItems.push(genre)
+      }
+    },
+    isSelected(genre) {
+      return this.selectedItems.includes(genre)
+    },
+    scrollLeft() {
+      this.scroll(-100)
+    },
+    scrollRight() {
+      this.scroll(100)
+    },
+    scroll(amount) {
+      const container = this.$refs.scrollContainer
+      if (container) {
+        container.scrollLeft += amount
+      }
     }
   }
 }
