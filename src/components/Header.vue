@@ -5,7 +5,6 @@
     :customClasses="'backdrop-blur-sm'"
     :modalContentClasses="'bg-white p-6 rounded-lg shadow-lg w-full max-w-xs'"
   >
-    <!-- <HeaderModal @update:show="showModal = false" /> -->
     <HeaderModal @close="showModal = false" />
   </TheModal>
 
