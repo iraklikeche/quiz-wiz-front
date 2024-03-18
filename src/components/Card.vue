@@ -9,8 +9,8 @@
       <p class="text-custom-blue text-sm font-semibold">Genres</p>
       <div class="flex justify-between items-center">
         <h2 class="text-[#101828] font-semibold text-2xl">Heading</h2>
-        <span class="opacity-0 group-hover:opacity-100"
-          ><ArrowTilted :stroke="'black'" :width="'16'" />
+        <span class="opacity-0 group-hover:opacity-100">
+          <ArrowTiltedBlack />
         </span>
       </div>
 
@@ -37,13 +37,13 @@
 import InfoDisplay from '@/components/icons/InfoDisplay.vue'
 import resetImage from '@/assets/imgs/sessions/reset.png'
 import Complete from '@/components/icons/Complete.vue'
-import ArrowTilted from '@/components/icons/ArrowTilted.vue'
+import ArrowTiltedBlack from '@/components/icons/ArrowTiltedBlack.vue'
 
 export default {
   components: {
     InfoDisplay,
     Complete,
-    ArrowTilted
+    ArrowTiltedBlack
   },
   data() {
     return {
