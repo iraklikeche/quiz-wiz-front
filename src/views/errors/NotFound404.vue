@@ -8,7 +8,7 @@
     <img :src="notFound" />
     <RouterLink :to="{ name: 'home' }" class="flex gap-4 items-center mt-4">
       <span>
-        <GoHome />
+        <GoBackHome />
       </span>
       <span class="text-lg text-[#4B69FD]">Go Home</span>
     </RouterLink>
@@ -20,12 +20,15 @@
 import Header from '@/components/Header.vue'
 import Footer from '@/components/Footer.vue'
 import notFound from '@/assets/imgs/errors/notFound.png'
-import GoHome from '@/components/icons/GoHome.vue'
+import GoBackHome from '@/components/icons/GoBackHome.vue'
+import LoginArrow from '@/components/icons/LoginArrow.vue'
+
 export default {
   components: {
     Header,
     Footer,
-    GoHome
+    GoBackHome
+    // GoHome
   },
   data() {
     return {
