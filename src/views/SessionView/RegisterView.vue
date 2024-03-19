@@ -5,6 +5,7 @@
       :buttonName="'Log in'"
       class="block sm:hidden text-center sm:text-left mb-12 sm:mb-0"
     />
+    <pre>{{ formErrors }}</pre>
     <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]" v-slot="{ values }">
       <CustomInput
         label="Username"
@@ -45,7 +46,6 @@
         <label class="text-[#344054] text-sm">I accept the terms and privacy policy</label>
       </div>
       <ErrorMessage name="terms" />
-      <pre>{{ values }}</pre>
 
       <button class="bg-black text-white py-4 rounded-xl mt-6 font-semibold">Sign Up</button>
     </Form>
@@ -92,7 +92,8 @@ export default {
     return {
       registerImage,
       isPasswordVisible: false,
-      isConfirmPasswordVisible: false
+      isConfirmPasswordVisible: false,
+      formErrors: {}
     }
   },
   methods: {
@@ -111,10 +112,12 @@ export default {
 
         // Redirect or show a success message
       } catch (error) {
-        if (error.response) {
+        if (error.response && error.response.data.errors) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
           console.error(error.response.data)
+          this.formErrors = error.response.data.errors
+
           // Here you could handle errors, show messages, etc.
         } else if (error.request) {
           // The request was made but no response was received
