@@ -17,22 +17,21 @@
             <img src="https://picsum.photos/394/274" class="rounded-xl" />
           </div>
           <ul class="flex flex-col sm:flex-row gap-4">
-            <li class="flex gap-2">
+            <QuizInfoList text="10 Questions">
               <Question />
-              <span class="text-custom-light-gray text-sm font-semibold">10 Questions </span>
-            </li>
-            <li class="flex gap-2">
+            </QuizInfoList>
+
+            <QuizInfoList text="15 Points">
               <Points />
-              <span class="text-custom-light-gray text-sm font-semibold">15 Points </span>
-            </li>
-            <li class="flex gap-2">
+            </QuizInfoList>
+
+            <QuizInfoList text="169 plays">
               <Plays />
-              <span class="text-custom-light-gray text-sm font-semibold">169 plays</span>
-            </li>
-            <li class="flex gap-2">
+            </QuizInfoList>
+
+            <QuizInfoList text="5m">
               <Time />
-              <span class="text-custom-light-gray text-sm font-semibold">5m</span>
-            </li>
+            </QuizInfoList>
           </ul>
           <button
             class="bg-[#4B69FD] py-4 rounded-xl text-white font-semibold w-full sm:w-4/5 mt-auto"
@@ -73,6 +72,7 @@ import Plays from '@/components/icons/Plays.vue'
 import Time from '@/components/icons/Time.vue'
 import Card from '@/components/Card.vue'
 import Footer from '@/components/Footer.vue'
+import QuizInfoList from '@/components/QuizInfoList.vue'
 
 export default {
   components: {
@@ -82,7 +82,8 @@ export default {
     Plays,
     Time,
     Card,
-    Footer
+    Footer,
+    QuizInfoList
   }
 }
 </script>
