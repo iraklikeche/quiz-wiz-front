@@ -10,7 +10,7 @@
   </TheModal>
 
   <nav
-    class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-4 sm:px-12 py-4 w-full"
+    class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-4 sm:px-20 py-4 w-full"
   >
     <div class="flex gap-20 items-center">
       <RouterLink :to="{ name: 'home' }">

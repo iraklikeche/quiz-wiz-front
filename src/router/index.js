@@ -35,12 +35,17 @@ const router = createRouter({
       component: () => import('../views/SessionView/ForgotPasswordView.vue')
     },
     {
+      path: '/quiz',
+      name: 'quiz',
+      component: () => import('../views/SingleQuizView.vue')
+    },
+    {
       path: '/:catchAll(.*)',
       name: 'notFound',
       component: () => import('../views/errors/NotFound404.vue')
     }
   ],
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior() {
     return { top: 0 }
   }
 })
