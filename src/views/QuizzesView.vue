@@ -33,17 +33,17 @@
           ref="scrollContainer"
         >
           <li
-            v-for="(genre, index) in genres"
-            :key="index"
+            v-for="genre in genres"
+            :key="genre.id"
             class="text-custom-light-gray text-sm font-semibold cursor-pointer pb-2"
             :class="{
               'border-b-2': true,
-              'border-transparent': !isSelected(genre),
-              'border-black': isSelected(genre)
+              'border-transparent': !isSelected(genre.name),
+              'border-black': isSelected(genre.name)
             }"
-            @click="toggleSelection(genre)"
+            @click="toggleSelection(genre.name)"
           >
-            {{ genre }}
+            {{ genre.name }}
           </li>
         </ul>
 
@@ -104,11 +104,11 @@ export default {
     Close
   },
   data() {
-    const genres = Array.from({ length: 50 }, (_, i) => `${i + 1}`)
+    const genres = Array.from({ length: 50 }, (_, i) => ({ id: i + 1, name: `${i + 1}` }))
     return {
       resetImage,
       genres: genres,
-      selectedItems: [genres[0]],
+      selectedItems: [genres[0].name],
       isFocused: false,
       scrollAmount: 0
     }

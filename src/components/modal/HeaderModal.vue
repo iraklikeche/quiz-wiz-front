@@ -24,6 +24,7 @@
       @update:show="toggleModal('registration', $event)"
       :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-[90vh]  transition-transform'"
       :customClasses="'flex justify-center items-end '"
+      class="flex justify-center items-end"
     >
       <RegisterView />
     </TheModal>
@@ -40,7 +41,7 @@
       :show="modals.login"
       @update:show="toggleModal('login', $event)"
       :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-[90vh]  transition-transform'"
-      :customClasses="'flex justify-center items-end '"
+      class="flex justify-center items-end"
     >
       <LoginView />
     </TheModal>

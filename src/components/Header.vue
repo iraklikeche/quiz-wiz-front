@@ -3,8 +3,8 @@
     :name="'fade-in'"
     :show="showModal"
     @update:show="showModal = $event"
-    :customClasses="'backdrop-blur-sm'"
     :modalContentClasses="'bg-white p-6 rounded-lg shadow-lg w-full max-w-xs'"
+    class="backdrop-blur-sm'"
   >
     <HeaderModal @close="showModal = false" />
   </TheModal>
