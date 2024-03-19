@@ -23,24 +23,27 @@ export default {
 <template>
   <Header />
   <section class="pt-6 overflow-hidden">
-    <main>
-      <div class="relative pl-24">
-        <img :src="quizImage" class="max-w-2xl 2xl:w-1/2" />
-        <img :src="hero" class="absolute top-0 right-0 translate-y-20" />
+    <main class="flex flex-col">
+      <div class="relative px-10 pr-16 sm:pl-24">
+        <img :src="quizImage" class="sm:max-w-2xl" />
+        <img
+          :src="hero"
+          class="absolute top-1/2 translate-y-[15%] sm:top-0 right-0 sm:translate-y-20 min-w-[30rem] -z-10 sm:z-0"
+        />
       </div>
       <div>
         <QuizNumbers
           numberOfGames="200+"
           gameType="Quiz games"
-          :customClass="'mt-32 bg-[#ff5613] py-20 '"
+          :customClass="'mt-[28rem] sm:mt-32 bg-[#ff5613] py-20 '"
         />
         <QuizNumbers
           numberOfGames="25+"
           gameType="different genre"
-          :customClass="'bg-custom-blue pb-20 pt-10'"
+          :customClass="'bg-custom-blue py-20 sm:pb-20 sm:pt-10'"
         />
       </div>
     </main>
   </section>
-  <Footer />
+  <Footer :logoBorderMobile="'border-b border-border-gray pb-6 sm:border-none sm:pb-0'" />
 </template>

@@ -52,4 +52,3 @@ export default {
   }
 }
 </script>
-import ArrowTiltedVue from '@/components/icons/ArrowTilted.vue'

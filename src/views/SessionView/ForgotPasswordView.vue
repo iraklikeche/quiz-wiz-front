@@ -6,7 +6,9 @@
     :imageClass="'max-w-[29rem] max-h-[27rem]'"
     :headingClass="'mb-2'"
   >
-    <p class="text-custom-gray text-sm mb-12 max-w-[26rem] leading-6">
+    <p
+      class="text-custom-gray text-sm sm:mb-12 max-w-[26rem] leading-6 text-center sm:text-left mb-8 mt-4 sm:mt-0"
+    >
       Don’t worry! It happens. Please enter the email associated with your account.
     </p>
     <form class="flex flex-col gap-5 max-w-[26rem]">

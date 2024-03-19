@@ -6,7 +6,9 @@
     :imageClass="'max-w-[29rem] max-h-[27rem]'"
     :headingClass="'mb-2'"
   >
-    <p class="text-custom-gray text-sm mb-12">Please type something you’ll remember</p>
+    <p class="text-custom-gray text-sm mb-12 sm:text-left text-center sm:mb-6 mt-6">
+      Please type something you’ll remember
+    </p>
     <form class="flex flex-col gap-5 max-w-[26rem]">
       <div class="flex flex-col relative">
         <label class="text-custom-gray text-sm mb-1">Password</label>
@@ -35,7 +37,11 @@
 
       <button class="bg-black text-white py-4 rounded-xl mt-4 font-semibold">Reset Password</button>
     </form>
-    <AccountLinks :question="'Already have account? '" :buttonName="'Log in'" />
+    <AccountLinks
+      :question="'Already have account? '"
+      :buttonName="'Log in'"
+      class="hidden sm:block"
+    />
   </SessionLayout>
 </template>
 

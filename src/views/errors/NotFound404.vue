@@ -1,9 +1,9 @@
 <template>
-  <ErrorView :errorType="'500'" :errorImage="ServerError" />
+  <ErrorView :errorType="'404'" :errorImage="notFound" />
 </template>
 
 <script>
-import serverError from '@/assets/imgs/errors/serverError.png'
+import notFound from '@/assets/imgs/errors/notFound.png'
 import ErrorView from '@/views/errors/ErrorView.vue'
 
 export default {
@@ -12,7 +12,7 @@ export default {
   },
   data() {
     return {
-      serverError
+      notFound
     }
   }
 }

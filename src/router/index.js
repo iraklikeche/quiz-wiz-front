@@ -36,8 +36,8 @@ const router = createRouter({
     },
     {
       path: '/:catchAll(.*)',
-      name: 'notfound',
-      component: () => import('../views/errors/notFound404.vue')
+      name: 'notFound',
+      component: () => import('../views/errors/NotFound404.vue')
     }
   ],
   scrollBehavior(to, from, savedPosition) {
