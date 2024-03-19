@@ -5,8 +5,10 @@
       :buttonName="'Log in'"
       class="block sm:hidden text-center sm:text-left mb-12 sm:mb-0"
     />
-    <pre>{{ formErrors }}</pre>
     <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]" v-slot="{ values }">
+      <div v-if="formErrors.username" class="text-red-500">
+        <p v-for="(error, index) in formErrors.username" :key="index">{{ error }}</p>
+      </div>
       <CustomInput
         label="Username"
         name="username"
@@ -15,6 +17,9 @@
         type="text"
       />
 
+      <div v-if="formErrors.email" class="text-red-500">
+        <p v-for="(error, index) in formErrors.email" :key="index">{{ error }}</p>
+      </div>
       <CustomInput
         label="Email"
         name="email"
