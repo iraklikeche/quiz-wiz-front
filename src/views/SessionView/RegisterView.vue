@@ -64,17 +64,14 @@
 </template>
 
 <script>
-import ShowPassword from '@/components/icons/ShowPassword.vue'
 import registerImage from '@/assets/imgs/sessions/register.png'
-import Logo from '@/components/icons/Logo.vue'
-import GoBack from '@/components/icons/GoBack.vue'
 import SessionLayout from '@/components/SessionLayout.vue'
 import AccountLinks from '@/components/AccountLinks.vue'
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import { defineRule } from 'vee-validate'
 import * as AllRules from '@vee-validate/rules'
 import CustomInput from '@/components/form/CustomInput.vue'
-import apiClient from '@/api/axios.js'
+import { registerUser } from '@/services/authService.js'
 
 Object.keys(AllRules).forEach((rule) => {
   defineRule(rule, AllRules[rule])
@@ -82,9 +79,6 @@ Object.keys(AllRules).forEach((rule) => {
 
 export default {
   components: {
-    ShowPassword,
-    Logo,
-    GoBack,
     SessionLayout,
     AccountLinks,
     Form,
@@ -102,36 +96,8 @@ export default {
     }
   },
   methods: {
-    async onSubmit(values) {
-      try {
-        const payload = {
-          ...values,
-          agreed_to_terms: values.terms === 'true',
-          password_confirmation: values.confirmation
-        }
-
-        const response = await apiClient.post('/register', payload)
-
-        // Handle response, e.g., show success message, redirect user, etc.
-        console.log(response.data)
-
-        // Redirect or show a success message
-      } catch (error) {
-        if (error.response && error.response.data.errors) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.error(error.response.data)
-          this.formErrors = error.response.data.errors
-
-          // Here you could handle errors, show messages, etc.
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.log(error.request)
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message)
-        }
-      }
+    onSubmit(values) {
+      registerUser(values)
     },
     togglePassword() {
       this.isPasswordVisible = !this.isPasswordVisible
