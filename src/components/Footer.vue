@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'flex sm:flex-row flex-col gap-8 sm:gap-32 py-12 px-10 sm:pl-12 relative z-50,',
+      'flex sm:flex-row flex-col gap-8 sm:gap-32 py-12 px-10 sm:pl-20 relative z-50,',
       customClass
     ]"
   >

@@ -22,14 +22,14 @@
       </div>
     </div>
   </Header>
-  <div class="sm:px-10">
-    <div class="sm:flex items-center">
+  <div class="sm:px-20">
+    <div class="sm:flex items-center justify-between">
       <div class="flex gap-2 pt-10 items-center justify-between">
         <button @click="scrollLeft" class="rotate-180 flex items-center justify-center pt-2">
           <SliderArrow />
         </button>
         <ul
-          class="flex gap-8 overflow-hidden border-b border-gray-300 max-w-[71rem]"
+          class="flex gap-8 overflow-hidden border-b border-gray-300 max-w-[68rem]"
           ref="scrollContainer"
         >
           <li
