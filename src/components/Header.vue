@@ -27,7 +27,7 @@
       <div class="sm:flex gap-6 hidden">
         <RouterLink
           :to="{ name: 'register' }"
-          class="bg-black px-6 py-2 shadow-br hover:text-black text-white font-bold text-sm rounded hover:bg-white hover:shadow-lg hover:scale-105 duration-300 transition-all"
+          class="bg-black px-6 py-2 hover:shadow-[6px_5px_2px_0_rgba(0,0,0)] hover:text-black text-white font-bold text-sm rounded hover:bg-white hover:scale-105 duration-300 transition-all"
         >
           Sign up
         </RouterLink>
@@ -72,9 +72,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.shadow-br:hover {
-  box-shadow: 6px 5px 2px 0 rgb(0, 0, 0);
-}
-</style>
