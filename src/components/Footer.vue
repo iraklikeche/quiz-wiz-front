@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'flex sm:flex-row flex-col gap-8 sm:gap-32 py-16 px-10 sm:pl-12 relative z-50,',
+      'flex sm:flex-row flex-col gap-8 sm:gap-32 py-12 px-10 sm:pl-12 relative z-50,',
       customClass
     ]"
   >
@@ -21,7 +21,7 @@
     </FooterList>
   </div>
   <div
-    class="flex items-start sm:items-end justify-start sm:justify-end px-10 sm:px-24 py-6 border-t-2 border-opacity-25"
+    class="flex items-start sm:items-end justify-start sm:justify-end px-10 sm:px-24 py-5 border-t-2 border-opacity-25"
   >
     <p class="text-custom-light-gray text-xs font-medium font-raleway">
       &copy; {{ year }} QW. All rights reserved
