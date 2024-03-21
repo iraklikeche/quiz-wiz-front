@@ -1,5 +1,5 @@
 <template>
-  <div :class="['flex flex-col gap-4 font-raleway px-10 sm:pl-24', customClass]">
+  <div :class="['flex flex-col gap-4 font-raleway px-10 sm:pl-20', customClass]">
     <p class="text-white text-7xl font-black">{{ numberOfGames }}</p>
     <div class="group text-white text-5xl font-black flex items-center gap-4">
       <span

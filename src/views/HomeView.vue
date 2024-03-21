@@ -24,7 +24,7 @@ export default {
   <Header />
   <section class="pt-6 overflow-hidden">
     <main class="flex flex-col">
-      <div class="relative px-10 pr-16 sm:pl-24">
+      <div class="relative px-10 pr-16 sm:pl-20">
         <img :src="quizImage" class="sm:max-w-2xl" />
         <img
           :src="hero"
