@@ -7,8 +7,5 @@ export async function registerUser(values) {
     password_confirmation: values.confirmation
   }
 
-  const response = await apiClient.post('/register', payload)
-
-  // Handle response, e.g., show success message, redirect user, etc.
-  console.log(response.data)
+  await apiClient.post('/register', payload)
 }

@@ -109,14 +109,7 @@ export default {
         resetForm()
       } catch (error) {
         if (error.response && error.response.data.errors) {
-          console.error(error.response.data)
           this.formErrors = error.response.data.errors
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.log(error.request)
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message)
         }
       }
     },
