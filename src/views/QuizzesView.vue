@@ -6,6 +6,7 @@
       </div>
       <div class="flex items-center border rounded-xl">
         <input
+          v-model="search"
           type="text"
           placeholder="Search"
           @focus="isFocused = true"
@@ -14,7 +15,7 @@
         />
         <button
           class="bg-white py-[0.9rem] px-4 rounded-r-xl border-l"
-          @click="closeInput"
+          @mousedown="closeInput"
           v-show="isFocused"
         >
           <Close />
@@ -110,12 +111,13 @@ export default {
       genres: genres,
       selectedItems: [genres[0].name],
       isFocused: false,
-      scrollAmount: 0
+      scrollAmount: 0,
+      search: ''
     }
   },
   methods: {
     closeInput() {
-      console.log('Button is Clicked')
+      this.search = ''
     },
     toggleSelection(genre) {
       const index = this.selectedItems.indexOf(genre)

@@ -11,27 +11,23 @@
       :linkTo="'register'"
       class="block sm:hidden text-center sm:text-left text-lg mb-6 mt-2"
     />
-    <form class="flex flex-col gap-5 max-w-[26rem]">
-      <div class="flex flex-col">
-        <label class="text-custom-gray text-sm mb-1">Email</label>
-        <input
-          type="email"
-          placeholder="example@gmail.com"
-          class="border border-border-gray py-4 px-4 rounded-xl focus:border-4 outline-none"
-        />
-      </div>
-      <div class="flex flex-col relative">
-        <label class="text-custom-gray text-sm mb-1">Password</label>
-        <input
-          :type="isPasswordVisible ? 'text' : 'password'"
-          placeholder="Must be 3 characters"
-          class="border border-border-gray py-4 px-4 rounded-xl focus:border-4 outline-none"
-        />
-        <ShowPassword
-          :customClass="'absolute top-[55%] right-[4%] cursor-pointer'"
-          @toggle="togglePassword"
-        />
-      </div>
+    <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]" v-slot="{ values }">
+      <CustomInput
+        label="Email"
+        name="email"
+        placeholder="example@gmail.com"
+        rules="required|email"
+        type="email"
+      />
+
+      <CustomInput
+        type="password"
+        label="Password"
+        name="password"
+        placeholder="Must be 3 characters"
+        rules="required|min:3"
+        isPasswordField
+      />
 
       <div class="flex items-center justify-between gap-4 mt-2 pl-1">
         <div class="flex gap-2">
@@ -45,7 +41,8 @@
         </div>
       </div>
       <button class="bg-black text-white py-4 rounded-xl mt-6 font-semibold">Log in</button>
-    </form>
+    </Form>
+    <button @click="onLogout">LOG OUT</button>
 
     <AccountLinks
       :question="'Don’t have an account?'"
@@ -60,12 +57,22 @@
 import SessionLayout from '@/components/SessionLayout.vue'
 import loginImage from '@/assets/imgs/sessions/login.png'
 import AccountLinks from '@/components/AccountLinks.vue'
-import ShowPassword from '@/components/icons/ShowPassword.vue'
+import CustomInput from '@/components/form/CustomInput.vue'
+import { Form } from 'vee-validate'
+import { defineRule } from 'vee-validate'
+import * as AllRules from '@vee-validate/rules'
+import { getCsrfCookie, loginUser, logoutUser } from '@/services/authService.js'
+
+Object.keys(AllRules).forEach((rule) => {
+  defineRule(rule, AllRules[rule])
+})
+
 export default {
   components: {
     SessionLayout,
     AccountLinks,
-    ShowPassword
+    CustomInput,
+    Form
   },
   data() {
     return {
@@ -76,6 +83,30 @@ export default {
   methods: {
     togglePassword() {
       this.isPasswordVisible = !this.isPasswordVisible
+    },
+    async onSubmit(values) {
+      getCsrfCookie()
+      // getCsrfCookie().then(() => {
+      //   const response = loginUser({
+      //     email: values.email,
+      //     password: values.password
+      //   })
+      //   console.log('Login Success:', response)
+      // })
+      getCsrfCookie()
+      const response = await loginUser({
+        email: values.email,
+        password: values.password
+      })
+      console.log('Login Success:', response)
+    },
+
+    async onLogout() {
+      try {
+        await logoutUser()
+      } catch (error) {
+        console.error('Logout Error:', error.response.data)
+      }
     }
   }
 }
