@@ -86,24 +86,22 @@ export default {
     },
     async onSubmit(values) {
       getCsrfCookie()
-      // getCsrfCookie().then(() => {
-      //   const response = loginUser({
-      //     email: values.email,
-      //     password: values.password
-      //   })
-      //   console.log('Login Success:', response)
-      // })
-      getCsrfCookie()
-      const response = await loginUser({
-        email: values.email,
-        password: values.password
-      })
-      console.log('Login Success:', response)
+      await getCsrfCookie()
+      try {
+        const response = await loginUser({
+          email: values.email,
+          password: values.password
+        })
+        console.log('Login Success:', response)
+      } catch (error) {
+        console.error('Login Error:', error.response.data)
+      }
     },
 
     async onLogout() {
       try {
         await logoutUser()
+        console.log('logged out')
       } catch (error) {
         console.error('Logout Error:', error.response.data)
       }
