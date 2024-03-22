@@ -107,11 +107,9 @@ export default {
       try {
         await registerUser(values)
         resetForm()
-        console.log('user created')
       } catch (error) {
         if (error.response && error.response.data.errors) {
           this.formErrors = error.response.data.errors
-          console.log(error)
         }
       }
     },

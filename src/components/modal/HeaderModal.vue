@@ -18,16 +18,15 @@
       Sign Up
     </button>
 
-    <TheModal
+    <!-- <TheModal
       :name="'slide-up'"
       :show="modals.registration"
       @update:show="toggleModal('registration', $event)"
-      :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-[90vh]  transition-transform'"
-      :customClasses="'flex justify-center items-end '"
-      class="flex justify-center items-end"
+      :modalContentClasses="'bg-white w-full rounded-t-lg p-4 transition-transform'"
+      class="mt-20"
     >
       <RegisterView />
-    </TheModal>
+    </TheModal> -->
 
     <button
       @click="toggleModal('login', true)"
@@ -36,15 +35,15 @@
       Log in
     </button>
 
-    <TheModal
+    <!-- <TheModal
       :name="'slide-up'"
       :show="modals.login"
       @update:show="toggleModal('login', $event)"
-      :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-[90vh]  transition-transform'"
-      class="flex justify-center items-end"
+      :modalContentClasses="'bg-white w-full rounded-t-lg p-4 transition-transform'"
+      class="mt-20"
     >
       <LoginView />
-    </TheModal>
+    </TheModal> -->
   </div>
 </template>
 
