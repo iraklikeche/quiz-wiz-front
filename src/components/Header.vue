@@ -6,7 +6,54 @@
     :modalContentClasses="'bg-white p-6 rounded-lg shadow-lg w-full max-w-xs'"
     class="backdrop-blur-sm'"
   >
-    <HeaderModal @close="showModal = false" />
+    <div class="flex items-center justify-between border-b pb-4 border-border-gray mb-4">
+      <RouterLink :to="{ name: 'home' }">
+        <Logo />
+      </RouterLink>
+      <CloseModalBtn @click="showModal = false" />
+    </div>
+
+    <div class="border-b pb-4 border-border-gray mb-4">
+      <RouterLink class="text-lg font-semibold mb-4" :to="{ name: 'quizzes' }">
+        Quizzes
+      </RouterLink>
+    </div>
+
+    <div class="flex flex-col">
+      <button
+        @click="showRegisterModal"
+        class="bg-black text-white w-full py-2 rounded-md mb-2 flex justify-center font-semibold"
+      >
+        Sign Up
+      </button>
+
+      <button
+        @click="showLoginModal"
+        class="bg-[#4B69FD] bg-opacity-10 w-full py-2 rounded-md text-custom-blue flex justify-center font-semibold"
+      >
+        Log in
+      </button>
+    </div>
+  </TheModal>
+
+  <TheModal
+    :name="'slide-up'"
+    :show="registrationModal"
+    @update:show="registrationModal = false"
+    :modalContentClasses="'bg-white w-full rounded-t-lg p-4 transition-transform'"
+    class="pt-32"
+  >
+    <RegisterView />
+  </TheModal>
+
+  <TheModal
+    :name="'slide-up'"
+    :show="loginModal"
+    @update:show="loginModal = false"
+    :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-full transition-transform'"
+    class="pt-32"
+  >
+    <LoginView />
   </TheModal>
 
   <nav
@@ -53,21 +100,40 @@ import { RouterLink } from 'vue-router'
 import LoginArrow from '@/components/icons/LoginArrow.vue'
 import MobileMenu from '@/components/icons/MobileMenu.vue'
 import Logo from '@/components/icons/Logo.vue'
-import HeaderModal from '@/components/modal/HeaderModal.vue'
 import TheModal from '@/components/modal/TheModal.vue'
+import RegisterView from '@/views/SessionView/RegisterView.vue'
+import LoginView from '@/views/SessionView/LoginView.vue'
+import CloseModalBtn from './icons/CloseModalBtn.vue'
 
 export default {
   components: {
-    HeaderModal,
+    RegisterView,
+    LoginView,
     RouterLink,
     Logo,
     LoginArrow,
     MobileMenu,
-    TheModal
+    TheModal,
+    CloseModalBtn
   },
+
   data() {
     return {
-      showModal: false
+      showModal: false,
+      registrationModal: false,
+      loginModal: false
+    }
+  },
+  methods: {
+    showRegisterModal() {
+      this.showModal = false
+      this.loginModal = false
+      this.registrationModal = true
+    },
+    showLoginModal() {
+      this.showModal = false
+      this.registrationModal = false
+      this.loginModal = true
     }
   }
 }

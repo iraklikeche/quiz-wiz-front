@@ -18,16 +18,6 @@
       Sign Up
     </button>
 
-    <TheModal
-      :name="'slide-up'"
-      :show="modals.registration"
-      @update:show="toggleModal('registration', $event)"
-      :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-[90vh]  transition-transform'"
-      :customClasses="'flex justify-center items-end '"
-      class="flex justify-center items-end"
-    >
-      <RegisterView />
-    </TheModal>
 
     <button
       @click="toggleModal('login', true)"
@@ -36,39 +26,18 @@
       Log in
     </button>
 
-    <TheModal
-      :name="'slide-up'"
-      :show="modals.login"
-      @update:show="toggleModal('login', $event)"
-      :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-[90vh]  transition-transform'"
-      class="flex justify-center items-end"
-    >
-      <LoginView />
-    </TheModal>
-  </div>
 </template>
 
 <script>
 import Logo from '@/components/icons/Logo.vue'
 import CloseModalBtn from '@/components/icons/CloseModalBtn.vue'
-import RegisterView from '@/views/SessionView/RegisterView.vue'
-import LoginView from '@/views/SessionView/LoginView.vue'
-import TheModal from '@/components/modal/TheModal.vue'
 
 export default {
   components: {
-    TheModal,
-    RegisterView,
-    LoginView,
     Logo,
     CloseModalBtn
   },
   methods: {
-    toggleModal(modalName, isVisible) {
-      if (this.modals.hasOwnProperty(modalName)) {
-        this.modals[modalName] = isVisible
-      }
-    }
   },
   emits: ['close'],
 

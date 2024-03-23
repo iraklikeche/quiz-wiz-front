@@ -10,9 +10,15 @@
       :validateOnInput="true"
     />
 
-    <div class="h-4 mt-1 mb-2">
-      <ErrorMessage :name="name" class="text-[#F04438] text-sm" />
-    </div>
+    <ErrorMessage
+      :name="name"
+      class="text-[#F04438] text-sm h-4 mt-1 mb-2"
+      v-slot="{ message }"
+      :serverErrors="serverErrors"
+    >
+      <p v-if="message" class="text-[#F04438] text-sm">{{ message }}</p>
+      <p v-else-if="serverErrors">serverErrors</p>
+    </ErrorMessage>
 
     <ShowPassword
       v-if="isPasswordField"
@@ -36,7 +42,8 @@ export default {
     name: String,
     placeholder: String,
     rules: String,
-    isPasswordField: Boolean
+    isPasswordField: Boolean,
+    serverErrors: Object
   },
   data() {
     return {
