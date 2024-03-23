@@ -5,10 +5,7 @@
       :buttonName="'Log in'"
       class="block sm:hidden text-center sm:text-left mb-12 sm:mb-0"
     />
-    <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]" v-slot="{ values }">
-      <!-- <div v-if="formErrors.username" class="text-red-500">
-        <p v-for="(error, index) in formErrors.username" :key="index">{{ error }}</p>
-      </div> -->
+    <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]" v-slot="{ values, meta }">
       <CustomInput
         label="Username"
         name="username"
