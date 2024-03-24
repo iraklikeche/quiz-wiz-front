@@ -2,7 +2,7 @@
   <transition :name="name">
     <div
       v-if="show"
-      class="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-scroll backdrop-blur"
+      class="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-scroll"
       @click.self="close"
     >
       <div :class="modalContentClasses" @click.stop>
