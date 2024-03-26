@@ -11,13 +11,19 @@
       :linkTo="'register'"
       class="block sm:hidden text-center sm:text-left text-lg mb-6 mt-2"
     />
-    <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]" v-slot="{ values }">
+    <Form
+      @submit="onSubmit"
+      class="flex flex-col gap-5 max-w-[26rem]"
+      :validation-schema="schema"
+      v-slot="{ values, errors }"
+    >
       <CustomInput
         label="Email"
         name="email"
         placeholder="example@gmail.com"
         rules="required|email"
         type="email"
+        :error="errors.email"
       />
 
       <CustomInput
@@ -27,6 +33,7 @@
         placeholder="Must be 3 characters"
         rules="required|min:3"
         isPasswordField
+        :error="errors.password"
       />
 
       <div class="flex items-center justify-between gap-4 mt-2 pl-1">
@@ -75,7 +82,20 @@ export default {
     Form
   },
   data() {
+    const schema = {
+      email(value) {
+        if (!value) return 'This field is required'
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!regex.test(value.trim())) return 'This field must be a valid email'
+        return true
+      },
+      password(value) {
+        if (!value) return 'This field is required'
+        return true
+      }
+    }
     return {
+      schema,
       loginImage,
       isPasswordVisible: false
     }

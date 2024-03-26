@@ -6,25 +6,27 @@
       :name="name"
       :placeholder="placeholder"
       class="border border-border-gray py-4 px-4 rounded-xl focus:ring-2 outline-none focus:border-border-gray focus:border-transparent"
-      :rules="rules"
+      :class="{ 'border-red-500': error }"
       :validateOnInput="true"
     />
 
-    <ErrorMessage
-      :name="name"
-      class="text-[#F04438] text-sm h-4 mt-1 mb-2"
-      v-slot="{ message }"
-      :serverErrors="serverErrors"
-    >
-      <p v-if="message" class="text-[#F04438] text-sm">{{ message }}</p>
-      <p v-else-if="serverErrors">serverErrors</p>
-    </ErrorMessage>
+    <div class="h-4">
+      <ErrorMessage
+        :name="name"
+        class="text-[#F04438] text-sm mt-1 mb-2"
+        :serverErrors="serverErrors"
+        v-slot="{ message }"
+      >
+        <p class="text-red-500">{{ message }}</p>
+        <p v-if="serverErrors">serverErrors</p>
+      </ErrorMessage>
 
-    <ShowPassword
-      v-if="isPasswordField"
-      :customClass="'absolute top-[43%] right-[4%] cursor-pointer cursor-pointer'"
-      @toggle="togglePasswordVisibility"
-    />
+      <ShowPassword
+        v-if="isPasswordField"
+        :customClass="'absolute top-[45%] right-[4%] cursor-pointer cursor-pointer'"
+        @toggle="togglePasswordVisibility"
+      />
+    </div>
   </div>
 </template>
 
@@ -43,7 +45,8 @@ export default {
     placeholder: String,
     rules: String,
     isPasswordField: Boolean,
-    serverErrors: Object
+    serverErrors: Object,
+    error: String
   },
   data() {
     return {

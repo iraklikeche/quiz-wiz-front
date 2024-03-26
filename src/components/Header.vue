@@ -4,7 +4,7 @@
     :show="showModal"
     @update:show="showModal = $event"
     :modalContentClasses="'bg-white p-6 rounded-lg shadow-lg w-full max-w-xs'"
-    class="backdrop-blur-sm'"
+    class="backdrop-blur'"
   >
     <div class="flex items-center justify-between border-b pb-4 border-border-gray mb-4">
       <RouterLink :to="{ name: 'home' }">
@@ -40,8 +40,8 @@
     :name="'slide-up'"
     :show="registrationModal"
     @update:show="registrationModal = false"
-    :modalContentClasses="'bg-white w-full rounded-t-lg p-4 transition-transform'"
-    class="pt-32"
+    :modalContentClasses="'bg-white w-full rounded-t-lg p-4 transition-transform backdrop-blur'"
+    class="pt-32 backdrop-blur"
   >
     <RegisterView />
   </TheModal>
@@ -50,8 +50,8 @@
     :name="'slide-up'"
     :show="loginModal"
     @update:show="loginModal = false"
-    :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-full transition-transform'"
-    class="pt-32"
+    :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-full transition-transform backdrop-blur'"
+    class="pt-32 backdrop-blur"
   >
     <LoginView />
   </TheModal>

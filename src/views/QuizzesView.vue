@@ -24,13 +24,13 @@
     </div>
   </Header>
   <div class="sm:px-20">
-    <div class="sm:flex items-center justify-between">
-      <div class="flex gap-2 pt-10 items-center justify-between">
+    <div class="sm:flex items-center">
+      <div class="flex flex-grow gap-2 pt-10 items-center">
         <button @click="scrollLeft" class="rotate-180 flex items-center justify-center pt-2">
           <SliderArrow />
         </button>
         <ul
-          class="flex gap-8 overflow-hidden border-b border-gray-300 max-w-[68rem]"
+          class="flex gap-8 overflow-hidden border-b border-gray-300 max-w-[71rem]"
           ref="scrollContainer"
         >
           <li
@@ -52,8 +52,9 @@
           <SliderArrow />
         </button>
       </div>
-      <div class="mt-4 sm:mt-0 px-2 sm:pt-8">
+      <div class="mt-4 sm:mt-0 px-2 sm:px-0 sm:pt-8">
         <button
+          @click="showModal = true"
           class="group flex gap-2 items-center border border-custom-light-gray border-opacity-60 py-2 px-4 rounded-xl hover:bg-[#4B69FD] hover:bg-opacity-10 hover:scale-105 hover:border-custom-blue"
         >
           <Filter />
@@ -61,6 +62,18 @@
         </button>
       </div>
     </div>
+
+    <div class="relative">
+      <FilterModal
+        :showModal="showModal"
+        @update:show="showModal = $event"
+        @update:activeButton="handleActiveButtonChange($event)"
+        @close-modal="showModal = false"
+        class="block sm:hidden"
+      />
+      <DesktopFilterModal />
+    </div>
+
     <div class="grid grid-cols-1 sm:grid-cols-3 justify-between mt-12 gap-20 sm:gap-8 px-4 sm:px-0">
       <!-- Just for testing till I get data from back-end -->
       <Card />
@@ -79,6 +92,7 @@
       </button>
     </div>
   </div>
+
   <Footer :customClass="'border-t border-border-gray pt-8 '" />
 </template>
 
@@ -92,9 +106,13 @@ import Card from '@/components/Card.vue'
 import ArrowDown from '@/components/icons/ArrowDown.vue'
 import Search from '@/components/icons/Search.vue'
 import Close from '@/components/icons/Close.vue'
+import DesktopFilterModal from '@/components/modal/DesktopFilterModal.vue'
+import FilterModal from '@/components/modal/FilterModal.vue'
 
 export default {
   components: {
+    FilterModal,
+    DesktopFilterModal,
     Header,
     Footer,
     SliderArrow,
@@ -112,7 +130,9 @@ export default {
       selectedItems: [genres[0].name],
       isFocused: false,
       scrollAmount: 0,
-      search: ''
+      search: '',
+      showModal: false,
+      activeButton: 'filter'
     }
   },
   methods: {
@@ -141,6 +161,12 @@ export default {
       if (container) {
         container.scrollLeft += amount
       }
+    },
+    setActiveButton(button) {
+      this.activeButton = button
+    },
+    handleActiveButtonChange(newActiveButton) {
+      this.activeButton = newActiveButton
     }
   }
 }
