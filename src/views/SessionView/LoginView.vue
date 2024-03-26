@@ -85,7 +85,8 @@ export default {
     const schema = {
       email(value) {
         if (!value) return 'This field is required'
-        if (!value.trim().includes('@')) return 'This field must be an email'
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!regex.test(value.trim())) return 'This field must be a valid email'
         return true
       },
       password(value) {
