@@ -23,6 +23,7 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('../views/SessionView/LoginView.vue')
+      // props: (route) => ({ verified: route.query.verified })
     },
     {
       path: '/reset',

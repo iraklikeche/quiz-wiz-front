@@ -81,6 +81,12 @@ export default {
     CustomInput,
     Form
   },
+  props: {
+    verified: {
+      type: String,
+      default: null
+    }
+  },
   data() {
     const schema = {
       email(value) {
@@ -100,7 +106,24 @@ export default {
       isPasswordVisible: false
     }
   },
+  // mounted() {
+  //   if (this.verified) {
+  //     if (this.verified === 'true') {
+  //       // If the email was successfully verified
+  //       this.showToast('Email verified successfully. Please login to continue.')
+  //     } else if (this.verified === 'already') {
+  //       // If the email was already verified
+  //       this.showToast('Your email has already been verified. Please login to continue.')
+  //     } else {
+  //       // For any other values, or if something went wrong
+  //       this.showToast('Could not verify email. Please try again or contact support.')
+  //     }
+  //   }
+  // },
   methods: {
+    showToast(message) {
+      console.log(message)
+    },
     togglePassword() {
       this.isPasswordVisible = !this.isPasswordVisible
     },
@@ -112,6 +135,7 @@ export default {
           email: values.email,
           password: values.password
         })
+        console.log('logged in')
       } catch (error) {
         //
       }
@@ -120,6 +144,7 @@ export default {
     async onLogout() {
       try {
         await logoutUser()
+        console.log('logged out')
       } catch (error) {
         //
       }
