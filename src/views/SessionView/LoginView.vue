@@ -145,7 +145,6 @@ export default {
           email: values.email,
           password: values.password
         })
-        console.log('logged in')
       } catch (error) {
         //
       }
@@ -154,30 +153,18 @@ export default {
     async onLogout() {
       try {
         await logoutUser()
-        console.log('logged out')
       } catch (error) {
         //
       }
     },
-    // async resendVerificationEmail(email) {
-    //   try {
-    //     // Call an API method to resend the verification email
-    //     await resendVerificationLink(email)
-    //     this.showToast('A new verification link has been sent to your email.')
-    //   } catch (error) {
-    //     this.showToast('There was an error resending the verification link.')
-    //   }
-    // },
     async resendVerificationEmail(email) {
       try {
         await resendVerificationLink(email)
         this.showToast('A new verification link has been sent to your email.')
       } catch (error) {
         if (error.response && error.response.status === 403) {
-          // Specific handling for expired links
           this.showToast('The verification link has expired. Please request a new link.')
         } else {
-          // General error handling
           this.showToast('There was an error resending the verification link.')
         }
       }
