@@ -68,7 +68,12 @@ import CustomInput from '@/components/form/CustomInput.vue'
 import { Form } from 'vee-validate'
 import { defineRule } from 'vee-validate'
 import * as AllRules from '@vee-validate/rules'
-import { getCsrfCookie, loginUser, logoutUser } from '@/services/authService.js'
+import {
+  getCsrfCookie,
+  loginUser,
+  logoutUser,
+  resendVerificationLink
+} from '@/services/authService.js'
 
 Object.keys(AllRules).forEach((rule) => {
   defineRule(rule, AllRules[rule])
@@ -106,24 +111,29 @@ export default {
       isPasswordVisible: false
     }
   },
-  // mounted() {
-  //   if (this.verified) {
-  //     if (this.verified === 'true') {
-  //       // If the email was successfully verified
-  //       this.showToast('Email verified successfully. Please login to continue.')
-  //     } else if (this.verified === 'already') {
-  //       // If the email was already verified
-  //       this.showToast('Your email has already been verified. Please login to continue.')
-  //     } else {
-  //       // For any other values, or if something went wrong
-  //       this.showToast('Could not verify email. Please try again or contact support.')
-  //     }
-  //   }
-  // },
+  mounted() {
+    if (this.verified) {
+      if (this.verified === 'true') {
+        // If the email was successfully verified
+        this.showToast('Email verified successfully. Please login to continue.')
+      } else if (this.verified === 'already') {
+        // If the email was already verified
+        this.showToast('Your email has already been verified. Please login to continue.')
+      } else {
+        // For any other values, or if something went wrong
+        this.showToast('Could not verify email. Please try again or contact support.')
+      }
+    }
+    if (this.verified === 'expired') {
+      this.showToast('The verification link has expired.', {
+        label: 'Resend Email',
+        onClick: () => {
+          this.resendVerificationEmail(this.email)
+        }
+      })
+    }
+  },
   methods: {
-    showToast(message) {
-      console.log(message)
-    },
     togglePassword() {
       this.isPasswordVisible = !this.isPasswordVisible
     },
@@ -148,6 +158,33 @@ export default {
       } catch (error) {
         //
       }
+    },
+    // async resendVerificationEmail(email) {
+    //   try {
+    //     // Call an API method to resend the verification email
+    //     await resendVerificationLink(email)
+    //     this.showToast('A new verification link has been sent to your email.')
+    //   } catch (error) {
+    //     this.showToast('There was an error resending the verification link.')
+    //   }
+    // },
+    async resendVerificationEmail(email) {
+      try {
+        await resendVerificationLink(email)
+        this.showToast('A new verification link has been sent to your email.')
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          // Specific handling for expired links
+          this.showToast('The verification link has expired. Please request a new link.')
+        } else {
+          // General error handling
+          this.showToast('There was an error resending the verification link.')
+        }
+      }
+    },
+
+    showToast(message, action) {
+      console.log(message, action)
     }
   }
 }
