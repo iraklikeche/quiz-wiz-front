@@ -26,11 +26,11 @@ export async function resendVerificationLink(email) {
   return await apiClient.post('/api/email/resend-verification', { email })
 }
 
-// export async function verifyEmail(id, hash) {
-//   return await apiClient.get(`/api/email/verify/${id}/${hash}`)
-// }
-export async function verifyEmail(params) {
-  return await apiClient.get(`/api/email/verify/${params.id}/${params.hash}`, {
-    params: { expires: params.expires, signature: params.signature }
+export async function verifyEmail(id, hash, expires, signature) {
+  return await apiClient.get(`/api/email/verify/${id}/${hash}`, {
+    params: {
+      expires,
+      signature
+    }
   })
 }

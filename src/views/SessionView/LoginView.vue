@@ -114,32 +114,27 @@ export default {
     }
   },
   mounted() {
-    // const { id, hash } = this.$route.query
-    // if (id && hash) {
-    //   this.verifyEmail(id, hash)
-    // }
-    // console.log(id, hash)
-
     this.verifyEmail()
   },
   methods: {
     async verifyEmail() {
       const { id, hash, expires, signature } = this.$route.query
       console.log(id, hash, expires, signature)
-      if (!id || !hash || expires || signature) {
+      if (!id || !hash) {
         console.log('Verification parameters are missing.')
         return
       }
 
       try {
         await getCsrfCookie()
-        await verifyEmail(id, hash)
+        await verifyEmail(id, hash, expires, signature)
         this.showToast('Your email has been successfully verified.', 'success')
       } catch (error) {
         console.error('Failed to verify email:', error)
         this.showToast('Failed to verify email. Please try again.', 'error')
       }
     },
+
     togglePassword() {
       this.isPasswordVisible = !this.isPasswordVisible
     },
