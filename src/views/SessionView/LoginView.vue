@@ -72,8 +72,10 @@ import {
   getCsrfCookie,
   loginUser,
   logoutUser,
-  resendVerificationLink
+  resendVerificationLink,
+  verifyEmail
 } from '@/services/authService.js'
+import axios from 'axios'
 
 Object.keys(AllRules).forEach((rule) => {
   defineRule(rule, AllRules[rule])
@@ -112,28 +114,32 @@ export default {
     }
   },
   mounted() {
-    if (this.verified) {
-      if (this.verified === 'true') {
-        // If the email was successfully verified
-        this.showToast('Email verified successfully. Please login to continue.')
-      } else if (this.verified === 'already') {
-        // If the email was already verified
-        this.showToast('Your email has already been verified. Please login to continue.')
-      } else {
-        // For any other values, or if something went wrong
-        this.showToast('Could not verify email. Please try again or contact support.')
-      }
-    }
-    if (this.verified === 'expired') {
-      this.showToast('The verification link has expired.', {
-        label: 'Resend Email',
-        onClick: () => {
-          this.resendVerificationEmail(this.email)
-        }
-      })
-    }
+    // const { id, hash } = this.$route.query
+    // if (id && hash) {
+    //   this.verifyEmail(id, hash)
+    // }
+    // console.log(id, hash)
+
+    this.verifyEmail()
   },
   methods: {
+    async verifyEmail() {
+      const { id, hash, expires, signature } = this.$route.query
+      console.log(id, hash, expires, signature)
+      if (!id || !hash || expires || signature) {
+        console.log('Verification parameters are missing.')
+        return
+      }
+
+      try {
+        await getCsrfCookie()
+        await verifyEmail(id, hash)
+        this.showToast('Your email has been successfully verified.', 'success')
+      } catch (error) {
+        console.error('Failed to verify email:', error)
+        this.showToast('Failed to verify email. Please try again.', 'error')
+      }
+    },
     togglePassword() {
       this.isPasswordVisible = !this.isPasswordVisible
     },
@@ -141,10 +147,11 @@ export default {
       getCsrfCookie()
       await getCsrfCookie()
       try {
-        const response = await loginUser({
+        const response = loginUser({
           email: values.email,
           password: values.password
         })
+        console.log('logged in')
       } catch (error) {
         //
       }
@@ -152,7 +159,8 @@ export default {
 
     async onLogout() {
       try {
-        await logoutUser()
+        logoutUser()
+        console.log('logged out')
       } catch (error) {
         //
       }
