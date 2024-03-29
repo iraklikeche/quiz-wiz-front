@@ -26,11 +26,8 @@ export async function resendVerificationLink(email) {
   return await apiClient.post('/api/email/resend-verification', { email })
 }
 
-export async function verifyEmail(id, hash, expires, signature) {
-  return await apiClient.get(`/api/email/verify/${id}/${hash}`, {
-    params: {
-      expires,
-      signature
-    }
-  })
+export async function verifyEmail(path) {
+  const response = await apiClient.get(path)
+  console.log(response)
+  return response
 }

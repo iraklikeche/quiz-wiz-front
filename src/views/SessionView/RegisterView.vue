@@ -103,7 +103,7 @@ export default {
   methods: {
     async onSubmit(values, { resetForm }) {
       try {
-        registerUser(values)
+        await registerUser(values)
         resetForm()
       } catch (error) {
         if (error.response && error.response.data.errors) {

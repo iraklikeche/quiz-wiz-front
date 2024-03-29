@@ -118,20 +118,30 @@ export default {
   },
   methods: {
     async verifyEmail() {
-      const { id, hash, expires, signature } = this.$route.query
-      console.log(id, hash, expires, signature)
-      if (!id || !hash) {
-        console.log('Verification parameters are missing.')
-        return
-      }
+      const verifyUrl = this.$route.query.verify_url
+      const url = new URL(decodeURIComponent(verifyUrl))
 
+      // I will keep consol.log until next branch where I will implement toasts
       try {
         await getCsrfCookie()
-        await verifyEmail(id, hash, expires, signature)
-        this.showToast('Your email has been successfully verified.', 'success')
+        const data = await verifyEmail(`${url.pathname}?${url.searchParams.toString()}`)
+        if (data.status === 200) {
+          switch (data.data.error) {
+            case 'verified':
+              console.log('User is verified')
+              break
+            case 'already_verified':
+              console.log('User already verified')
+          }
+        }
       } catch (error) {
-        console.error('Failed to verify email:', error)
-        this.showToast('Failed to verify email. Please try again.', 'error')
+        if (error.response && error.response.status === 403) {
+          console.log('Time is up')
+          this.showToast('The verification link has expired or is invalid.', 'warning')
+        } else {
+          console.error('Failed to verify email:', error)
+          this.showToast('Failed to verify email. Please try again.', 'error')
+        }
       }
     },
 
