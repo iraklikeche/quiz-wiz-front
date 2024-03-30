@@ -21,3 +21,13 @@ export async function loginUser(credentials) {
 export async function logoutUser() {
   return await apiClient.post('api/logout')
 }
+
+export async function resendVerificationLink(email) {
+  return await apiClient.post('/api/email/resend-verification', { email })
+}
+
+export async function verifyEmail(path) {
+  const response = await apiClient.get(path)
+  console.log(response)
+  return response
+}

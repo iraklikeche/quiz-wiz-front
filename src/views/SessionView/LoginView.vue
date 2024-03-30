@@ -68,7 +68,14 @@ import CustomInput from '@/components/form/CustomInput.vue'
 import { Form } from 'vee-validate'
 import { defineRule } from 'vee-validate'
 import * as AllRules from '@vee-validate/rules'
-import { getCsrfCookie, loginUser, logoutUser } from '@/services/authService.js'
+import {
+  getCsrfCookie,
+  loginUser,
+  logoutUser,
+  resendVerificationLink,
+  verifyEmail
+} from '@/services/authService.js'
+import axios from 'axios'
 
 Object.keys(AllRules).forEach((rule) => {
   defineRule(rule, AllRules[rule])
@@ -80,6 +87,12 @@ export default {
     AccountLinks,
     CustomInput,
     Form
+  },
+  props: {
+    verified: {
+      type: String,
+      default: null
+    }
   },
   data() {
     const schema = {
@@ -100,7 +113,38 @@ export default {
       isPasswordVisible: false
     }
   },
+  mounted() {
+    this.verifyEmail()
+  },
   methods: {
+    async verifyEmail() {
+      const verifyUrl = this.$route.query.verify_url
+      const url = new URL(decodeURIComponent(verifyUrl))
+
+      // I will keep consol.log until next branch where I will implement toasts
+      try {
+        await getCsrfCookie()
+        const data = await verifyEmail(`${url.pathname}?${url.searchParams.toString()}`)
+        if (data.status === 200) {
+          switch (data.data.error) {
+            case 'verified':
+              console.log('User is verified')
+              break
+            case 'already_verified':
+              console.log('User already verified')
+          }
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          console.log('Time is up')
+          this.showToast('The verification link has expired or is invalid.', 'warning')
+        } else {
+          console.error('Failed to verify email:', error)
+          this.showToast('Failed to verify email. Please try again.', 'error')
+        }
+      }
+    },
+
     togglePassword() {
       this.isPasswordVisible = !this.isPasswordVisible
     },
@@ -108,10 +152,11 @@ export default {
       getCsrfCookie()
       await getCsrfCookie()
       try {
-        const response = await loginUser({
+        const response = loginUser({
           email: values.email,
           password: values.password
         })
+        console.log('logged in')
       } catch (error) {
         //
       }
@@ -119,10 +164,27 @@ export default {
 
     async onLogout() {
       try {
-        await logoutUser()
+        logoutUser()
+        console.log('logged out')
       } catch (error) {
         //
       }
+    },
+    async resendVerificationEmail(email) {
+      try {
+        await resendVerificationLink(email)
+        this.showToast('A new verification link has been sent to your email.')
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          this.showToast('The verification link has expired. Please request a new link.')
+        } else {
+          this.showToast('There was an error resending the verification link.')
+        }
+      }
+    },
+
+    showToast(message, action) {
+      console.log(message, action)
     }
   }
 }
