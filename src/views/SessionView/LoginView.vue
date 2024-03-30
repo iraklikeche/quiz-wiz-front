@@ -1,4 +1,9 @@
 <template>
+  <TheToast :showToast="showToast" type="warning" :header="header" :toastMsg="msg">
+    <div v-if="showResendBtn" class="flex justify-center">
+      <button>CLICK ME</button>
+    </div>
+  </TheToast>
   <SessionLayout
     :image="loginImage"
     :heading="'Hi, Welcome!'"
@@ -15,7 +20,7 @@
       @submit="onSubmit"
       class="flex flex-col gap-5 max-w-[26rem]"
       :validation-schema="schema"
-      v-slot="{ values, errors }"
+      v-slot="{ errors }"
     >
       <CustomInput
         label="Email"
@@ -50,6 +55,7 @@
       <button class="bg-black text-white py-4 rounded-xl mt-6 font-semibold">Log in</button>
     </Form>
     <button @click="onLogout">LOG OUT</button>
+    <button @click="resend" class="ml-4 bg-red-400 mt-4">CLICK ME</button>
 
     <AccountLinks
       :question="'Don’t have an account?'"
@@ -65,6 +71,7 @@ import SessionLayout from '@/components/SessionLayout.vue'
 import loginImage from '@/assets/imgs/sessions/login.png'
 import AccountLinks from '@/components/AccountLinks.vue'
 import CustomInput from '@/components/form/CustomInput.vue'
+import TheToast from '@/components/TheToast.vue'
 import { Form } from 'vee-validate'
 import { defineRule } from 'vee-validate'
 import * as AllRules from '@vee-validate/rules'
@@ -75,7 +82,6 @@ import {
   resendVerificationLink,
   verifyEmail
 } from '@/services/authService.js'
-import axios from 'axios'
 
 Object.keys(AllRules).forEach((rule) => {
   defineRule(rule, AllRules[rule])
@@ -86,7 +92,8 @@ export default {
     SessionLayout,
     AccountLinks,
     CustomInput,
-    Form
+    Form,
+    TheToast
   },
   props: {
     verified: {
@@ -110,7 +117,11 @@ export default {
     return {
       schema,
       loginImage,
-      isPasswordVisible: false
+      isPasswordVisible: false,
+      header: '',
+      msg: '',
+      showToast: false,
+      showResendBtn: false
     }
   },
   mounted() {
@@ -126,21 +137,34 @@ export default {
         await getCsrfCookie()
         const data = await verifyEmail(`${url.pathname}?${url.searchParams.toString()}`)
         if (data.status === 200) {
-          switch (data.data.error) {
-            case 'verified':
-              console.log('User is verified')
-              break
-            case 'already_verified':
-              console.log('User already verified')
-          }
+          console.log('User is verified')
         }
       } catch (error) {
         if (error.response && error.response.status === 403) {
-          console.log('Time is up')
-          this.showToast('The verification link has expired or is invalid.', 'warning')
+          this.header = 'Token is expired'
+          this.msg = 'Please click button to re-send token'
+          this.showToast = true
+          this.showResendBtn = true
+
+          setTimeout(() => {
+            this.showToast = false
+          }, 4000)
+        } else if (error.response && error.response.status === 422) {
+          this.header = 'Verified'
+          this.msg = 'You have already verified your account.'
+          this.showToast = true
+
+          setTimeout(() => {
+            this.showToast = false
+          }, 4000)
         } else {
-          console.error('Failed to verify email:', error)
-          this.showToast('Failed to verify email. Please try again.', 'error')
+          this.header = 'Error'
+          this.msg = 'Oops, something went wrong.'
+          this.showToast = true
+
+          setTimeout(() => {
+            this.showToast = false
+          }, 4000)
         }
       }
     },
@@ -152,11 +176,12 @@ export default {
       getCsrfCookie()
       await getCsrfCookie()
       try {
-        const response = loginUser({
+        const response = await loginUser({
           email: values.email,
           password: values.password
         })
-        console.log('logged in')
+        localStorage.setItem('isLoggedIn', true)
+        this.$router.push('/quizzes')
       } catch (error) {
         //
       }
@@ -164,27 +189,24 @@ export default {
 
     async onLogout() {
       try {
-        logoutUser()
-        console.log('logged out')
+        await logoutUser()
+        localStorage.removeItem('isLoggedIn')
       } catch (error) {
         //
       }
     },
-    async resendVerificationEmail(email) {
+    async resend(email) {
       try {
         await resendVerificationLink(email)
-        this.showToast('A new verification link has been sent to your email.')
+        console.log(email)
+        console.log('resend')
       } catch (error) {
         if (error.response && error.response.status === 403) {
-          this.showToast('The verification link has expired. Please request a new link.')
+          //
         } else {
-          this.showToast('There was an error resending the verification link.')
+          console.log(error)
         }
       }
-    },
-
-    showToast(message, action) {
-      console.log(message, action)
     }
   }
 }
