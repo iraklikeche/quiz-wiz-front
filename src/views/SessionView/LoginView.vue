@@ -1,8 +1,8 @@
 <template>
   <TheToast :showToast="showToast" type="warning" :header="header" :toastMsg="msg">
-    <div v-if="true" class="flex justify-center">
+    <div v-if="showResendBtn" class="mt-2">
       <button
-        @click="showResendBtn"
+        @click="resend"
         class="ml-4mt-4 text-white font-semibold text-sm bg-black py-2 px-4 rounded-xl"
       >
         Re-send
@@ -149,6 +149,34 @@ export default {
 
       return null
     },
+    updateStateFromError(errorConfig) {
+      this.header = errorConfig.header
+      this.msg = errorConfig.msg
+      this.showToast = true
+      this.showResendBtn = errorConfig.showResendBtn || false
+
+      this.timeout()
+    },
+
+    getErrorConfig(status) {
+      const errorConfigMap = {
+        403: {
+          header: 'Token is expired',
+          msg: 'Please click button to re-send token',
+          showResendBtn: true
+        },
+        422: {
+          header: 'Verified',
+          msg: 'You have already verified your account.'
+        },
+        default: {
+          header: 'Error',
+          msg: 'Oops, something went wrong.'
+        }
+      }
+
+      return errorConfigMap[status] || errorConfigMap.default
+    },
     async verifyEmail() {
       const verifyUrl = this.$route.query.verify_url
       const url = new URL(decodeURIComponent(verifyUrl))
@@ -160,26 +188,10 @@ export default {
           console.log('User is verified')
         }
       } catch (error) {
-        if (error.response && error.response.status === 403) {
-          this.header = 'Token is expired'
-          this.msg = 'Please click button to re-send token'
-          this.showToast = true
-          this.showResendBtn = true
+        const status = error.response && error.response.status
+        const errorConfig = this.getErrorConfig(status)
 
-          this.timeout()
-        } else if (error.response && error.response.status === 422) {
-          this.header = 'Verified'
-          this.msg = 'You have already verified your account.'
-          this.showToast = true
-
-          this.timeout()
-        } else {
-          this.header = 'Error'
-          this.msg = 'Oops, something went wrong.'
-          this.showToast = true
-
-          this.timeout()
-        }
+        this.updateStateFromError(errorConfig)
       }
     },
 

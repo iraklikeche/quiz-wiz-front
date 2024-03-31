@@ -7,7 +7,7 @@
   >
     <div
       v-if="showToast"
-      class="max-w-[340px] fixed top-4 right-1/2 translate-x-1/2 sm:-translate-x-0 sm:right-12 border-b-[3px] font-raleway py-3 rounded-lg px-4 bg-gradient-to-r to-[#242C32] to-35% border-b-[#01E17B] from-green-900"
+      class="max-w-[21rem] fixed top-4 right-1/2 translate-x-1/2 sm:-translate-x-0 sm:right-12 border-b-[3px] font-raleway py-3 rounded-lg px-4 bg-gradient-to-r to-[#242C32] to-35% border-b-[#01E17B] from-green-900 z-10"
     >
       <div class="flex items-center justify-between gap-6">
         <div v-if="type === 'success'" class="bg-toast-green/10 p-1 rounded-full">
@@ -25,9 +25,9 @@
           <p class="text-[#C8C5C5] text-sm">
             {{ toastMsg }}
           </p>
+          <slot />
         </div>
       </div>
-      <slot />
     </div>
   </Transition>
 </template>
