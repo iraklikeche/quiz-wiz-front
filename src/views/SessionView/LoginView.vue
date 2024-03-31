@@ -1,7 +1,12 @@
 <template>
   <TheToast :showToast="showToast" type="warning" :header="header" :toastMsg="msg">
-    <div v-if="showResendBtn" class="flex justify-center">
-      <button>CLICK ME</button>
+    <div v-if="true" class="flex justify-center">
+      <button
+        @click="showResendBtn"
+        class="ml-4mt-4 text-white font-semibold text-sm bg-black py-2 px-4 rounded-xl"
+      >
+        Re-send
+      </button>
     </div>
   </TheToast>
   <SessionLayout
@@ -55,7 +60,6 @@
       <button class="bg-black text-white py-4 rounded-xl mt-6 font-semibold">Log in</button>
     </Form>
     <button @click="onLogout">LOG OUT</button>
-    <button @click="resend" class="ml-4 bg-red-400 mt-4">CLICK ME</button>
 
     <AccountLinks
       :question="'Don’t have an account?'"
