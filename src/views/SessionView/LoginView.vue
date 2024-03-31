@@ -1,6 +1,11 @@
 <template>
-  <TheToast :showToast="showToast" type="warning" :header="header" :toastMsg="msg">
-    <div v-if="showResendBtn" class="mt-2">
+  <TheToast
+    :showToast="errorConfig.showToast"
+    type="warning"
+    :header="errorConfig.header"
+    :toastMsg="errorConfig.msg"
+  >
+    <div v-if="errorConfig.showResendBtn" class="mt-2">
       <button
         @click="resend"
         class="ml-4mt-4 text-white font-semibold text-sm bg-black py-2 px-4 rounded-xl"
@@ -118,14 +123,17 @@ export default {
         return true
       }
     }
+
     return {
       schema,
       loginImage,
       isPasswordVisible: false,
-      header: '',
-      msg: '',
-      showToast: false,
-      showResendBtn: false
+      errorConfig: {
+        header: '',
+        msg: '',
+        showToast: false,
+        showResendBtn: false
+      }
     }
   },
   mounted() {
@@ -149,14 +157,6 @@ export default {
 
       return null
     },
-    updateStateFromError(errorConfig) {
-      this.header = errorConfig.header
-      this.msg = errorConfig.msg
-      this.showToast = true
-      this.showResendBtn = errorConfig.showResendBtn || false
-
-      this.timeout()
-    },
 
     getErrorConfig(status) {
       const errorConfigMap = {
@@ -177,6 +177,17 @@ export default {
 
       return errorConfigMap[status] || errorConfigMap.default
     },
+    updateStateFromError(errorConfig) {
+      this.errorConfig = {
+        ...this.errorConfig,
+        header: errorConfig.header,
+        msg: errorConfig.msg,
+        showToast: true,
+        showResendBtn: errorConfig.showResendBtn || false
+      }
+      this.timeout()
+    },
+
     async verifyEmail() {
       const verifyUrl = this.$route.query.verify_url
       const url = new URL(decodeURIComponent(verifyUrl))
