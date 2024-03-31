@@ -126,13 +126,29 @@ export default {
   },
   mounted() {
     this.verifyEmail()
+    console.log(this.$route)
+    console.log(this.$route.query.verify_url)
   },
   methods: {
+    timeout() {
+      setTimeout(() => {
+        this.showToast = false
+      }, 4000)
+    },
+
+    extractIDFromURL(url) {
+      const regex = /\/verify\/(\d+)/
+      const match = url.match(regex)
+      if (match && match[1]) {
+        return match[1]
+      }
+
+      return null
+    },
     async verifyEmail() {
       const verifyUrl = this.$route.query.verify_url
       const url = new URL(decodeURIComponent(verifyUrl))
 
-      // I will keep consol.log until next branch where I will implement toasts
       try {
         await getCsrfCookie()
         const data = await verifyEmail(`${url.pathname}?${url.searchParams.toString()}`)
@@ -146,25 +162,19 @@ export default {
           this.showToast = true
           this.showResendBtn = true
 
-          setTimeout(() => {
-            this.showToast = false
-          }, 4000)
+          this.timeout()
         } else if (error.response && error.response.status === 422) {
           this.header = 'Verified'
           this.msg = 'You have already verified your account.'
           this.showToast = true
 
-          setTimeout(() => {
-            this.showToast = false
-          }, 4000)
+          this.timeout()
         } else {
           this.header = 'Error'
           this.msg = 'Oops, something went wrong.'
           this.showToast = true
 
-          setTimeout(() => {
-            this.showToast = false
-          }, 4000)
+          this.timeout()
         }
       }
     },
@@ -195,11 +205,14 @@ export default {
         //
       }
     },
-    async resend(email) {
+    async resend() {
+      await getCsrfCookie()
+      console.log(this.$route.query.verify_url)
+      const id = this.extractIDFromURL(this.$route.query.verify_url)
+      console.log(id)
       try {
-        await resendVerificationLink(email)
-        console.log(email)
-        console.log('resend')
+        const data = await resendVerificationLink(id)
+        console.log('resend', data)
       } catch (error) {
         if (error.response && error.response.status === 403) {
           //
