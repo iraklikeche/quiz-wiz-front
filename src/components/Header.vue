@@ -71,7 +71,9 @@
     </div>
     <div class="flex gap-4 sm:gap-6 items-center">
       <slot />
-      <div class="sm:flex gap-6 hidden">
+      <div v-if="isLogged">AVATAR</div>
+
+      <div v-else class="sm:flex gap-6 hidden">
         <RouterLink
           :to="{ name: 'register' }"
           class="bg-black px-6 py-2 hover:shadow-[6px_5px_2px_0_rgba(0,0,0)] hover:text-black text-white font-bold text-sm rounded hover:bg-white hover:scale-105 duration-300 transition-all"
@@ -121,10 +123,20 @@ export default {
     return {
       showModal: false,
       registrationModal: false,
-      loginModal: false
+      loginModal: false,
+      isLogged: false
     }
   },
+  mounted() {
+    this.initialLoginCheck()
+  },
   methods: {
+    initialLoginCheck() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn')
+      if (isLoggedIn) {
+        this.isLogged = true
+      }
+    },
     showRegisterModal() {
       this.showModal = false
       this.loginModal = false

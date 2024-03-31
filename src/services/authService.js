@@ -22,8 +22,10 @@ export async function logoutUser() {
   return await apiClient.post('api/logout')
 }
 
-export async function resendVerificationLink(email) {
-  return await apiClient.post('/api/email/resend-verification', { email })
+export async function resendVerificationLink(userId) {
+  const response = await apiClient.post('/api/email/resend', { id: userId })
+  console.log(response)
+  return response
 }
 
 export async function verifyEmail(path) {

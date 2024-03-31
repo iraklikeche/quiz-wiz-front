@@ -1,4 +1,19 @@
 <template>
+  <TheToast
+    :showToast="errorConfig.showToast"
+    type="warning"
+    :header="errorConfig.header"
+    :toastMsg="errorConfig.msg"
+  >
+    <div v-if="errorConfig.showResendBtn" class="mt-2">
+      <button
+        @click="resend"
+        class="ml-4mt-4 text-white font-semibold text-sm bg-black py-2 px-4 rounded-xl"
+      >
+        Re-send
+      </button>
+    </div>
+  </TheToast>
   <SessionLayout
     :image="loginImage"
     :heading="'Hi, Welcome!'"
@@ -15,7 +30,7 @@
       @submit="onSubmit"
       class="flex flex-col gap-5 max-w-[26rem]"
       :validation-schema="schema"
-      v-slot="{ values, errors }"
+      v-slot="{ errors }"
     >
       <CustomInput
         label="Email"
@@ -65,6 +80,7 @@ import SessionLayout from '@/components/SessionLayout.vue'
 import loginImage from '@/assets/imgs/sessions/login.png'
 import AccountLinks from '@/components/AccountLinks.vue'
 import CustomInput from '@/components/form/CustomInput.vue'
+import TheToast from '@/components/TheToast.vue'
 import { Form } from 'vee-validate'
 import { defineRule } from 'vee-validate'
 import * as AllRules from '@vee-validate/rules'
@@ -75,7 +91,6 @@ import {
   resendVerificationLink,
   verifyEmail
 } from '@/services/authService.js'
-import axios from 'axios'
 
 Object.keys(AllRules).forEach((rule) => {
   defineRule(rule, AllRules[rule])
@@ -86,7 +101,8 @@ export default {
     SessionLayout,
     AccountLinks,
     CustomInput,
-    Form
+    Form,
+    TheToast
   },
   props: {
     verified: {
@@ -107,41 +123,86 @@ export default {
         return true
       }
     }
+
     return {
       schema,
       loginImage,
-      isPasswordVisible: false
+      isPasswordVisible: false,
+      errorConfig: {
+        header: '',
+        msg: '',
+        showToast: false,
+        showResendBtn: false
+      }
     }
   },
   mounted() {
     this.verifyEmail()
+    console.log(this.$route)
+    console.log(this.$route.query.verify_url)
   },
   methods: {
+    timeout() {
+      setTimeout(() => {
+        this.showToast = false
+      }, 4000)
+    },
+
+    extractIDFromURL(url) {
+      const regex = /\/verify\/(\d+)/
+      const match = url.match(regex)
+      if (match && match[1]) {
+        return match[1]
+      }
+
+      return null
+    },
+
+    getErrorConfig(status) {
+      const errorConfigMap = {
+        403: {
+          header: 'Token is expired',
+          msg: 'Please click button to re-send token',
+          showResendBtn: true
+        },
+        422: {
+          header: 'Verified',
+          msg: 'You have already verified your account.'
+        },
+        default: {
+          header: 'Error',
+          msg: 'Oops, something went wrong.'
+        }
+      }
+
+      return errorConfigMap[status] || errorConfigMap.default
+    },
+    updateStateFromError(errorConfig) {
+      this.errorConfig = {
+        ...this.errorConfig,
+        header: errorConfig.header,
+        msg: errorConfig.msg,
+        showToast: true,
+        showResendBtn: errorConfig.showResendBtn || false
+      }
+      this.timeout()
+    },
+
     async verifyEmail() {
       const verifyUrl = this.$route.query.verify_url
       const url = new URL(decodeURIComponent(verifyUrl))
 
-      // I will keep consol.log until next branch where I will implement toasts
       try {
         await getCsrfCookie()
         const data = await verifyEmail(`${url.pathname}?${url.searchParams.toString()}`)
         if (data.status === 200) {
-          switch (data.data.error) {
-            case 'verified':
-              console.log('User is verified')
-              break
-            case 'already_verified':
-              console.log('User already verified')
-          }
+          console.log('User is verified')
         }
       } catch (error) {
-        if (error.response && error.response.status === 403) {
-          console.log('Time is up')
-          this.showToast('The verification link has expired or is invalid.', 'warning')
-        } else {
-          console.error('Failed to verify email:', error)
-          this.showToast('Failed to verify email. Please try again.', 'error')
-        }
+        const status = error.response && error.response.status
+        const errorConfig = this.getErrorConfig(status)
+
+        this.updateStateFromError(errorConfig)
       }
     },
 
@@ -152,11 +213,12 @@ export default {
       getCsrfCookie()
       await getCsrfCookie()
       try {
-        const response = loginUser({
+        const response = await loginUser({
           email: values.email,
           password: values.password
         })
-        console.log('logged in')
+        localStorage.setItem('isLoggedIn', true)
+        this.$router.push('/quizzes')
       } catch (error) {
         //
       }
@@ -164,27 +226,27 @@ export default {
 
     async onLogout() {
       try {
-        logoutUser()
-        console.log('logged out')
+        await logoutUser()
+        localStorage.removeItem('isLoggedIn')
       } catch (error) {
         //
       }
     },
-    async resendVerificationEmail(email) {
+    async resend() {
+      await getCsrfCookie()
+      console.log(this.$route.query.verify_url)
+      const id = this.extractIDFromURL(this.$route.query.verify_url)
+      console.log(id)
       try {
-        await resendVerificationLink(email)
-        this.showToast('A new verification link has been sent to your email.')
+        const data = await resendVerificationLink(id)
+        console.log('resend', data)
       } catch (error) {
         if (error.response && error.response.status === 403) {
-          this.showToast('The verification link has expired. Please request a new link.')
+          //
         } else {
-          this.showToast('There was an error resending the verification link.')
+          console.log(error)
         }
       }
-    },
-
-    showToast(message, action) {
-      console.log(message, action)
     }
   }
 }

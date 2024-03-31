@@ -1,4 +1,11 @@
 <template>
+  <TheToast
+    :showToast="showToast"
+    type="success"
+    header="Registered Successfully."
+    toastMsg="Please check your e-mail to verify your account."
+  />
+
   <SessionLayout :image="registerImage" :heading="'Create account'" :customClass="'bg-[#EAFAFE]'">
     <AccountLinks
       :question="'Already have account? '"
@@ -70,6 +77,7 @@ import { defineRule } from 'vee-validate'
 import * as AllRules from '@vee-validate/rules'
 import CustomInput from '@/components/form/CustomInput.vue'
 import { registerUser } from '@/services/authService.js'
+import TheToast from '@/components/TheToast.vue'
 
 Object.keys(AllRules).forEach((rule) => {
   defineRule(rule, AllRules[rule])
@@ -82,7 +90,8 @@ export default {
     Form,
     Field,
     ErrorMessage,
-    CustomInput
+    CustomInput,
+    TheToast
   },
 
   data() {
@@ -91,6 +100,7 @@ export default {
       isPasswordVisible: false,
       isConfirmPasswordVisible: false,
       formErrors: {},
+      showToast: false,
       formValues: {
         username: '',
         email: '',
@@ -105,6 +115,11 @@ export default {
       try {
         await registerUser(values)
         resetForm()
+        this.showToast = true
+
+        setTimeout(() => {
+          this.showToast = false
+        }, 4000)
       } catch (error) {
         if (error.response && error.response.data.errors) {
           this.formErrors = error.response.data.errors
