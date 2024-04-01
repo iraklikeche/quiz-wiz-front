@@ -9,34 +9,27 @@
     <p class="text-custom-gray text-sm mb-12 sm:text-left text-center sm:mb-6 mt-6">
       Please type something you’ll remember
     </p>
-    <form class="flex flex-col gap-5 max-w-[26rem]">
-      <div class="flex flex-col relative">
-        <label class="text-custom-gray text-sm mb-1">Password</label>
-        <input
-          :type="isPasswordVisible ? 'text' : 'password'"
-          placeholder="Must be 3 characters"
-          class="border border-border-gray py-4 px-4 rounded-xl focus:border-4 outline-none"
-        />
-        <ShowPassword
-          :customClass="'absolute top-[55%] right-[4%] cursor-pointer'"
-          @toggle="togglePassword"
-        />
-      </div>
-      <div class="flex flex-col relative">
-        <label class="text-custom-gray text-sm mb-1">Confirm Password</label>
-        <input
-          :type="isConfirmPasswordVisible ? 'text' : 'password'"
-          placeholder="Must be 3 characters"
-          class="border border-border-gray py-4 px-4 rounded-xl focus:border-4 outline-none"
-        />
-        <ShowPassword
-          :customClass="'absolute top-[55%] right-[4%] cursor-pointer'"
-          @toggle="toggleConfirmPassword"
-        />
-      </div>
+    <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]">
+      <CustomInput
+        type="password"
+        label="Password"
+        name="password"
+        placeholder="Must be 3 characters"
+        rules="required|min:3"
+        isPasswordField
+      />
+
+      <CustomInput
+        type="password"
+        label="Confirm Password"
+        name="confirmation"
+        placeholder="Must be 3 characters"
+        rules="confirmed:@password"
+        isPasswordField
+      />
 
       <button class="bg-black text-white py-4 rounded-xl mt-4 font-semibold">Reset Password</button>
-    </form>
+    </Form>
     <AccountLinks
       :question="'Already have account? '"
       :buttonName="'Log in'"
@@ -49,20 +42,36 @@
 import SessionLayout from '@/components/SessionLayout.vue'
 import resetImage from '@/assets/imgs/sessions/reset.png'
 import AccountLinks from '@/components/AccountLinks.vue'
-import ShowPassword from '@/components/icons/ShowPassword.vue'
+import CustomInput from '@/components/form/CustomInput.vue'
+import { Form, Field } from 'vee-validate'
+import { defineRule } from 'vee-validate'
+import * as AllRules from '@vee-validate/rules'
+import { getCsrfCookie, resetPassword } from '@/services/authService.js'
+
+Object.keys(AllRules).forEach((rule) => {
+  defineRule(rule, AllRules[rule])
+})
 
 export default {
   components: {
     AccountLinks,
     SessionLayout,
-    ShowPassword
+    CustomInput,
+    Form,
+    Field
   },
   data() {
     return {
       resetImage,
       isPasswordVisible: false,
-      isConfirmPasswordVisible: false
+      isConfirmPasswordVisible: false,
+      token: '',
+      email: ''
     }
+  },
+  created() {
+    this.token = this.$route.query.token
+    this.email = this.$route.query.email || ''
   },
   methods: {
     togglePassword() {
@@ -70,6 +79,21 @@ export default {
     },
     toggleConfirmPassword() {
       this.isConfirmPasswordVisible = !this.isConfirmPasswordVisible
+    },
+    async onSubmit(values, { resetForm }) {
+      try {
+        console.log(values, this.token, this.email)
+        await getCsrfCookie()
+        await resetPassword({
+          token: this.token,
+          email: this.email,
+          password: values.password,
+          password_confirmation: values.confirmation
+        })
+        resetForm()
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }

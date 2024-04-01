@@ -11,32 +11,90 @@
     >
       Don’t worry! It happens. Please enter the email associated with your account.
     </p>
-    <form class="flex flex-col gap-5 max-w-[26rem]">
-      <div class="flex flex-col">
-        <label class="text-custom-gray text-sm mb-1">Email Address</label>
-        <input
-          type="email"
-          placeholder="Enter your email address"
-          class="border border-border-gray py-4 px-4 rounded-xl focus:border-4 outline-none"
-        />
-      </div>
-      <button class="bg-black text-white py-4 rounded-xl mt-4 font-semibold">Send</button>
-    </form>
+    <Form
+      @submit="onSubmit"
+      class="flex flex-col gap-5 max-w-[26rem]"
+      :validation-schema="schema"
+      v-slot="{ errors }"
+    >
+      <CustomInput
+        label="Email"
+        name="email"
+        placeholder="example@gmail.com"
+        rules="required|email"
+        type="email"
+        :error="errors.email"
+      />
+      <button
+        class="bg-black text-white py-4 rounded-xl mt-4 font-semibold hover:shadow-lg transition-all"
+      >
+        Send
+      </button>
+    </Form>
   </SessionLayout>
 </template>
 
 <script>
 import SessionLayout from '@/components/SessionLayout.vue'
 import resetImage from '@/assets/imgs/sessions/reset.png'
+import TheToast from '@/components/TheToast.vue'
+import { Form, Field } from 'vee-validate'
+import { defineRule } from 'vee-validate'
+import * as AllRules from '@vee-validate/rules'
+import CustomInput from '@/components/form/CustomInput.vue'
+import { getCsrfCookie, forgotPassword } from '@/services/authService.js'
+
+Object.keys(AllRules).forEach((rule) => {
+  defineRule(rule, AllRules[rule])
+})
 
 export default {
   components: {
-    SessionLayout
+    SessionLayout,
+    TheToast,
+    Form,
+    Field,
+    CustomInput
   },
   data() {
+    const schema = {
+      email(value) {
+        if (!value) return 'This field is required'
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!regex.test(value.trim())) return 'This field must be a valid email'
+        return true
+      }
+    }
     return {
-      resetImage
+      resetImage,
+      schema
+    }
+  },
+  methods: {
+    test() {
+      console.log(1)
+    },
+    async onSubmit(values) {
+      console.log(1)
+      await getCsrfCookie()
+      try {
+        await forgotPassword(values.email)
+        console.log('success')
+      } catch (error) {
+        console.log(error)
+        console.log(error.response.data.message)
+      }
     }
   }
 }
 </script>
+
+<!-- try {
+  const response = await loginUser({
+    email: values.email,
+    password: values.password,
+    remember: values.remember
+  })
+} catch (error) {
+  
+} -->

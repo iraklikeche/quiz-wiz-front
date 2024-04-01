@@ -21,6 +21,9 @@ export async function loginUser(credentials) {
 export async function logoutUser() {
   return await apiClient.post('api/logout')
 }
+export async function forgotPassword(email) {
+  return await apiClient.post('api/forgot-password', { email })
+}
 
 export async function resendVerificationLink(userId) {
   const response = await apiClient.post('/api/email/resend', { id: userId })
@@ -30,6 +33,12 @@ export async function resendVerificationLink(userId) {
 
 export async function verifyEmail(path) {
   const response = await apiClient.get(path)
+  console.log(response)
+  return response
+}
+
+export async function resetPassword(data) {
+  const response = await apiClient.post('/api/reset-password', data)
   console.log(response)
   return response
 }
