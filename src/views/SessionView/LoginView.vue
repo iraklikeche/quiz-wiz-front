@@ -197,7 +197,7 @@ export default {
         await getCsrfCookie()
         const data = await verifyEmail(`${url.pathname}?${url.searchParams.toString()}`)
         if (data.status === 200) {
-          console.log('User is verified')
+          //
         }
       } catch (error) {
         const status = error.response && error.response.status

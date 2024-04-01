@@ -1,4 +1,11 @@
 <template>
+  <TheToast
+    :showToast="showToast"
+    type="success"
+    header="Password reset Successfully."
+    toastMsg="I don't know what to write here."
+  />
+
   <SessionLayout
     :image="resetImage"
     :heading="'Reset Password'"
@@ -43,6 +50,7 @@ import SessionLayout from '@/components/SessionLayout.vue'
 import resetImage from '@/assets/imgs/sessions/reset.png'
 import AccountLinks from '@/components/AccountLinks.vue'
 import CustomInput from '@/components/form/CustomInput.vue'
+import TheToast from '@/components/TheToast.vue'
 import { Form, Field } from 'vee-validate'
 import { defineRule } from 'vee-validate'
 import * as AllRules from '@vee-validate/rules'
@@ -58,7 +66,8 @@ export default {
     SessionLayout,
     CustomInput,
     Form,
-    Field
+    Field,
+    TheToast
   },
   data() {
     return {
@@ -66,7 +75,8 @@ export default {
       isPasswordVisible: false,
       isConfirmPasswordVisible: false,
       token: '',
-      email: ''
+      email: '',
+      showToast: false
     }
   },
   created() {
@@ -91,6 +101,11 @@ export default {
           password_confirmation: values.confirmation
         })
         resetForm()
+        this.showToast = true
+
+        setTimeout(() => {
+          this.showToast = false
+        }, 4000)
       } catch (error) {
         console.log(error)
       }

@@ -1,4 +1,10 @@
 <template>
+  <TheToast
+    :showToast="showToast"
+    type="success"
+    header="Link send Successfully."
+    toastMsg="Please check your email to reset password"
+  />
   <SessionLayout
     :image="resetImage"
     :heading="'Forgot Password?'"
@@ -67,7 +73,8 @@ export default {
     }
     return {
       resetImage,
-      schema
+      schema,
+      showToast: false
     }
   },
   methods: {
@@ -75,11 +82,14 @@ export default {
       console.log(1)
     },
     async onSubmit(values) {
-      console.log(1)
       await getCsrfCookie()
       try {
         await forgotPassword(values.email)
-        console.log('success')
+        this.showToast = true
+
+        setTimeout(() => {
+          this.showToast = false
+        }, 4000)
       } catch (error) {
         console.log(error)
         console.log(error.response.data.message)
@@ -88,13 +98,3 @@ export default {
   }
 }
 </script>
-
-<!-- try {
-  const response = await loginUser({
-    email: values.email,
-    password: values.password,
-    remember: values.remember
-  })
-} catch (error) {
-  
-} -->
