@@ -53,7 +53,7 @@
 
       <div class="flex items-center justify-between gap-4 mt-2 pl-1">
         <div class="flex gap-2">
-          <input type="checkbox" class="accent-black scale-125" />
+          <Field name="remember" type="checkbox" value="true" class="scale-125" />
           <label class="text-custom-gray text-sm">Remember for 30 days</label>
         </div>
         <div>
@@ -81,7 +81,7 @@ import loginImage from '@/assets/imgs/sessions/login.png'
 import AccountLinks from '@/components/AccountLinks.vue'
 import CustomInput from '@/components/form/CustomInput.vue'
 import TheToast from '@/components/TheToast.vue'
-import { Form } from 'vee-validate'
+import { Form, Field } from 'vee-validate'
 import { defineRule } from 'vee-validate'
 import * as AllRules from '@vee-validate/rules'
 import {
@@ -102,6 +102,7 @@ export default {
     AccountLinks,
     CustomInput,
     Form,
+    Field,
     TheToast
   },
   props: {
@@ -210,21 +211,24 @@ export default {
       this.isPasswordVisible = !this.isPasswordVisible
     },
     async onSubmit(values) {
-      getCsrfCookie()
       await getCsrfCookie()
       try {
         const response = await loginUser({
           email: values.email,
-          password: values.password
+          password: values.password,
+          remember: values.remember
         })
         localStorage.setItem('isLoggedIn', true)
         this.$router.push('/quizzes')
       } catch (error) {
-        //
+        console.log(error)
+        console.log(error.response.data.message)
       }
     },
 
     async onLogout() {
+      await getCsrfCookie()
+
       try {
         await logoutUser()
         localStorage.removeItem('isLoggedIn')
