@@ -76,7 +76,7 @@ import { Form, Field, ErrorMessage } from 'vee-validate'
 import { defineRule } from 'vee-validate'
 import * as AllRules from '@vee-validate/rules'
 import CustomInput from '@/components/form/CustomInput.vue'
-import { registerUser } from '@/services/authService.js'
+import { registerUser, getCsrfCookie } from '@/services/authService.js'
 import TheToast from '@/components/TheToast.vue'
 
 Object.keys(AllRules).forEach((rule) => {
@@ -113,6 +113,7 @@ export default {
   methods: {
     async onSubmit(values, { resetForm }) {
       try {
+        await getCsrfCookie()
         await registerUser(values)
         resetForm()
         this.showToast = true
