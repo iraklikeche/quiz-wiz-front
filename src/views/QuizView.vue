@@ -1,4 +1,4 @@
-<!-- It is just blueprint  -->
+<!--********************** It is just blueprint ************************** -->
 <template>
   <div class="p-6 px-20">
     <header class="">
@@ -121,16 +121,12 @@ export default {
       this.timer = null
     },
     submitAnswers() {
-      // Stop the timer
       this.clearTimer()
 
-      // Calculate the time passed
       const timePassed = this.startTime - this.totalTime
 
-      // Log the time passed
       console.log(`Time passed: ${timePassed} seconds`)
 
-      // If you need to do anything with the questions data, do it here
       console.log(this.questions)
     }
   }
