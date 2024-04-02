@@ -58,7 +58,7 @@
         <div class="flex flex-col items-center">
           <div class="bg-white px-8 py-4 rounded-lg shadow flex items-center flex-col">
             <span class="text-sm font-semibold text-gray-500 mb-1">Timer</span>
-            <span class="text-5xl font-semibold text-gray-800">4 : 59</span>
+            <span class="text-5xl font-semibold text-gray-800">{{ formattedTime }}</span>
           </div>
 
           <div class="border-t my-4 w-full border-gray-200"></div>
@@ -79,6 +79,10 @@
 export default {
   data() {
     return {
+      totalTime: 300,
+      timer: null,
+      startTime: 300,
+
       questions: [
         {
           text: 'What is the study of medicines and their action called?',
@@ -88,8 +92,45 @@ export default {
       ]
     }
   },
+  computed: {
+    formattedTime() {
+      const minutes = Math.floor(this.totalTime / 60)
+      const seconds = this.totalTime % 60
+      return `${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`
+    }
+  },
+  mounted() {
+    this.startTimer()
+  },
+  beforeUnmount() {
+    this.clearTimer()
+  },
   methods: {
+    startTimer() {
+      this.timer = setInterval(() => {
+        if (this.totalTime > 0) {
+          this.totalTime -= 1
+        } else {
+          this.clearTimer()
+          console.log('finish')
+        }
+      }, 1000)
+    },
+    clearTimer() {
+      clearInterval(this.timer)
+      this.timer = null
+    },
     submitAnswers() {
+      // Stop the timer
+      this.clearTimer()
+
+      // Calculate the time passed
+      const timePassed = this.startTime - this.totalTime
+
+      // Log the time passed
+      console.log(`Time passed: ${timePassed} seconds`)
+
+      // If you need to do anything with the questions data, do it here
       console.log(this.questions)
     }
   }
