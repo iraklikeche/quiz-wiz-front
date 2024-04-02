@@ -1,7 +1,7 @@
 <template>
   <TheToast
     :showToast="errorConfig.showToast"
-    type="warning"
+    :type="errorConfig.type"
     :header="errorConfig.header"
     :toastMsg="errorConfig.msg"
   >
@@ -26,29 +26,24 @@
       :linkTo="'register'"
       class="block sm:hidden text-center sm:text-left text-lg mb-6 mt-2"
     />
-    <Form
-      @submit="onSubmit"
-      class="flex flex-col gap-5 max-w-[26rem]"
-      :validation-schema="schema"
-      v-slot="{ errors }"
-    >
+    <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]" v-slot="{ errors }">
       <CustomInput
         label="Email"
         name="email"
         placeholder="example@gmail.com"
-        rules="required|email"
         type="email"
-        :error="errors.email"
+        :serverError="errors.email"
+        rules="required|email"
       />
 
       <CustomInput
         type="password"
         label="Password"
         name="password"
+        rules="required"
         placeholder="Must be 3 characters"
-        rules="required|min:3"
         isPasswordField
-        :error="errors.password"
+        :serverError="errors.password"
       />
 
       <div class="flex items-center justify-between gap-4 mt-2 pl-1">
@@ -81,9 +76,8 @@ import loginImage from '@/assets/imgs/sessions/login.png'
 import AccountLinks from '@/components/AccountLinks.vue'
 import CustomInput from '@/components/form/CustomInput.vue'
 import TheToast from '@/components/TheToast.vue'
+
 import { Form, Field } from 'vee-validate'
-import { defineRule } from 'vee-validate'
-import * as AllRules from '@vee-validate/rules'
 import {
   getCsrfCookie,
   loginUser,
@@ -91,10 +85,6 @@ import {
   resendVerificationLink,
   verifyEmail
 } from '@/services/authService.js'
-
-Object.keys(AllRules).forEach((rule) => {
-  defineRule(rule, AllRules[rule])
-})
 
 export default {
   components: {
@@ -112,35 +102,20 @@ export default {
     }
   },
   data() {
-    const schema = {
-      email(value) {
-        if (!value) return 'This field is required'
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!regex.test(value.trim())) return 'This field must be a valid email'
-        return true
-      },
-      password(value) {
-        if (!value) return 'This field is required'
-        return true
-      }
-    }
-
     return {
-      schema,
       loginImage,
       isPasswordVisible: false,
       errorConfig: {
         header: '',
         msg: '',
         showToast: false,
-        showResendBtn: false
+        showResendBtn: false,
+        type: ''
       }
     }
   },
   mounted() {
     this.verifyEmail()
-    console.log(this.$route)
-    console.log(this.$route.query.verify_url)
   },
   methods: {
     timeout() {
@@ -161,14 +136,21 @@ export default {
 
     getErrorConfig(status) {
       const errorConfigMap = {
+        200: {
+          header: 'Success!',
+          msg: 'Email has been successfully verified.',
+          type: 'warning'
+        },
         403: {
           header: 'Token is expired',
           msg: 'Please click button to re-send token',
-          showResendBtn: true
+          showResendBtn: true,
+          type: 'warning'
         },
         422: {
           header: 'Verified',
-          msg: 'You have already verified your account.'
+          msg: 'You have already verified your account.',
+          type: 'warning'
         },
         default: {
           header: 'Error',
@@ -184,7 +166,8 @@ export default {
         header: errorConfig.header,
         msg: errorConfig.msg,
         showToast: true,
-        showResendBtn: errorConfig.showResendBtn || false
+        showResendBtn: errorConfig.showResendBtn || false,
+        type: errorConfig.type
       }
       this.timeout()
     },
@@ -197,7 +180,9 @@ export default {
         await getCsrfCookie()
         const data = await verifyEmail(`${url.pathname}?${url.searchParams.toString()}`)
         if (data.status === 200) {
-          console.log('User is verified')
+          const status = data.status
+          const errorConfig = this.getErrorConfig(status)
+          this.updateStateFromError(errorConfig)
         }
       } catch (error) {
         const status = error.response && error.response.status
@@ -210,7 +195,7 @@ export default {
     togglePassword() {
       this.isPasswordVisible = !this.isPasswordVisible
     },
-    async onSubmit(values) {
+    async onSubmit(values, { setFieldError }) {
       await getCsrfCookie()
       try {
         const response = await loginUser({
@@ -221,14 +206,18 @@ export default {
         localStorage.setItem('isLoggedIn', true)
         this.$router.push('/quizzes')
       } catch (error) {
-        console.log(error)
-        console.log(error.response.data.message)
+        if (error.response.data.errors) {
+          for (const fieldName in error.response.data.errors) {
+            setFieldError(fieldName, error.response.data.errors[fieldName])
+          }
+        } else {
+          setFieldError('email', error.response.data.message)
+        }
       }
     },
 
     async onLogout() {
       await getCsrfCookie()
-
       try {
         await logoutUser()
         localStorage.removeItem('isLoggedIn')

@@ -1,25 +1,19 @@
 <template>
   <div class="flex flex-col relative">
-    <label class="text-custom-gray text-sm mb-1">{{ name }}</label>
+    <label class="text-custom-gray text-sm mb-1">{{ label }}</label>
     <Field
       :type="inputType"
       :name="name"
       :placeholder="placeholder"
       class="border border-border-gray py-4 px-4 rounded-xl focus:ring-2 outline-none focus:border-border-gray focus:border-transparent"
-      :class="{ 'border-red-500': error }"
+      :class="{ 'border-red-500': serverError }"
       :validateOnInput="true"
+      :validateOnBlur="false"
+      :rules="rules"
     />
 
     <div class="h-4">
-      <ErrorMessage
-        :name="name"
-        class="text-[#F04438] text-sm mt-1 mb-2"
-        :serverErrors="serverErrors"
-        v-slot="{ message }"
-      >
-        <p class="text-red-500">{{ message }}</p>
-        <p v-if="serverErrors">serverErrors</p>
-      </ErrorMessage>
+      <ErrorMessage :name="name" class="text-[#F04438] text-sm mt-1 mb-2 leading-3" />
 
       <ShowPassword
         v-if="isPasswordField"
@@ -40,12 +34,13 @@ export default {
     ShowPassword
   },
   props: {
+    label: String,
     type: String,
     name: String,
     placeholder: String,
     rules: String,
     isPasswordField: Boolean,
-    serverErrors: Object,
+    serverError: String,
     error: String
   },
   data() {

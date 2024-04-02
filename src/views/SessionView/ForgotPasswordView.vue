@@ -1,4 +1,10 @@
 <template>
+  <TheToast
+    :showToast="showToast"
+    type="success"
+    header="Link send Successfully."
+    toastMsg="Please check your email to reset password"
+  />
   <SessionLayout
     :image="resetImage"
     :heading="'Forgot Password?'"
@@ -11,31 +17,66 @@
     >
       Don’t worry! It happens. Please enter the email associated with your account.
     </p>
-    <form class="flex flex-col gap-5 max-w-[26rem]">
-      <div class="flex flex-col">
-        <label class="text-custom-gray text-sm mb-1">Email Address</label>
-        <input
-          type="email"
-          placeholder="Enter your email address"
-          class="border border-border-gray py-4 px-4 rounded-xl focus:border-4 outline-none"
-        />
-      </div>
-      <button class="bg-black text-white py-4 rounded-xl mt-4 font-semibold">Send</button>
-    </form>
+    <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]" v-slot="{ errors }">
+      <CustomInput
+        label="Email"
+        name="email"
+        placeholder="example@gmail.com"
+        type="email"
+        rules="required|email"
+        :serverError="errors.email"
+      />
+      <button
+        class="bg-black text-white py-4 rounded-xl mt-4 font-semibold hover:shadow-lg transition-all"
+      >
+        Send
+      </button>
+    </Form>
   </SessionLayout>
 </template>
 
 <script>
 import SessionLayout from '@/components/SessionLayout.vue'
 import resetImage from '@/assets/imgs/sessions/reset.png'
+import TheToast from '@/components/TheToast.vue'
+import { Form, Field } from 'vee-validate'
+import CustomInput from '@/components/form/CustomInput.vue'
+import { getCsrfCookie, forgotPassword } from '@/services/authService.js'
 
 export default {
   components: {
-    SessionLayout
+    SessionLayout,
+    TheToast,
+    Form,
+    Field,
+    CustomInput
   },
   data() {
     return {
-      resetImage
+      resetImage,
+      showToast: false
+    }
+  },
+  methods: {
+    async onSubmit(values, { setFieldError, resetForm }) {
+      await getCsrfCookie()
+      try {
+        await forgotPassword(values.email)
+        resetForm()
+        this.showToast = true
+
+        setTimeout(() => {
+          this.showToast = false
+        }, 4000)
+      } catch (error) {
+        if (error.response.data.errors) {
+          for (const fieldName in error.response.data.errors) {
+            setFieldError(fieldName, error.response.data.errors[fieldName])
+          }
+        } else {
+          setFieldError('email', error.response.data.email)
+        }
+      }
     }
   }
 }
