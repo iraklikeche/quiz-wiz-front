@@ -59,7 +59,6 @@
       </div>
       <button class="bg-black text-white py-4 rounded-xl mt-6 font-semibold">Log in</button>
     </Form>
-    <button @click="onLogout">LOG OUT</button>
 
     <AccountLinks
       :question="'Don’t have an account?'"
@@ -81,7 +80,6 @@ import { Form, Field } from 'vee-validate'
 import {
   getCsrfCookie,
   loginUser,
-  logoutUser,
   resendVerificationLink,
   verifyEmail
 } from '@/services/authService.js'
@@ -216,15 +214,6 @@ export default {
       }
     },
 
-    async onLogout() {
-      await getCsrfCookie()
-      try {
-        await logoutUser()
-        localStorage.removeItem('isLoggedIn')
-      } catch (error) {
-        //
-      }
-    },
     async resend() {
       await getCsrfCookie()
       console.log(this.$route.query.verify_url)

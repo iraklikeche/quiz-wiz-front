@@ -41,6 +41,11 @@ const router = createRouter({
       component: () => import('../views/SingleQuizView.vue')
     },
     {
+      path: '/test',
+      name: 'test',
+      component: () => import('../views/QuizView.vue')
+    },
+    {
       path: '/:catchAll(.*)',
       name: 'notFound',
       component: () => import('../views/errors/NotFound404.vue')
@@ -48,6 +53,16 @@ const router = createRouter({
   ],
   scrollBehavior() {
     return { top: 0 }
+  }
+})
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
+  const restricted = ['/login', '/register', '/forgot-password', '/reset']
+
+  if (isLoggedIn && restricted.includes(to.path)) {
+    next({ name: 'home' })
+  } else {
+    next()
   }
 })
 

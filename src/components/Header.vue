@@ -4,7 +4,7 @@
     :show="showModal"
     @update:show="showModal = $event"
     :modalContentClasses="'bg-white p-6 rounded-lg shadow-lg w-full max-w-xs'"
-    class="backdrop-blur'"
+    class="backdrop-blur bg-black bg-opacity-50"
   >
     <div class="flex items-center justify-between border-b pb-4 border-border-gray mb-4">
       <RouterLink :to="{ name: 'home' }">
@@ -19,41 +19,37 @@
       </RouterLink>
     </div>
 
-    <div class="flex flex-col">
-      <button
-        @click="showRegisterModal"
+    <div v-if="isLogged">
+      <div class="flex gap-2 items-center">
+        <TheAvatar />
+        <div>
+          <h4 class="text-sm font-bold">{{ username }}</h4>
+          <p class="text-sm text-custom-light-gray">{{ email }}</p>
+        </div>
+      </div>
+      <div class="border-t pt-2 mt-4">
+        <button
+          @click="onLogout"
+          class="bg-[#4B69FD] bg-opacity-10 w-full py-2 mt-2 rounded-md text-custom-blue flex justify-center font-semibold"
+        >
+          Log out
+        </button>
+      </div>
+    </div>
+    <div v-else class="flex flex-col">
+      <RouterLink
+        :to="{ name: 'register' }"
         class="bg-black text-white w-full py-2 rounded-md mb-2 flex justify-center font-semibold"
       >
-        Sign Up
-      </button>
-
-      <button
-        @click="showLoginModal"
+        Sign up
+      </RouterLink>
+      <RouterLink
+        :to="{ name: 'login' }"
         class="bg-[#4B69FD] bg-opacity-10 w-full py-2 rounded-md text-custom-blue flex justify-center font-semibold"
       >
         Log in
-      </button>
+      </RouterLink>
     </div>
-  </TheModal>
-
-  <TheModal
-    :name="'slide-up'"
-    :show="registrationModal"
-    @update:show="registrationModal = false"
-    :modalContentClasses="'bg-white w-full rounded-t-lg p-4 transition-transform backdrop-blur'"
-    class="pt-32 backdrop-blur"
-  >
-    <RegisterView />
-  </TheModal>
-
-  <TheModal
-    :name="'slide-up'"
-    :show="loginModal"
-    @update:show="loginModal = false"
-    :modalContentClasses="'bg-white w-full rounded-t-lg p-4 h-full transition-transform backdrop-blur'"
-    class="pt-32 backdrop-blur"
-  >
-    <LoginView />
   </TheModal>
 
   <nav
@@ -71,7 +67,30 @@
     </div>
     <div class="flex gap-4 sm:gap-6 items-center">
       <slot />
-      <div v-if="isLogged">AVATAR</div>
+      <div
+        v-if="isLogged"
+        @click="showProfileModal"
+        class="hidden sm:flex items-center justify-center relative"
+      >
+        <TheAvatar class="cursor-pointer" />
+
+        <div
+          v-if="showProfile"
+          class="absolute right-0 -top-2 border border-border-gray rounded-lg z-10"
+          @click.self="closeProfile"
+        >
+          <div class="bg-white p-6 rounded-lg shadow-lg min-w-[19rem] flex flex-col pt-10">
+            <TheAvatar />
+            <h4 class="text-sm font-bold mt-4">{{ username }}</h4>
+            <div class="flex justify-between items-center">
+              <p class="text-sm text-custom-light-gray">{{ email }}</p>
+              <button @click="onLogout">
+                <Logout class="cursor-pointer" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div v-else class="sm:flex gap-6 hidden">
         <RouterLink
@@ -103,20 +122,21 @@ import LoginArrow from '@/components/icons/LoginArrow.vue'
 import MobileMenu from '@/components/icons/MobileMenu.vue'
 import Logo from '@/components/icons/Logo.vue'
 import TheModal from '@/components/modal/TheModal.vue'
-import RegisterView from '@/views/SessionView/RegisterView.vue'
-import LoginView from '@/views/SessionView/LoginView.vue'
 import CloseModalBtn from './icons/CloseModalBtn.vue'
+import TheAvatar from './icons/TheAvatar.vue'
+import Logout from '@/components/icons/Logout.vue'
+import { getCsrfCookie, logoutUser, getUser } from '@/services/authService.js'
 
 export default {
   components: {
-    RegisterView,
-    LoginView,
     RouterLink,
     Logo,
     LoginArrow,
     MobileMenu,
     TheModal,
-    CloseModalBtn
+    CloseModalBtn,
+    TheAvatar,
+    Logout
   },
 
   data() {
@@ -124,18 +144,39 @@ export default {
       showModal: false,
       registrationModal: false,
       loginModal: false,
-      isLogged: false
+      isLogged: false,
+      showProfile: false,
+      email: '',
+      username: ''
     }
   },
   mounted() {
     this.initialLoginCheck()
+    if (this.isLogged) {
+      this.getUserData()
+    }
   },
   methods: {
+    async getUserData() {
+      try {
+        const data = await getUser()
+        this.email = data.data.email
+        this.username = data.data.username
+      } catch (err) {
+        //
+      }
+    },
     initialLoginCheck() {
       const isLoggedIn = localStorage.getItem('isLoggedIn')
       if (isLoggedIn) {
         this.isLogged = true
       }
+    },
+    showProfileModal() {
+      this.showProfile = true
+    },
+    closeProfile() {
+      this.showProfile = false
     },
     showRegisterModal() {
       this.showModal = false
@@ -146,6 +187,16 @@ export default {
       this.showModal = false
       this.registrationModal = false
       this.loginModal = true
+    },
+    async onLogout() {
+      await getCsrfCookie()
+      try {
+        await logoutUser()
+        localStorage.removeItem('isLoggedIn')
+        this.$router.push('/login')
+      } catch (error) {
+        //
+      }
     }
   }
 }
