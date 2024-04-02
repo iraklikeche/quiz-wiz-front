@@ -27,9 +27,8 @@
         label="Email"
         name="email"
         placeholder="example@gmail.com"
-        rules="required|email"
         type="email"
-        :error="errors.email"
+        :serverError="errors.email"
       />
       <button
         class="bg-black text-white py-4 rounded-xl mt-4 font-semibold hover:shadow-lg transition-all"
@@ -45,14 +44,8 @@ import SessionLayout from '@/components/SessionLayout.vue'
 import resetImage from '@/assets/imgs/sessions/reset.png'
 import TheToast from '@/components/TheToast.vue'
 import { Form, Field } from 'vee-validate'
-import { defineRule } from 'vee-validate'
-import * as AllRules from '@vee-validate/rules'
 import CustomInput from '@/components/form/CustomInput.vue'
 import { getCsrfCookie, forgotPassword } from '@/services/authService.js'
-
-Object.keys(AllRules).forEach((rule) => {
-  defineRule(rule, AllRules[rule])
-})
 
 export default {
   components: {
@@ -81,18 +74,24 @@ export default {
     test() {
       console.log(1)
     },
-    async onSubmit(values) {
+    async onSubmit(values, { setFieldError, resetForm }) {
       await getCsrfCookie()
       try {
         await forgotPassword(values.email)
+        resetForm()
         this.showToast = true
 
         setTimeout(() => {
           this.showToast = false
         }, 4000)
       } catch (error) {
-        console.log(error)
-        console.log(error.response.data.message)
+        if (error.response.data.errors) {
+          for (const fieldName in error.response.data.errors) {
+            setFieldError(fieldName, error.response.data.errors[fieldName])
+          }
+        } else {
+          setFieldError('email', error.response.data.email)
+        }
       }
     }
   }

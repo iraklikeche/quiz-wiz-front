@@ -18,7 +18,6 @@
         </div>
         <div v-else class="bg-toast-red/10 p-1 rounded-full">
           <ErrorToast />
-          ALERT
         </div>
         <div>
           <h1 class="text-white font-extrabold">{{ header }}</h1>

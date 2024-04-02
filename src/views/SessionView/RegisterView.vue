@@ -12,25 +12,26 @@
       :buttonName="'Log in'"
       class="block sm:hidden text-center sm:text-left mb-12 sm:mb-0"
     />
-    <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]" v-slot="{ values, meta }">
+    <Form
+      @submit="onSubmit"
+      class="flex flex-col gap-5 max-w-[26rem]"
+      :validation-schema="schema"
+      v-slot="{ errors }"
+    >
       <CustomInput
         label="Username"
         name="username"
         placeholder="Your username"
-        rules="required|min:3"
         type="text"
-        :serverErrors="formErrors"
+        :serverError="errors.username"
       />
 
-      <div v-if="formErrors.email" class="text-red-500">
-        <p v-for="(error, index) in formErrors.email" :key="index">{{ error }}</p>
-      </div>
       <CustomInput
         label="Email"
         name="email"
         placeholder="example@gmail.com"
-        rules="required|email"
         type="email"
+        :serverError="errors.email"
       />
 
       <CustomInput
@@ -38,24 +39,33 @@
         label="Password"
         name="password"
         placeholder="Must be 3 characters"
-        rules="required|min:3"
         isPasswordField
+        :serverError="errors.password"
       />
 
       <CustomInput
         type="password"
         label="Confirm Password"
-        name="confirmation"
+        name="password_confirmation"
         placeholder="Must be 3 characters"
-        rules="confirmed:@password"
         isPasswordField
+        rules="confirmed:@password"
+        :serverError="errors.password_confirmation"
       />
 
-      <div class="flex items-center gap-4 pl-1">
-        <Field name="terms" type="radio" value="true" class="scale-150" rules="required" />
-        <label class="text-[#344054] text-sm">I accept the terms and privacy policy</label>
+      <div>
+        <div class="flex gap-4 items-center pl-1 mb-2">
+          <Field
+            name="agreed_to_terms"
+            type="radio"
+            value="true"
+            class="scale-150"
+            :serverError="errors.agreed_to_terms"
+          />
+          <label class="text-[#344054] text-sm">I accept the terms and privacy policy</label>
+        </div>
+        <ErrorMessage name="agreed_to_terms" class="text-red-500 text-sm" />
       </div>
-      <ErrorMessage name="terms" />
 
       <button class="bg-black text-white py-4 rounded-xl mt-6 font-semibold">Sign Up</button>
     </Form>
@@ -73,15 +83,9 @@ import registerImage from '@/assets/imgs/sessions/register.png'
 import SessionLayout from '@/components/SessionLayout.vue'
 import AccountLinks from '@/components/AccountLinks.vue'
 import { Form, Field, ErrorMessage } from 'vee-validate'
-import { defineRule } from 'vee-validate'
-import * as AllRules from '@vee-validate/rules'
 import CustomInput from '@/components/form/CustomInput.vue'
 import { registerUser, getCsrfCookie } from '@/services/authService.js'
 import TheToast from '@/components/TheToast.vue'
-
-Object.keys(AllRules).forEach((rule) => {
-  defineRule(rule, AllRules[rule])
-})
 
 export default {
   components: {
@@ -95,11 +99,36 @@ export default {
   },
 
   data() {
+    const schema = {
+      username(value) {
+        if (!value) return 'This field is required'
+        if (value.length < 3) return 'At least 3 characters'
+        return true
+      },
+      email(value) {
+        if (!value) return 'This field is required'
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!regex.test(value.trim())) return 'This field must be a valid email'
+        return true
+      },
+      password(value) {
+        if (!value) return 'This field is required'
+        if (value.length < 3) return 'At least 3 characters'
+
+        return true
+      },
+      password_confirmation(value) {
+        if (!value) return 'This field is required'
+        if (value.length < 3) return 'At least 3 characters'
+
+        return true
+      }
+    }
     return {
       registerImage,
+      schema,
       isPasswordVisible: false,
       isConfirmPasswordVisible: false,
-      formErrors: {},
       showToast: false,
       formValues: {
         username: '',
@@ -111,7 +140,7 @@ export default {
     }
   },
   methods: {
-    async onSubmit(values, { resetForm }) {
+    async onSubmit(values, { resetForm, setFieldError }) {
       try {
         await getCsrfCookie()
         await registerUser(values)
@@ -122,8 +151,10 @@ export default {
           this.showToast = false
         }, 4000)
       } catch (error) {
-        if (error.response && error.response.data.errors) {
-          this.formErrors = error.response.data.errors
+        console.log(error)
+
+        for (const fieldName in error.response.data.errors) {
+          setFieldError(fieldName, error.response.data.errors[fieldName])
         }
       }
     },

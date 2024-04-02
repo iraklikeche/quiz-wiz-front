@@ -1,10 +1,19 @@
 <template>
   <TheToast
-    :showToast="showToast"
-    type="success"
-    header="Password reset Successfully."
-    toastMsg="I don't know what to write here."
-  />
+    :showToast="errorConfig.showToast"
+    :type="errorConfig.type"
+    :header="errorConfig.header"
+    :toastMsg="errorConfig.msg"
+  >
+    <div v-if="errorConfig.showResendBtn" class="mt-2">
+      <button
+        @click="resend"
+        class="ml-4mt-4 text-white font-semibold text-sm bg-black py-2 px-4 rounded-xl"
+      >
+        Re-send
+      </button>
+    </div>
+  </TheToast>
 
   <SessionLayout
     :image="resetImage"
@@ -16,22 +25,28 @@
     <p class="text-custom-gray text-sm mb-12 sm:text-left text-center sm:mb-6 mt-6">
       Please type something you’ll remember
     </p>
-    <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]">
+    <Form
+      @submit="onSubmit"
+      :validation-schema="schema"
+      v-slot="{ errors }"
+      class="flex flex-col gap-5 max-w-[26rem]"
+    >
       <CustomInput
         type="password"
         label="Password"
         name="password"
         placeholder="Must be 3 characters"
-        rules="required|min:3"
         isPasswordField
+        :serverError="errors.password"
       />
 
       <CustomInput
         type="password"
         label="Confirm Password"
-        name="confirmation"
+        name="password_confirmation"
         placeholder="Must be 3 characters"
         rules="confirmed:@password"
+        :serverError="errors.password_confirmation"
         isPasswordField
       />
 
@@ -52,13 +67,8 @@ import AccountLinks from '@/components/AccountLinks.vue'
 import CustomInput from '@/components/form/CustomInput.vue'
 import TheToast from '@/components/TheToast.vue'
 import { Form, Field } from 'vee-validate'
-import { defineRule } from 'vee-validate'
-import * as AllRules from '@vee-validate/rules'
-import { getCsrfCookie, resetPassword } from '@/services/authService.js'
 
-Object.keys(AllRules).forEach((rule) => {
-  defineRule(rule, AllRules[rule])
-})
+import { getCsrfCookie, resetPassword } from '@/services/authService.js'
 
 export default {
   components: {
@@ -70,13 +80,33 @@ export default {
     TheToast
   },
   data() {
+    const schema = {
+      password(value) {
+        if (!value) return 'This field is required'
+        if (value.length < 3) return 'At least 3 characters'
+        return true
+      },
+      password_confirmation(value) {
+        if (!value) return 'This field is required'
+        if (value.length < 3) return 'At least 3 characters'
+        return true
+      }
+    }
     return {
+      schema,
       resetImage,
       isPasswordVisible: false,
       isConfirmPasswordVisible: false,
       token: '',
       email: '',
-      showToast: false
+      showToast: false,
+      errorConfig: {
+        header: '',
+        msg: '',
+        showToast: false,
+        showResendBtn: false,
+        type: ''
+      }
     }
   },
   created() {
@@ -84,30 +114,76 @@ export default {
     this.email = this.$route.query.email || ''
   },
   methods: {
+    timeout() {
+      setTimeout(() => {
+        this.errorConfig.showToast = false
+      }, 4000)
+    },
     togglePassword() {
       this.isPasswordVisible = !this.isPasswordVisible
     },
     toggleConfirmPassword() {
       this.isConfirmPasswordVisible = !this.isConfirmPasswordVisible
     },
-    async onSubmit(values, { resetForm }) {
+
+    getErrorConfig(status) {
+      const errorConfigMap = {
+        200: {
+          header: 'Success!',
+          msg: 'Password has been reset.',
+          type: 'success'
+        },
+        422: {
+          header: 'Token is expired',
+          msg: 'The password reset link is expired or invalid.',
+          type: 'warning',
+          showResendBtn: true
+        },
+        default: {
+          header: 'Error',
+          msg: 'Oops, something went wrong.'
+        }
+      }
+
+      return errorConfigMap[status] || errorConfigMap.default
+    },
+
+    updateStateFromError(errorConfig) {
+      this.errorConfig = {
+        ...this.errorConfig,
+        header: errorConfig.header,
+        msg: errorConfig.msg,
+        type: errorConfig.type,
+        showToast: true,
+        showResendBtn: errorConfig.showResendBtn || false
+      }
+      this.timeout()
+    },
+    async onSubmit(values, { resetForm, setFieldError }) {
       try {
         console.log(values, this.token, this.email)
         await getCsrfCookie()
-        await resetPassword({
+        const data = await resetPassword({
           token: this.token,
           email: this.email,
           password: values.password,
-          password_confirmation: values.confirmation
+          password_confirmation: values.password_confirmation
         })
         resetForm()
-        this.showToast = true
-
-        setTimeout(() => {
-          this.showToast = false
-        }, 4000)
+        if (data.status === 200) {
+          const status = data.status
+          const errorConfig = this.getErrorConfig(status)
+          this.updateStateFromError(errorConfig)
+        }
       } catch (error) {
-        console.log(error)
+        if (error.response.status === 422) {
+          const status = error.response && error.response.status
+          const errorConfig = this.getErrorConfig(status)
+          this.updateStateFromError(errorConfig)
+        }
+        for (const fieldName in error.response.data.errors) {
+          setFieldError(fieldName, error.response.data.errors[fieldName])
+        }
       }
     }
   }
