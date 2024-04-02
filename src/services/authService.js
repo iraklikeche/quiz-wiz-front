@@ -39,3 +39,8 @@ export async function resetPassword(data) {
   const response = await apiClient.post('/api/reset-password', data)
   return response
 }
+
+export async function resendPasswordResetLink(email) {
+  const response = await apiClient.post('/api/reset-password/resend', { email })
+  return response
+}

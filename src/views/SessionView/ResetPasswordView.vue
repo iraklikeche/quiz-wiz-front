@@ -64,7 +64,7 @@ import CustomInput from '@/components/form/CustomInput.vue'
 import TheToast from '@/components/TheToast.vue'
 import { Form, Field } from 'vee-validate'
 
-import { getCsrfCookie, resetPassword } from '@/services/authService.js'
+import { getCsrfCookie, resetPassword, resendPasswordResetLink } from '@/services/authService.js'
 
 export default {
   components: {
@@ -141,6 +141,20 @@ export default {
         showResendBtn: errorConfig.showResendBtn || false
       }
       this.timeout()
+    },
+    async resend() {
+      await getCsrfCookie()
+
+      try {
+        const data = await resendPasswordResetLink(this.$route.query.email)
+        console.log('resend', data)
+      } catch (error) {
+        if (error.response && error.response.status === 403) {
+          //
+        } else {
+          console.log(error)
+        }
+      }
     },
     async onSubmit(values, { resetForm, setFieldError }) {
       try {
