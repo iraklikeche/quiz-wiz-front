@@ -12,16 +12,12 @@
       :buttonName="'Log in'"
       class="block sm:hidden text-center sm:text-left mb-12 sm:mb-0"
     />
-    <Form
-      @submit="onSubmit"
-      class="flex flex-col gap-5 max-w-[26rem]"
-      :validation-schema="schema"
-      v-slot="{ errors }"
-    >
+    <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]" v-slot="{ errors }">
       <CustomInput
         label="Username"
         name="username"
         placeholder="Your username"
+        rules="required|min:3"
         type="text"
         :serverError="errors.username"
       />
@@ -31,6 +27,7 @@
         name="email"
         placeholder="example@gmail.com"
         type="email"
+        rules="required|email"
         :serverError="errors.email"
       />
 
@@ -38,6 +35,7 @@
         type="password"
         label="Password"
         name="password"
+        rules="required|min:3"
         placeholder="Must be 3 characters"
         isPasswordField
         :serverError="errors.password"
@@ -49,7 +47,7 @@
         name="password_confirmation"
         placeholder="Must be 3 characters"
         isPasswordField
-        rules="confirmed:@password"
+        rules="confirmed:@password_confirmation"
         :serverError="errors.password_confirmation"
       />
 
@@ -99,34 +97,8 @@ export default {
   },
 
   data() {
-    const schema = {
-      username(value) {
-        if (!value) return 'This field is required'
-        if (value.length < 3) return 'At least 3 characters'
-        return true
-      },
-      email(value) {
-        if (!value) return 'This field is required'
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!regex.test(value.trim())) return 'This field must be a valid email'
-        return true
-      },
-      password(value) {
-        if (!value) return 'This field is required'
-        if (value.length < 3) return 'At least 3 characters'
-
-        return true
-      },
-      password_confirmation(value) {
-        if (!value) return 'This field is required'
-        if (value.length < 3) return 'At least 3 characters'
-
-        return true
-      }
-    }
     return {
       registerImage,
-      schema,
       isPasswordVisible: false,
       isConfirmPasswordVisible: false,
       showToast: false,

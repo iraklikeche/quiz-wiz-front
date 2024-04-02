@@ -25,18 +25,14 @@
     <p class="text-custom-gray text-sm mb-12 sm:text-left text-center sm:mb-6 mt-6">
       Please type something you’ll remember
     </p>
-    <Form
-      @submit="onSubmit"
-      :validation-schema="schema"
-      v-slot="{ errors }"
-      class="flex flex-col gap-5 max-w-[26rem]"
-    >
+    <Form @submit="onSubmit" v-slot="{ errors }" class="flex flex-col gap-5 max-w-[26rem]">
       <CustomInput
         type="password"
         label="Password"
         name="password"
         placeholder="Must be 3 characters"
         isPasswordField
+        rules="required|min:3"
         :serverError="errors.password"
       />
 
@@ -80,20 +76,7 @@ export default {
     TheToast
   },
   data() {
-    const schema = {
-      password(value) {
-        if (!value) return 'This field is required'
-        if (value.length < 3) return 'At least 3 characters'
-        return true
-      },
-      password_confirmation(value) {
-        if (!value) return 'This field is required'
-        if (value.length < 3) return 'At least 3 characters'
-        return true
-      }
-    }
     return {
-      schema,
       resetImage,
       isPasswordVisible: false,
       isConfirmPasswordVisible: false,

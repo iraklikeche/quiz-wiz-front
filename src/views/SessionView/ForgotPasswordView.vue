@@ -17,17 +17,13 @@
     >
       Don’t worry! It happens. Please enter the email associated with your account.
     </p>
-    <Form
-      @submit="onSubmit"
-      class="flex flex-col gap-5 max-w-[26rem]"
-      :validation-schema="schema"
-      v-slot="{ errors }"
-    >
+    <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]" v-slot="{ errors }">
       <CustomInput
         label="Email"
         name="email"
         placeholder="example@gmail.com"
         type="email"
+        rules="required|email"
         :serverError="errors.email"
       />
       <button
@@ -56,24 +52,12 @@ export default {
     CustomInput
   },
   data() {
-    const schema = {
-      email(value) {
-        if (!value) return 'This field is required'
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!regex.test(value.trim())) return 'This field must be a valid email'
-        return true
-      }
-    }
     return {
       resetImage,
-      schema,
       showToast: false
     }
   },
   methods: {
-    test() {
-      console.log(1)
-    },
     async onSubmit(values, { setFieldError, resetForm }) {
       await getCsrfCookie()
       try {

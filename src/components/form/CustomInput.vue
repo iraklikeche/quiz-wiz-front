@@ -9,6 +9,7 @@
       :class="{ 'border-red-500': serverError }"
       :validateOnInput="true"
       :validateOnBlur="false"
+      :rules="rules"
     />
 
     <div class="h-4">

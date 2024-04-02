@@ -26,24 +26,21 @@
       :linkTo="'register'"
       class="block sm:hidden text-center sm:text-left text-lg mb-6 mt-2"
     />
-    <Form
-      @submit="onSubmit"
-      class="flex flex-col gap-5 max-w-[26rem]"
-      :validation-schema="schema"
-      v-slot="{ errors }"
-    >
+    <Form @submit="onSubmit" class="flex flex-col gap-5 max-w-[26rem]" v-slot="{ errors }">
       <CustomInput
         label="Email"
         name="email"
         placeholder="example@gmail.com"
         type="email"
         :serverError="errors.email"
+        rules="required|email"
       />
 
       <CustomInput
         type="password"
         label="Password"
         name="password"
+        rules="required"
         placeholder="Must be 3 characters"
         isPasswordField
         :serverError="errors.password"
@@ -79,6 +76,7 @@ import loginImage from '@/assets/imgs/sessions/login.png'
 import AccountLinks from '@/components/AccountLinks.vue'
 import CustomInput from '@/components/form/CustomInput.vue'
 import TheToast from '@/components/TheToast.vue'
+
 import { Form, Field } from 'vee-validate'
 import {
   getCsrfCookie,
@@ -104,22 +102,7 @@ export default {
     }
   },
   data() {
-    const schema = {
-      email(value) {
-        if (!value) return 'This field is required'
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!regex.test(value.trim())) return 'This field must be a valid email'
-        return true
-      },
-      password(value) {
-        if (!value) return 'This field is required'
-        if (value.length < 3) return 'At least 3 characters'
-        return true
-      }
-    }
-
     return {
-      schema,
       loginImage,
       isPasswordVisible: false,
       errorConfig: {
