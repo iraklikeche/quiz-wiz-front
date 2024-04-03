@@ -44,3 +44,8 @@ export async function resendPasswordResetLink(email) {
   const response = await apiClient.post('/api/reset-password/resend', { email })
   return response
 }
+
+export async function getUser() {
+  const response = await apiClient.get('api/user')
+  return response
+}
