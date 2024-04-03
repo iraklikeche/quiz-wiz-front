@@ -69,7 +69,7 @@
       <slot />
       <div
         v-if="isLogged"
-        @click="showProfileModal"
+        @click.stop="showProfileModal"
         class="hidden sm:flex items-center justify-center relative"
       >
         <TheAvatar class="cursor-pointer" />
@@ -77,14 +77,17 @@
         <div
           v-if="showProfile"
           class="absolute right-0 -top-2 border border-border-gray rounded-lg z-10"
-          @click.self="closeProfile"
+          ref="avatar"
         >
           <div class="bg-white p-6 rounded-lg shadow-lg min-w-[19rem] flex flex-col pt-10">
             <TheAvatar />
             <h4 class="text-sm font-bold mt-4">{{ username }}</h4>
             <div class="flex justify-between items-center">
               <p class="text-sm text-custom-light-gray">{{ email }}</p>
-              <button @click="onLogout">
+              <button
+                @click="onLogout"
+                class="bg-black bg-opacity-0 p-1 rounded-full hover:bg-opacity-10 hover:scale-90 duration-300"
+              >
                 <Logout class="cursor-pointer" />
               </button>
             </div>
@@ -152,9 +155,13 @@ export default {
   },
   mounted() {
     this.initialLoginCheck()
+    document.addEventListener('click', this.handleClickOutside)
     if (this.isLogged) {
       this.getUserData()
     }
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside)
   },
   methods: {
     async getUserData() {
@@ -175,8 +182,10 @@ export default {
     showProfileModal() {
       this.showProfile = true
     },
-    closeProfile() {
-      this.showProfile = false
+    handleClickOutside(e) {
+      if (this.$refs.avatar && !this.$refs.avatar.contains(e.target)) {
+        this.showProfile = false
+      }
     },
     showRegisterModal() {
       this.showModal = false
