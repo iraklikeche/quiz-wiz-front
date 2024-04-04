@@ -71,17 +71,11 @@
         @close-modal="showModal = false"
         class="block sm:hidden"
       />
-      <DesktopFilterModal />
+      <!-- <DesktopFilterModal /> -->
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-3 justify-between mt-12 gap-20 sm:gap-8 px-4 sm:px-0">
-      <!-- Just for testing till I get data from back-end -->
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
+      <Card v-for="quiz in quizzes" :key="quiz.id" :quiz="quiz" />
     </div>
     <div class="flex items-center justify-center mt-12 mb-24">
       <button
@@ -108,6 +102,7 @@ import Search from '@/components/icons/Search.vue'
 import Close from '@/components/icons/Close.vue'
 import DesktopFilterModal from '@/components/modal/DesktopFilterModal.vue'
 import FilterModal from '@/components/modal/FilterModal.vue'
+import { getQuizzes } from '@/services/quizService.js'
 
 export default {
   components: {
@@ -132,10 +127,23 @@ export default {
       scrollAmount: 0,
       search: '',
       showModal: false,
-      activeButton: 'filter'
+      activeButton: 'filter',
+      quizzes: null
     }
   },
+  mounted() {
+    this.getQuizzesData()
+  },
   methods: {
+    async getQuizzesData() {
+      try {
+        const res = await getQuizzes()
+        this.quizzes = res.data
+        console.log(this.quizzes)
+      } catch (err) {
+        console.log(err)
+      }
+    },
     closeInput() {
       this.search = ''
     },
