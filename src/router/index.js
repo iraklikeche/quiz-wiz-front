@@ -36,7 +36,7 @@ const router = createRouter({
       component: () => import('../views/SessionView/ForgotPasswordView.vue')
     },
     {
-      path: '/quiz',
+      path: '/quiz/:id',
       name: 'quiz',
       component: () => import('../views/SingleQuizView.vue')
     },
