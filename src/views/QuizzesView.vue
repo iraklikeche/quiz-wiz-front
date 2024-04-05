@@ -6,7 +6,7 @@
       </div>
       <div class="flex items-center border rounded-xl">
         <input
-          v-model="search"
+          v-model="searchQuery"
           type="text"
           placeholder="Search"
           @focus="isFocused = true"
@@ -77,7 +77,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 justify-between mt-12 gap-20 sm:gap-8 px-4 sm:px-0">
       <RouterLink
         :to="{ name: 'quiz', params: { id: quiz.id } }"
-        v-for="quiz in filteredQuizzes"
+        v-for="quiz in quizzes"
         :key="quiz.id"
       >
         <Card :quiz="quiz" />
@@ -132,30 +132,46 @@ export default {
       isFocused: false,
       scrollAmount: 0,
       search: '',
+      searchQuery: '',
+
       showModal: false,
       activeButton: 'filter',
       quizzes: null,
-      filteredQuizzes: null
+      debouncedSearch: null
     }
+  },
+  created() {
+    this.debouncedSearch = this.debounce(this.getQuizzesData, 500)
   },
   mounted() {
     this.getQuizzesData()
   },
   methods: {
-    async getQuizzesData() {
+    async getQuizzesData(searchQuery = '') {
       try {
-        const res = await getQuizzes()
+        let url = '/api/quizzes'
+        if (searchQuery) {
+          url += `/search?search=${searchQuery}`
+        }
+        const res = await getQuizzes(url)
         this.quizzes = res.data.data
         console.log(this.quizzes)
-        this.filterQuizzes()
       } catch (err) {
         console.log(err)
       }
     },
-    filterQuizzes() {
-      this.filteredQuizzes = this.quizzes.filter((quiz) =>
-        quiz.title.toLowerCase().includes(this.search.toLowerCase())
-      )
+    debounce(func, wait) {
+      let timeout
+
+      return function (...args) {
+        const later = () => {
+          clearTimeout(timeout)
+          func.apply(this, args)
+        }
+
+        clearTimeout(timeout)
+        timeout = setTimeout(later, wait)
+      }
     },
 
     closeInput() {
@@ -192,8 +208,11 @@ export default {
     }
   },
   watch: {
-    search() {
-      this.filterQuizzes()
+    // search(newVal) {
+    //   this.getQuizzesData(newVal)
+    // }
+    searchQuery(newQuery) {
+      this.debouncedSearch(newQuery)
     }
   }
 }

@@ -110,7 +110,7 @@ export default {
     async getQuizData() {
       try {
         const res = await getSingleQuiz(this.$route.params.id)
-        this.quiz = res.data
+        this.quiz = res.data.data
         console.log(this.quiz)
       } catch (err) {
         console.log(err)
