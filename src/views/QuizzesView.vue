@@ -131,7 +131,6 @@ export default {
       selectedItems: [genres[0].name],
       isFocused: false,
       scrollAmount: 0,
-      search: '',
       searchQuery: '',
 
       showModal: false,
@@ -142,6 +141,10 @@ export default {
   },
   created() {
     this.debouncedSearch = this.debounce(this.getQuizzesData, 500)
+    if (this.$route.query.search) {
+      this.searchQuery = this.$route.query.search
+      this.getQuizzesData(this.searchQuery)
+    }
   },
   mounted() {
     this.getQuizzesData()
@@ -175,7 +178,7 @@ export default {
     },
 
     closeInput() {
-      this.search = ''
+      this.searchQuery = ''
     },
     toggleSelection(genre) {
       const index = this.selectedItems.indexOf(genre)
@@ -208,10 +211,8 @@ export default {
     }
   },
   watch: {
-    // search(newVal) {
-    //   this.getQuizzesData(newVal)
-    // }
     searchQuery(newQuery) {
+      this.$router.push({ query: { ...this.$route.query, search: newQuery } }).catch((err) => {})
       this.debouncedSearch(newQuery)
     }
   }

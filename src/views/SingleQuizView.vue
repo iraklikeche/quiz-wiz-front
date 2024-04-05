@@ -67,8 +67,8 @@
     <div class="px-4 mt-16 sm:mt-10">
       <p class="text-custom-light-gray font-semibold mb-4 sm:hidden">Similar quizzes</p>
       <div class="grid grid-cols-1 gap-8">
-        <Card class="bg-[#D0D5DD] bg-opacity-20" />
-        <Card class="bg-[#D0D5DD] bg-opacity-20" />
+        <!-- <Card class="bg-[#D0D5DD] bg-opacity-20" />
+        <Card class="bg-[#D0D5DD] bg-opacity-20" /> -->
       </div>
     </div>
   </div>
