@@ -1,10 +1,9 @@
 <template>
-  <RouterLink
-    :to="{ name: 'quiz', params: { id: quiz.id } }"
-    class="group flex flex-col shadow-lg p-6 pb-8 border-2 border-black rounded-2xl border-transparent hover:border-black"
+  <div
+    class="group flex flex-col shadow-lg p-6 pb-8 border-2 border-black rounded-2xl border-transparent hover:border-black h-full"
   >
     <div class="w-full flex items-center justify-center">
-      <img :src="quiz.image" class="max-w-60 max-h-60" />
+      <img :src="quiz.image" class="max-w-60 max-h-60 min-h-60" />
     </div>
     <div class="flex flex-col gap-4 mt-12">
       <div class="flex gap-2">
@@ -17,7 +16,7 @@
         </p>
       </div>
       <div class="flex justify-between items-center">
-        <h2 class="text-[#101828] font-semibold text-2xl">{{ quiz.title }}</h2>
+        <h2 class="text-[#101828] font-bold text-2xl">{{ quiz.title }}</h2>
         <span class="opacity-0 group-hover:opacity-100">
           <ArrowTilted class="w-4 stroke-black" />
         </span>
@@ -25,34 +24,40 @@
 
       <div class="flex gap-4">
         <InfoDisplay label="Completed" value="DATE">
-          <Complete />
+          <Completed />
         </InfoDisplay>
         <InfoDisplay label="Total Minutes" :value="`${quiz.totalTime}Minutes`" />
         <InfoDisplay label="Total Users" value="8" />
       </div>
       <div class="flex gap-4">
         <InfoDisplay label="Difficulty Level" :value="quiz.difficultyLevel.name">
-          <Complete />
+          <DifficultyLevel />
         </InfoDisplay>
         <InfoDisplay label="Points" value="10/10">
-          <Complete />
+          <PointsMainCard />
         </InfoDisplay>
       </div>
     </div>
-  </RouterLink>
+  </div>
 </template>
 
 <script>
 import InfoDisplay from '@/components/icons/InfoDisplay.vue'
 import resetImage from '@/assets/imgs/sessions/reset.png'
-import Complete from '@/components/icons/Complete.vue'
+import Completed from '@/components/icons/quiz/Completed.vue'
 import ArrowTilted from '@/components/icons/ArrowTilted.vue'
+import DifficultyLevel from '@/components/icons/quiz/DifficultyLevel.vue'
+import Points from './icons/quiz/Points.vue'
+import PointsMainCard from '@/components/icons/quiz/PointsMainCard.vue'
 
 export default {
   components: {
     InfoDisplay,
-    Complete,
-    ArrowTilted
+    Completed,
+    ArrowTilted,
+    DifficultyLevel,
+    Points,
+    PointsMainCard
   },
   props: {
     quiz: {

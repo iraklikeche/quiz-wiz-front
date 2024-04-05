@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import Complete from '@/components/icons/Complete.vue'
 export default {
   props: {
     label: String,

@@ -75,7 +75,13 @@
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-3 justify-between mt-12 gap-20 sm:gap-8 px-4 sm:px-0">
-      <Card v-for="quiz in quizzes" :key="quiz.id" :quiz="quiz" />
+      <RouterLink
+        :to="{ name: 'quiz', params: { id: quiz.id } }"
+        v-for="quiz in quizzes"
+        :key="quiz.id"
+      >
+        <Card :quiz="quiz" />
+      </RouterLink>
     </div>
     <div class="flex items-center justify-center mt-12 mb-24">
       <button
