@@ -6,7 +6,7 @@
       </div>
       <div class="flex items-center border rounded-xl">
         <input
-          v-model="search"
+          v-model="searchQuery"
           type="text"
           placeholder="Search"
           @focus="isFocused = true"
@@ -131,27 +131,54 @@ export default {
       selectedItems: [genres[0].name],
       isFocused: false,
       scrollAmount: 0,
-      search: '',
+      searchQuery: '',
+
       showModal: false,
       activeButton: 'filter',
-      quizzes: null
+      quizzes: null,
+      debouncedSearch: null
+    }
+  },
+  created() {
+    this.debouncedSearch = this.debounce(this.getQuizzesData, 500)
+    if (this.$route.query.search) {
+      this.searchQuery = this.$route.query.search
+      this.getQuizzesData(this.searchQuery)
     }
   },
   mounted() {
     this.getQuizzesData()
   },
   methods: {
-    async getQuizzesData() {
+    async getQuizzesData(searchQuery = '') {
       try {
-        const res = await getQuizzes()
-        this.quizzes = res.data
+        let url = '/api/quizzes'
+        if (searchQuery) {
+          url += `/search?search=${searchQuery}`
+        }
+        const res = await getQuizzes(url)
+        this.quizzes = res.data.data
         console.log(this.quizzes)
       } catch (err) {
         console.log(err)
       }
     },
+    debounce(func, wait) {
+      let timeout
+
+      return function (...args) {
+        const later = () => {
+          clearTimeout(timeout)
+          func.apply(this, args)
+        }
+
+        clearTimeout(timeout)
+        timeout = setTimeout(later, wait)
+      }
+    },
+
     closeInput() {
-      this.search = ''
+      this.searchQuery = ''
     },
     toggleSelection(genre) {
       const index = this.selectedItems.indexOf(genre)
@@ -181,6 +208,12 @@ export default {
     },
     handleActiveButtonChange(newActiveButton) {
       this.activeButton = newActiveButton
+    }
+  },
+  watch: {
+    searchQuery(newQuery) {
+      this.$router.push({ query: { ...this.$route.query, search: newQuery } }).catch((err) => {})
+      this.debouncedSearch(newQuery)
     }
   }
 }
