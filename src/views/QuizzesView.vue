@@ -77,7 +77,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 justify-between mt-12 gap-20 sm:gap-8 px-4 sm:px-0">
       <RouterLink
         :to="{ name: 'quiz', params: { id: quiz.id } }"
-        v-for="quiz in quizzes"
+        v-for="quiz in filteredQuizzes"
         :key="quiz.id"
       >
         <Card :quiz="quiz" />
@@ -134,7 +134,8 @@ export default {
       search: '',
       showModal: false,
       activeButton: 'filter',
-      quizzes: null
+      quizzes: null,
+      filteredQuizzes: null
     }
   },
   mounted() {
@@ -144,12 +145,19 @@ export default {
     async getQuizzesData() {
       try {
         const res = await getQuizzes()
-        this.quizzes = res.data
+        this.quizzes = res.data.data
         console.log(this.quizzes)
+        this.filterQuizzes()
       } catch (err) {
         console.log(err)
       }
     },
+    filterQuizzes() {
+      this.filteredQuizzes = this.quizzes.filter((quiz) =>
+        quiz.title.toLowerCase().includes(this.search.toLowerCase())
+      )
+    },
+
     closeInput() {
       this.search = ''
     },
@@ -181,6 +189,11 @@ export default {
     },
     handleActiveButtonChange(newActiveButton) {
       this.activeButton = newActiveButton
+    }
+  },
+  watch: {
+    search() {
+      this.filterQuizzes()
     }
   }
 }
