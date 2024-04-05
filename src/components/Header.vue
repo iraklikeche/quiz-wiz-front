@@ -53,7 +53,7 @@
   </TheModal>
 
   <nav
-    class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-4 sm:px-20 py-4 max-h-[5rem] w-full"
+    class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-4 sm:px-20 py-5 w-full max-h-[4.5rem]"
   >
     <div class="flex gap-20 items-center">
       <RouterLink :to="{ name: 'home' }">
@@ -63,7 +63,10 @@
         class="text-sm font-semibold text-custom-gray hidden sm:flex items-center gap-2"
         :to="{ name: 'quizzes' }"
       >
-        <div class="indicator-dot bg-[#4B69FD] w-2 h-2 rounded-full"></div>
+        <div
+          :class="{ block: isQuizzesActive, hidden: !isQuizzesActive }"
+          class="bg-[#4B69FD] w-2 h-2 rounded-full"
+        ></div>
         <span>Quizzes</span>
       </RouterLink>
     </div>
@@ -165,6 +168,11 @@ export default {
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
   },
+  computed: {
+    isQuizzesActive() {
+      return this.$route.name === 'quizzes'
+    }
+  },
   methods: {
     async getUserData() {
       try {
@@ -212,13 +220,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.router-link-active .indicator-dot {
-  @apply block; /* Show the dot */
-}
-
-.indicator-dot {
-  @apply hidden;
-}
-</style>
