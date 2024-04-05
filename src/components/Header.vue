@@ -4,7 +4,7 @@
     :show="showModal"
     @update:show="showModal = $event"
     :modalContentClasses="'bg-white p-6 rounded-lg shadow-lg w-full max-w-xs'"
-    class="backdrop-blur bg-black bg-opacity-50"
+    class="backdrop-blur bg-black bg-opacity-50 fixed inset-0 z-50"
   >
     <div class="flex items-center justify-between border-b pb-4 border-border-gray mb-4">
       <RouterLink :to="{ name: 'home' }">
@@ -53,17 +53,19 @@
   </TheModal>
 
   <nav
-    class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-4 sm:px-20 py-4 w-full"
+    class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-4 sm:px-20 py-4 max-h-[5rem] w-full"
   >
     <div class="flex gap-20 items-center">
       <RouterLink :to="{ name: 'home' }">
         <Logo />
       </RouterLink>
       <RouterLink
-        class="text-sm font-semibold text-custom-gray hidden sm:block"
+        class="text-sm font-semibold text-custom-gray hidden sm:flex items-center gap-2"
         :to="{ name: 'quizzes' }"
-        >Quizzes</RouterLink
       >
+        <div class="indicator-dot bg-[#4B69FD] w-2 h-2 rounded-full"></div>
+        <span>Quizzes</span>
+      </RouterLink>
     </div>
     <div class="flex gap-4 sm:gap-6 items-center">
       <slot />
@@ -210,3 +212,13 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.router-link-active .indicator-dot {
+  @apply block; /* Show the dot */
+}
+
+.indicator-dot {
+  @apply hidden;
+}
+</style>

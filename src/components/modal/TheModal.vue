@@ -1,6 +1,6 @@
 <template>
   <transition :name="name">
-    <div v-if="show" class="fixed inset-0 z-50" @click.self="close">
+    <div v-if="show" class="" @click.self="close">
       <div :class="modalContentClasses" @click.stop>
         <slot></slot>
       </div>

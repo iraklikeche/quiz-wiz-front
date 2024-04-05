@@ -3,32 +3,41 @@
     :name="'fade-in'"
     :show="showModal"
     :modalContentClasses="'bg-white rounded-lg shadow-lg w-full h-full'"
+    class="fixed sm:absolute sm:w-[66rem] inset-0 z-50 sm:bottom-auto sm:left-[20.5%] sm:border-2 sm:rounded-xl sm:border-border-gray sm:bg-white sm:pt-2"
   >
     <div
-      class="text-sm font-semibold text-custom-gray flex justify-between items-center bg-[#D0D5DD] p-6 bg-opacity-20"
+      class="sm:hidden text-sm font-semibold text-custom-gray flex justify-between items-center bg-[#D0D5DD] p-6 bg-opacity-20"
     >
       <button>Reset</button>
       <button class="uppercase">Filters</button>
       <CloseModalBtn @click="close" />
     </div>
 
-    <div class="bg-white relative py-2 border-y border-border-gray">
-      <div class="absolute left-6 top-1/2 transform -translate-y-1/2">
-        <Search />
-      </div>
-      <div class="flex items-center px-4">
-        <input
-          v-model="search"
-          type="text"
-          placeholder="Search"
-          @focus="isFocused = true"
-          @blur="isFocused = false"
-          class="outline-none pl-8 py-2 rounded-xl bg-transparent w-32 transition-all duration-300 focus:w-[10rem] sm:focus:w-[21.5rem]"
-        />
+    <div class="bg-white relative py-2 border-y border-border-gray sm:px-4 sm:border-0">
+      <div
+        class="sm:bg-[#D0D5DD] sm:bg-opacity-30 sm:rounded-xl sm:flex items-center sm:px-4 sm:py-4 sm:gap-6"
+      >
+        <button class="hidden sm:block bg-black py-2 px-6 text-white rounded-xl mr-4 text-sm">
+          Filter
+        </button>
+        <div class="absolute left-6 sm:left-44 top-1/2 transform -translate-y-1/2">
+          <Search />
+        </div>
+        <div class="flex sm:w-full items-center px-4 sm:bg-white sm:rounded-3xl">
+          <input
+            v-model="search"
+            type="text"
+            placeholder="Search"
+            @focus="isFocused = true"
+            @blur="isFocused = false"
+            class="outline-none pl-8 py-2 rounded-xl bg-transparent sm:w-full"
+          />
+        </div>
+        <div class="hidden sm:block cursor-pointer"><CloseModalBtn @click="close" /></div>
       </div>
     </div>
 
-    <div class="mt-4 px-4">
+    <div class="mt-4 px-4 sm:hidden">
       <div class="bg-[#D0D5DD] bg-opacity-50 rounded-full grid grid-cols-2 font-semibold">
         <button
           class="py-3 px-12 rounded-full"
@@ -53,38 +62,47 @@
       </div>
     </div>
 
-    <div v-if="activeButton === 'filter'">
-      <div class="flex items-center mb-8 mt-12 px-6 gap-2">
-        <label for="my-quizzes" class="text-[#101828] font-semibold">My quizzes</label>
-        <input id="my-quizzes" type="checkbox" class="mr-2 scale-125" />
-      </div>
+    <div class="sm:px-4 sm:grid grid-cols-[70fr_30fr] gap-2">
+      <div
+        v-if="activeButton === 'filter'"
+        class="sm:border border-border-gray sm:rounded-xl sm:pb-8 sm:mb-12"
+      >
+        <p class="hidden sm:block px-6 mt-4 text-custom-blue font-bol">Filter by</p>
+        <div class="flex items-center mb-8 sm:mb-4 mt-12 sm:mt-4 px-6 gap-2">
+          <label for="my-quizzes" class="text-[#101828] font-semibold">My quizzes</label>
+          <input id="my-quizzes" type="checkbox" class="mr-2 scale-125" />
+        </div>
 
-      <div class="flex items-center mb-4 px-6 gap-2">
-        <label for="not-completed" class="text-[#101828] font-semibold">Not completed</label>
-        <input id="not-completed" type="checkbox" class="mr-2 scale-125" />
-      </div>
+        <div class="flex items-center mb-4 px-6 gap-2">
+          <label for="not-completed" class="text-[#101828] font-semibold">Not completed</label>
+          <input id="not-completed" type="checkbox" class="mr-2 scale-125" />
+        </div>
 
-      <!-- *********************** LEVELS ******************************** -->
-      <div class="my-4 px-6">
-        <p class="text-sm font-semibold border-t border-border-gray pt-4">Levels</p>
-        <div class="flex flex-wrap gap-2 mt-2">
-          <button class="bg-blue-200 py-2 px-6 rounded-3xl">Starter</button>
-          <button class="bg-blue-200 py-2 px-6 rounded-3xl">Beginner</button>
+        <!-- *********************** LEVELS ******************************** -->
+        <div class="my-4 px-6">
+          <p class="text-sm font-semibold border-t border-border-gray pt-4">Levels</p>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <button class="bg-blue-200 py-2 px-6 rounded-3xl">Starter</button>
+            <button class="bg-blue-200 py-2 px-6 rounded-3xl">Beginner</button>
+          </div>
+        </div>
+        <!-- ******************** CATEGORIES  ************************* -->
+        <div class="px-6">
+          <p class="text-sm font-semibold border-t border-border-gray pt-4">Categories</p>
+          <div class="flex flex-wrap gap-2 mt-2 font-semibold text-custom-gray">
+            <button class="py-1 px-3 rounded">Geography</button>
+            <button class="py-1 px-3 rounded">Geography</button>
+            <button class="py-2 bg-black text-white rounded-full px-4">Geography</button>
+            <button class="py-1 px-3 rounded">Geography</button>
+          </div>
         </div>
       </div>
-      <!-- ******************** CATEGORIES  ************************* -->
-      <div class="px-6">
-        <p class="text-sm font-semibold border-t border-border-gray pt-4">Categories</p>
-        <div class="flex flex-wrap gap-2 mt-2 font-semibold text-custom-gray">
-          <button class="py-1 px-3 rounded">Geography</button>
-          <button class="py-1 px-3 rounded">Geography</button>
-          <button class="py-2 bg-black text-white rounded-full px-4">Geography</button>
-          <button class="py-1 px-3 rounded">Geography</button>
-        </div>
+      <div v-else class="sm:hidden">
+        <SortList class="flex flex-col gap-8 px-6 mt-12 justify-center" />
       </div>
-    </div>
-    <div v-else>
-      <SortList class="flex flex-col gap-8 px-6 mt-12 justify-center" />
+      <div class="sm:border border-border-gray sm:rounded-xl sm:pb-8 sm:mb-12 hidden sm:block">
+        <SortList class="flex flex-col gap-8 px-6 mt-12 justify-center" />
+      </div>
     </div>
   </TheModal>
 </template>

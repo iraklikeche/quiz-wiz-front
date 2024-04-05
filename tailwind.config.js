@@ -11,6 +11,13 @@ export default {
         'custom-light-gray': '#667085',
         'border-gray': '#D0D5DD',
         'custom-blue': '#4B69FD'
+      },
+      keyframes: {
+        progress: {
+          '100%': {
+            right: '100%'
+          }
+        }
       }
     }
   },
