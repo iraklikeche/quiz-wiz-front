@@ -69,6 +69,7 @@
         @update:show="showModal = $event"
         @update:activeButton="handleActiveButtonChange($event)"
         @close-modal="showModal = false"
+        :quizzes="categoryDifficultyData"
       />
     </div>
 
@@ -105,7 +106,7 @@ import ArrowDown from '@/components/icons/ArrowDown.vue'
 import Search from '@/components/icons/Search.vue'
 import Close from '@/components/icons/Close.vue'
 import FilterModal from '@/components/modal/FilterModal.vue'
-import { getQuizzes } from '@/services/quizService.js'
+import { getQuizzes, fetchInitialData } from '@/services/quizService.js'
 
 export default {
   components: {
@@ -132,7 +133,8 @@ export default {
       showModal: false,
       activeButton: 'filter',
       quizzes: null,
-      debouncedSearch: null
+      debouncedSearch: null,
+      categoryDifficultyData: null
     }
   },
   created() {
@@ -144,8 +146,17 @@ export default {
   },
   mounted() {
     this.getQuizzesData()
+    this.getInitialData()
   },
   methods: {
+    async getInitialData() {
+      try {
+        const res = await fetchInitialData()
+        this.categoryDifficultyData = res.data
+      } catch (err) {
+        console.log(err)
+      }
+    },
     async getQuizzesData(searchQuery = '') {
       try {
         let url = '/api/quizzes'
