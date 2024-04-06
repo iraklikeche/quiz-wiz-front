@@ -180,7 +180,9 @@ export default {
         this.email = data.data.email
         this.username = data.data.username
       } catch (err) {
-        //
+        if (err.response?.status === 401 && localStorage.getItem('isLoggedIn')) {
+          localStorage.removeItem('isLoggedIn')
+        }
       }
     },
     initialLoginCheck() {
