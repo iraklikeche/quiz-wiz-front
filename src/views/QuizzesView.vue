@@ -69,9 +69,7 @@
         @update:show="showModal = $event"
         @update:activeButton="handleActiveButtonChange($event)"
         @close-modal="showModal = false"
-        class="block sm:hidden"
       />
-      <!-- <DesktopFilterModal /> -->
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-3 justify-between mt-12 gap-20 sm:gap-8 px-4 sm:px-0">
@@ -106,14 +104,12 @@ import Card from '@/components/Card.vue'
 import ArrowDown from '@/components/icons/ArrowDown.vue'
 import Search from '@/components/icons/Search.vue'
 import Close from '@/components/icons/Close.vue'
-import DesktopFilterModal from '@/components/modal/DesktopFilterModal.vue'
 import FilterModal from '@/components/modal/FilterModal.vue'
 import { getQuizzes } from '@/services/quizService.js'
 
 export default {
   components: {
     FilterModal,
-    DesktopFilterModal,
     Header,
     Footer,
     SliderArrow,
