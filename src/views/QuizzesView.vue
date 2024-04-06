@@ -171,7 +171,6 @@ export default {
         }
         const res = await getQuizzes(url)
         this.quizzes = res.data.data
-        console.log(this.quizzes)
       } catch (err) {
         console.log(err)
       }
