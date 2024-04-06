@@ -93,11 +93,11 @@
           <div class="flex flex-wrap gap-2 mt-2">
             <button
               class="py-2 px-6 rounded-3xl"
-              v-for="level in quizzes.difficultyLevels"
+              v-for="level in diffLevels"
               :key="level.id"
               :style="{
-                color: level.text_color,
-                background: level.background_color
+                color: level.textColor,
+                background: level.backgroundColor
               }"
             >
               {{ level.name }}
@@ -108,11 +108,7 @@
         <div class="px-6">
           <p class="text-sm font-semibold border-t border-border-gray pt-4">Categories</p>
           <div class="flex flex-wrap gap-2 mt-2 font-semibold text-custom-gray">
-            <button
-              class="py-1 px-3 rounded"
-              v-for="category in quizzes.categories"
-              :key="category.id"
-            >
+            <button class="py-1 px-3 rounded" v-for="category in categories" :key="category.id">
               {{ category.name }}
             </button>
           </div>
@@ -143,7 +139,8 @@ export default {
   },
   props: {
     showModal: Boolean,
-    quizzes: Object
+    categories: Object,
+    diffLevels: Object
   },
   emits: ['update:show', 'update:activeButton'],
   data() {
