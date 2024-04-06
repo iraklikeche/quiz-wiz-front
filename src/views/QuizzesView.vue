@@ -34,17 +34,28 @@
           ref="scrollContainer"
         >
           <li
-            v-for="genre in genres"
-            :key="genre.id"
             class="text-custom-light-gray text-sm font-semibold cursor-pointer pb-2"
             :class="{
               'border-b-2': true,
-              'border-transparent': !isSelected(genre.name),
-              'border-black': isSelected(genre.name)
+              'border-transparent': !allQuizzesSelected,
+              'border-black': allQuizzesSelected
             }"
-            @click="toggleSelection(genre.name)"
+            @click="removeAllQueriesFromUrl"
           >
-            {{ genre.name }}
+            All Quizzes
+          </li>
+          <li
+            v-for="category in categories"
+            :key="category.id"
+            class="text-custom-light-gray text-sm font-semibold cursor-pointer pb-2"
+            :class="{
+              'border-b-2': true,
+              'border-transparent': !isSelected(category.name),
+              'border-black': isSelected(category.name)
+            }"
+            @click="toggleSelection(category.name)"
+          >
+            {{ category.name }}
           </li>
         </ul>
 
@@ -122,11 +133,10 @@ export default {
     Close
   },
   data() {
-    const genres = Array.from({ length: 50 }, (_, i) => ({ id: i + 1, name: `${i + 1}` }))
     return {
       resetImage,
-      genres: genres,
-      selectedItems: [genres[0].name],
+      allQuizzesSelected: true,
+      selectedItems: [],
       isFocused: false,
       scrollAmount: 0,
       searchQuery: '',
@@ -151,6 +161,11 @@ export default {
     this.getInitialData()
   },
   methods: {
+    removeAllQueriesFromUrl() {
+      this.$router.replace({ query: {} })
+      this.allQuizzesSelected = true
+      this.selectedItems = []
+    },
     async getInitialData() {
       try {
         const [categoriesResponse, difficultyLevelsResponse] = await Promise.all([
@@ -197,11 +212,22 @@ export default {
       if (index > -1) {
         this.selectedItems.splice(index, 1)
       } else {
+        this.allQuizzesSelected = false
         this.selectedItems.push(genre)
+      }
+      this.updateUrl()
+    },
+    updateUrl() {
+      if (this.selectedItems.length === 0) {
+        this.removeAllQueriesFromUrl()
+      } else {
+        this.$router.replace({ query: { id: this.selectedItems } })
       }
     },
     isSelected(genre) {
-      return this.selectedItems.includes(genre)
+      return (
+        this.selectedItems.includes(genre) || (this.allQuizzesSelected && genre === 'All Quizzes')
+      )
     },
     scrollLeft() {
       this.scroll(-100)
