@@ -33,7 +33,16 @@
             class="outline-none pl-8 py-2 rounded-xl bg-transparent sm:w-full"
           />
         </div>
-        <div class="hidden sm:block cursor-pointer"><CloseModalBtn @click="close" /></div>
+        <div class="flex items-center gap-2">
+          <div class="sm:flex items-center gap-2 hidden" v-if="true">
+            <button class="bg-[#4B69FD] px-8 py-2 text-white rounded-xl text-sm font-semibold">
+              Confirm
+            </button>
+            <div class="border-r h-4 w-2 border-border-gray"></div>
+            <button class="text-custom-light-gray text-sm">Reset all filter</button>
+          </div>
+          <div class="hidden sm:block cursor-pointer"><CloseModalBtn @click="close" /></div>
+        </div>
       </div>
     </div>
 
@@ -82,18 +91,26 @@
         <div class="my-4 px-6">
           <p class="text-sm font-semibold border-t border-border-gray pt-4">Levels</p>
           <div class="flex flex-wrap gap-2 mt-2">
-            <button class="bg-blue-200 py-2 px-6 rounded-3xl">Starter</button>
-            <button class="bg-blue-200 py-2 px-6 rounded-3xl">Beginner</button>
+            <button
+              class="py-2 px-6 rounded-3xl"
+              v-for="level in diffLevels"
+              :key="level.id"
+              :style="{
+                color: level.textColor,
+                background: level.backgroundColor
+              }"
+            >
+              {{ level.name }}
+            </button>
           </div>
         </div>
         <!-- ******************** CATEGORIES  ************************* -->
         <div class="px-6">
           <p class="text-sm font-semibold border-t border-border-gray pt-4">Categories</p>
           <div class="flex flex-wrap gap-2 mt-2 font-semibold text-custom-gray">
-            <button class="py-1 px-3 rounded">Geography</button>
-            <button class="py-1 px-3 rounded">Geography</button>
-            <button class="py-2 bg-black text-white rounded-full px-4">Geography</button>
-            <button class="py-1 px-3 rounded">Geography</button>
+            <button class="py-1 px-3 rounded" v-for="category in categories" :key="category.id">
+              {{ category.name }}
+            </button>
           </div>
         </div>
       </div>
@@ -121,7 +138,9 @@ export default {
     SortList
   },
   props: {
-    showModal: Boolean
+    showModal: Boolean,
+    categories: Object,
+    diffLevels: Object
   },
   emits: ['update:show', 'update:activeButton'],
   data() {
