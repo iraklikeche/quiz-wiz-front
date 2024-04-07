@@ -82,6 +82,7 @@
         @close-modal="showModal = false"
         :categories="categories"
         :diffLevels="difficultyLevels"
+        @apply-filters="applyFilters"
       />
     </div>
 
@@ -157,10 +158,68 @@ export default {
     }
   },
   mounted() {
-    this.getQuizzesData()
     this.getInitialData()
+    const queryParams = this.$route.query
+    if (queryParams.categories || queryParams.difficulties) {
+      let filters = {
+        categories: queryParams.categories ? queryParams.categories.split(',') : [],
+        difficulties: queryParams.difficulties ? queryParams.difficulties.split(',') : []
+      }
+      this.applyFilters(filters)
+    } else {
+      this.getQuizzesData()
+    }
   },
   methods: {
+    async applyFilters(filters) {
+      let queryParams = new URLSearchParams()
+
+      if (filters.categories && filters.categories.length > 0) {
+        queryParams.set('categories', filters.categories.join(','))
+      }
+
+      if (filters.difficulties && filters.difficulties.length > 0) {
+        queryParams.set('difficulties', filters.difficulties.join(','))
+      }
+
+      // if (filters.sort) {
+      //   queryParams.append('sort', filters.sort.toLowerCase())
+      // }
+      const sortMapping = {
+        'A-Z': 'alphabet',
+        'Z-A': 'reverse-alphabet',
+        Newest: 'newest',
+        Oldest: 'oldest'
+        // Add other mappings as necessary
+      }
+      if (filters.sort) {
+        // Use the mapping to convert frontend labels to backend identifiers
+        const sortParam = sortMapping[filters.sort] || filters.sort // Fallback to the original value just in case
+        queryParams.append('sort', sortParam.toLowerCase()) // Ensure lowercase for backend
+      }
+
+      this.$router
+        .push({ path: this.$route.path, query: queryParams.toString() })
+        .catch((err) => {})
+      await this.getQuizzesData(null, queryParams.toString())
+    },
+
+    async getQuizzesData(searchQuery = '', filterQuery = '') {
+      try {
+        let url = '/api/quizzes'
+        if (searchQuery) {
+          const searchParam = `search=${searchQuery}`
+          url += filterQuery ? `?${filterQuery}&${searchParam}` : `?${searchParam}`
+        } else if (filterQuery) {
+          url += `?${filterQuery}`
+        }
+        const res = await getQuizzes(url)
+        this.quizzes = res.data.data
+      } catch (err) {
+        console.log(err)
+      }
+    },
+
     removeAllQueriesFromUrl() {
       this.$router.replace({ query: {} })
       this.allQuizzesSelected = true
@@ -178,18 +237,7 @@ export default {
         console.error('Error fetching initial data:', err)
       }
     },
-    async getQuizzesData(searchQuery = '') {
-      try {
-        let url = '/api/quizzes'
-        if (searchQuery) {
-          url += `/search?search=${searchQuery}`
-        }
-        const res = await getQuizzes(url)
-        this.quizzes = res.data.data
-      } catch (err) {
-        console.log(err)
-      }
-    },
+
     debounce(func, wait) {
       let timeout
 
