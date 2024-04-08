@@ -35,7 +35,10 @@
         </div>
         <div class="flex items-center gap-2">
           <div class="sm:flex items-center gap-2 hidden" v-if="true">
-            <button class="bg-[#4B69FD] px-8 py-2 text-white rounded-xl text-sm font-semibold">
+            <button
+              class="bg-[#4B69FD] px-8 py-2 text-white rounded-xl text-sm font-semibold"
+              @click="confirmFilters"
+            >
               Confirm
             </button>
             <div class="border-r h-4 w-2 border-border-gray"></div>
@@ -77,12 +80,12 @@
         class="sm:border border-border-gray sm:rounded-xl sm:pb-8 sm:mb-12"
       >
         <p class="hidden sm:block px-6 mt-4 text-custom-blue font-bol">Filter by</p>
-        <div class="flex items-center mb-8 sm:mb-4 mt-12 sm:mt-4 px-6 gap-2">
+        <div v-if="isLogged" class="flex items-center mb-8 sm:mb-4 mt-12 sm:mt-4 px-6 gap-2">
           <label for="my-quizzes" class="text-[#101828] font-semibold">My quizzes</label>
           <input id="my-quizzes" type="checkbox" class="mr-2 scale-125" />
         </div>
 
-        <div class="flex items-center mb-4 px-6 gap-2">
+        <div v-if="isLogged" class="flex items-center mb-4 px-6 gap-2">
           <label for="not-completed" class="text-[#101828] font-semibold">Not completed</label>
           <input id="not-completed" type="checkbox" class="mr-2 scale-125" />
         </div>
@@ -92,13 +95,21 @@
           <p class="text-sm font-semibold border-t border-border-gray pt-4">Levels</p>
           <div class="flex flex-wrap gap-2 mt-2">
             <button
-              class="py-2 px-6 rounded-3xl"
+              class="py-2 px-6 rounded-3xl font-semibold"
               v-for="level in diffLevels"
               :key="level.id"
-              :style="{
-                color: level.textColor,
-                background: level.backgroundColor
-              }"
+              :style="
+                isSelected(level.id, 'selectedDifficulties')
+                  ? {
+                      color: 'white',
+                      background: level.textColor
+                    }
+                  : {
+                      color: level.textColor,
+                      background: level.backgroundColor
+                    }
+              "
+              @click="toggleSelection(level.id, 'selectedDifficulties')"
             >
               {{ level.name }}
             </button>
@@ -108,7 +119,16 @@
         <div class="px-6">
           <p class="text-sm font-semibold border-t border-border-gray pt-4">Categories</p>
           <div class="flex flex-wrap gap-2 mt-2 font-semibold text-custom-gray">
-            <button class="py-1 px-3 rounded" v-for="category in categories" :key="category.id">
+            <button
+              class="px-4 py-2 font-semibold"
+              v-for="category in filteredCategories"
+              :key="category.id"
+              :class="{
+                'bg-transparent': !isSelected(category.id, 'selectedCategories'),
+                'bg-black text-white rounded-full': isSelected(category.id, 'selectedCategories')
+              }"
+              @click="toggleSelection(category.id, 'selectedCategories')"
+            >
               {{ category.name }}
             </button>
           </div>
@@ -118,7 +138,7 @@
         <SortList class="flex flex-col gap-8 px-6 mt-12 justify-center" />
       </div>
       <div class="sm:border border-border-gray sm:rounded-xl sm:pb-8 sm:mb-12 hidden sm:block">
-        <SortList class="flex flex-col gap-8 px-6 mt-12 justify-center" />
+        <SortList ref="sortListRef" class="flex flex-col gap-8 px-6 mt-12 justify-center" />
       </div>
     </div>
   </TheModal>
@@ -142,21 +162,77 @@ export default {
     categories: Object,
     diffLevels: Object
   },
-  emits: ['update:show', 'update:activeButton'],
+  emits: ['update:show', 'update:activeButton', 'apply-filters'],
   data() {
     return {
       activeButton: 'filter',
       search: '',
-      isFocused: false
+      isFocused: false,
+      selectedCategories: [],
+      selectedDifficulties: [],
+      isLogged: false,
+      computed: {
+        filteredCategories() {
+          if (!this.search) {
+            return this.categories
+          }
+          const searchLower = this.search.toLowerCase()
+          return this.categories.filter((category) =>
+            category.name.toLowerCase().includes(searchLower)
+          )
+        }
+      }
     }
   },
+  mounted() {
+    this.initialLoginCheck()
+  },
+  computed: {
+    filteredCategories() {
+      if (!this.search) {
+        return this.categories
+      }
+      const searchLower = this.search.toLowerCase()
+      return this.categories.filter((category) => category.name.toLowerCase().includes(searchLower))
+    }
+  },
+
   methods: {
+    initialLoginCheck() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn')
+      if (isLoggedIn) {
+        this.isLogged = true
+      }
+    },
+    toggleSelection(itemId, selectedArray) {
+      const index = this[selectedArray].indexOf(itemId)
+      if (index > -1) {
+        this[selectedArray].splice(index, 1)
+      } else {
+        this[selectedArray].push(itemId)
+      }
+    },
+
+    isSelected(itemId, selectedArray) {
+      return this[selectedArray].includes(itemId)
+    },
+
     setActiveButton(button) {
       this.activeButton = button
       this.$emit('update:activeButton', button)
     },
     close() {
       this.$emit('update:show', false)
+    },
+    confirmFilters() {
+      const selectedSort = this.$refs.sortListRef.sort
+
+      this.$emit('apply-filters', {
+        categories: this.selectedCategories,
+        difficulties: this.selectedDifficulties,
+        sort: selectedSort
+      })
+      this.close()
     }
   }
 }

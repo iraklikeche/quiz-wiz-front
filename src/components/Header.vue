@@ -158,10 +158,12 @@ export default {
       username: ''
     }
   },
-  mounted() {
+  beforeMount() {
     this.initialLoginCheck()
+  },
+  mounted() {
     document.addEventListener('click', this.handleClickOutside)
-    if (this.isLogged) {
+    if (this.isLogged && localStorage.getItem('isLoggedIn')) {
       this.getUserData()
     }
   },
