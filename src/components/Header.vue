@@ -184,7 +184,6 @@ export default {
       } catch (err) {
         if (err.response?.status === 401 && localStorage.getItem('isLoggedIn')) {
           localStorage.removeItem('isLoggedIn')
-          // this.isLogged = false
         }
       }
     },
