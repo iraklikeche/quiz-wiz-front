@@ -170,18 +170,7 @@ export default {
       isFocused: false,
       selectedCategories: [],
       selectedDifficulties: [],
-      isLogged: false,
-      computed: {
-        filteredCategories() {
-          if (!this.search) {
-            return this.categories
-          }
-          const searchLower = this.search.toLowerCase()
-          return this.categories.filter((category) =>
-            category.name.toLowerCase().includes(searchLower)
-          )
-        }
-      }
+      isLogged: false
     }
   },
   mounted() {
@@ -224,15 +213,13 @@ export default {
     close() {
       this.$emit('update:show', false)
     },
-    confirmFilters() {
-      const selectedSort = this.$refs.sortListRef.sort
 
+    confirmFilters() {
       this.$emit('apply-filters', {
         categories: this.selectedCategories,
         difficulties: this.selectedDifficulties,
-        sort: selectedSort
+        sort: this.selectedSort
       })
-      this.close()
     }
   }
 }
