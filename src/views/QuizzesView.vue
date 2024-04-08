@@ -205,6 +205,7 @@ export default {
       try {
         const res = await getQuizzes(url)
         this.quizzes = res.data.data
+        console.log(this.quizzes)
       } catch (err) {
         console.error('Failed to fetch quizzes:', err)
       }

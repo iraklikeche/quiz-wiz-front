@@ -19,9 +19,8 @@
                 {{ category.name }}
               </p>
             </div>
-            <p class="text-[#667085] text-sm font-semibold leading-8">
-              Can you put the discoveries in order, from the oldest to <br />
-              the newest one? 🧠
+            <p class="text-[#667085] text-sm font-semibold leading-6 sm:w-4/5">
+              {{ quiz.entryQuestion }}
             </p>
           </div>
           <div class="sm:hidden">
@@ -50,16 +49,14 @@
             Start quizz
           </button>
         </div>
-        <div class="hidden sm:block">
+        <div class="hidden sm:block max-w-80">
           <img :src="quiz.image" class="rounded-xl" />
         </div>
       </div>
       <div class="border-t mt-10 hidden sm:block">
         <p class="font-bold text-lg my-4">Instruction</p>
         <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci voluptate tempore ab!
-          Blanditiis error ipsum ratione, vitae repellendus reiciendis, dolore maxime libero in,
-          quibusdam voluptate commodi. Natus nam beatae deserunt ea.
+          {{ quiz.instruction }}
         </p>
       </div>
     </div>
@@ -111,7 +108,6 @@ export default {
       try {
         const res = await getSingleQuiz(this.$route.params.id)
         this.quiz = res.data.data
-        console.log(this.quiz)
       } catch (err) {
         console.log(err)
       }

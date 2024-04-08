@@ -85,7 +85,10 @@
           ref="avatar"
         >
           <div class="bg-white p-6 rounded-lg shadow-lg min-w-[19rem] flex flex-col pt-10">
-            <TheAvatar />
+            <div>
+              <TheAvatar v-if="!avatar" />
+              <img :src="avatar" v-else class="w-12" />
+            </div>
             <h4 class="text-sm font-bold mt-4">{{ username }}</h4>
             <div class="flex justify-between items-center">
               <p class="text-sm text-custom-light-gray">{{ email }}</p>
@@ -155,7 +158,8 @@ export default {
       isLogged: false,
       showProfile: false,
       email: '',
-      username: ''
+      username: '',
+      avatar: ''
     }
   },
   beforeMount() {
@@ -179,8 +183,10 @@ export default {
     async getUserData() {
       try {
         const data = await getUser()
-        this.email = data.data.email
-        this.username = data.data.username
+        console.log(data.data.data)
+        this.email = data.data.data.email
+        this.username = data.data.data.username
+        this.avatar = data.data.data.avatar
       } catch (err) {
         if (err.response?.status === 401 && localStorage.getItem('isLoggedIn')) {
           localStorage.removeItem('isLoggedIn')
