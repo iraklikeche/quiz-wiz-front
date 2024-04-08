@@ -158,10 +158,12 @@ export default {
       username: ''
     }
   },
-  mounted() {
+  beforeMount() {
     this.initialLoginCheck()
+  },
+  mounted() {
     document.addEventListener('click', this.handleClickOutside)
-    if (this.isLogged) {
+    if (this.isLogged && localStorage.getItem('isLoggedIn')) {
       this.getUserData()
     }
   },
@@ -182,6 +184,7 @@ export default {
       } catch (err) {
         if (err.response?.status === 401 && localStorage.getItem('isLoggedIn')) {
           localStorage.removeItem('isLoggedIn')
+          // this.isLogged = false
         }
       }
     },

@@ -98,18 +98,18 @@
               class="py-2 px-6 rounded-3xl font-semibold"
               v-for="level in diffLevels"
               :key="level.id"
-              :style="{
-                color: level.textColor,
-                background: level.backgroundColor
-              }"
+              :style="
+                isSelected(level.id, 'selectedDifficulties')
+                  ? {
+                      color: 'white',
+                      background: level.textColor
+                    }
+                  : {
+                      color: level.textColor,
+                      background: level.backgroundColor
+                    }
+              "
               @click="toggleSelection(level.id, 'selectedDifficulties')"
-              :class="{
-                'border-transparent': !isSelected(level.id, 'selectedDifficulties'),
-                'px-4 py-2 bg-black text-white rounded-full': isSelected(
-                  level.name,
-                  'selectedDifficulties'
-                )
-              }"
             >
               {{ level.name }}
             </button>
@@ -121,7 +121,7 @@
           <div class="flex flex-wrap gap-2 mt-2 font-semibold text-custom-gray">
             <button
               class="px-4 py-2 font-semibold"
-              v-for="category in categories"
+              v-for="category in filteredCategories"
               :key="category.id"
               :class="{
                 'bg-transparent': !isSelected(category.id, 'selectedCategories'),
@@ -170,11 +170,31 @@ export default {
       isFocused: false,
       selectedCategories: [],
       selectedDifficulties: [],
-      isLogged: false
+      isLogged: false,
+      computed: {
+        filteredCategories() {
+          if (!this.search) {
+            return this.categories
+          }
+          const searchLower = this.search.toLowerCase()
+          return this.categories.filter((category) =>
+            category.name.toLowerCase().includes(searchLower)
+          )
+        }
+      }
     }
   },
   mounted() {
     this.initialLoginCheck()
+  },
+  computed: {
+    filteredCategories() {
+      if (!this.search) {
+        return this.categories
+      }
+      const searchLower = this.search.toLowerCase()
+      return this.categories.filter((category) => category.name.toLowerCase().includes(searchLower))
+    }
   },
 
   methods: {

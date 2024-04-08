@@ -182,20 +182,16 @@ export default {
         queryParams.set('difficulties', filters.difficulties.join(','))
       }
 
-      // if (filters.sort) {
-      //   queryParams.append('sort', filters.sort.toLowerCase())
-      // }
+
       const sortMapping = {
         'A-Z': 'alphabet',
         'Z-A': 'reverse-alphabet',
         Newest: 'newest',
         Oldest: 'oldest'
-        // Add other mappings as necessary
       }
       if (filters.sort) {
-        // Use the mapping to convert frontend labels to backend identifiers
-        const sortParam = sortMapping[filters.sort] || filters.sort // Fallback to the original value just in case
-        queryParams.append('sort', sortParam.toLowerCase()) // Ensure lowercase for backend
+        const sortParam = sortMapping[filters.sort] || filters.sort 
+        queryParams.append('sort', sortParam.toLowerCase()) 
       }
 
       this.$router
