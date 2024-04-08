@@ -45,15 +45,11 @@
             All Quizzes
           </li>
           <li
+            class="text-custom-light-gray text-sm font-semibold cursor-pointer pb-2"
             v-for="category in categories"
             :key="category.id"
-            class="text-custom-light-gray text-sm font-semibold cursor-pointer pb-2"
-            :class="{
-              'border-b-2': true,
-              'border-transparent': !isSelected(category.name),
-              'border-black': isSelected(category.name)
-            }"
-            @click="toggleSelection(category.name)"
+            :class="categoryClasses(category.id)"
+            @click="toggleSelection(category.id)"
           >
             {{ category.name }}
           </li>
@@ -65,7 +61,7 @@
       </div>
       <div class="mt-4 sm:mt-0 px-2 sm:px-0 sm:pt-8">
         <button
-          @click="showModal = true"
+          @click="showModal = !showModal"
           class="group flex gap-2 items-center border border-custom-light-gray border-opacity-60 py-2 px-4 rounded-xl hover:bg-[#4B69FD] hover:bg-opacity-10 hover:scale-105 hover:border-custom-blue"
         >
           <Filter />
@@ -141,6 +137,7 @@ export default {
       isFocused: false,
       scrollAmount: 0,
       searchQuery: '',
+      selectedCategories: [],
 
       showModal: false,
       activeButton: 'filter',
@@ -157,70 +154,64 @@ export default {
       this.getQuizzesData(this.searchQuery)
     }
   },
+
   mounted() {
     this.getInitialData()
-    const queryParams = this.$route.query
-    if (queryParams.categories || queryParams.difficulties) {
-      let filters = {
-        categories: queryParams.categories ? queryParams.categories.split(',') : [],
-        difficulties: queryParams.difficulties ? queryParams.difficulties.split(',') : []
-      }
-      this.applyFilters(filters)
+    let queryParams = { ...this.$route.query }
+    if (queryParams.categories) {
+      this.selectedCategories = queryParams.categories.split(',')
+    }
+    if (Object.keys(queryParams).length > 0) {
+      this.applyFilters()
     } else {
       this.getQuizzesData()
     }
   },
+
   methods: {
-    async applyFilters(filters) {
-      let queryParams = new URLSearchParams()
+    applyFilters(filters = null) {
+      let queryParams = {}
 
-      if (filters.categories && filters.categories.length > 0) {
-        queryParams.set('categories', filters.categories.join(','))
+      if (filters) {
+        queryParams = {
+          ...(filters.categories && { categories: filters.categories.join(',') }),
+          ...(filters.difficulties && { difficulties: filters.difficulties.join(',') })
+        }
+      } else {
+        queryParams = {
+          ...(this.searchQuery && { search: this.searchQuery }),
+          ...(this.selectedCategories.length > 0 && {
+            categories: this.selectedCategories.join(',')
+          })
+        }
       }
 
-      if (filters.difficulties && filters.difficulties.length > 0) {
-        queryParams.set('difficulties', filters.difficulties.join(','))
-      }
-
-
-      const sortMapping = {
-        'A-Z': 'alphabet',
-        'Z-A': 'reverse-alphabet',
-        Newest: 'newest',
-        Oldest: 'oldest'
-      }
-      if (filters.sort) {
-        const sortParam = sortMapping[filters.sort] || filters.sort 
-        queryParams.append('sort', sortParam.toLowerCase()) 
-      }
-
-      this.$router
-        .push({ path: this.$route.path, query: queryParams.toString() })
-        .catch((err) => {})
-      await this.getQuizzesData(null, queryParams.toString())
+      this.$router.push({ query: queryParams }).catch((err) => {})
+      this.getQuizzesData(queryParams)
     },
 
-    async getQuizzesData(searchQuery = '', filterQuery = '') {
+    async getQuizzesData(filters = {}) {
+      let queryString = Object.keys(filters)
+        .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
+        .join('&')
+
+      let url = `/api/quizzes?${queryString}`
       try {
-        let url = '/api/quizzes'
-        if (searchQuery) {
-          const searchParam = `search=${searchQuery}`
-          url += filterQuery ? `?${filterQuery}&${searchParam}` : `?${searchParam}`
-        } else if (filterQuery) {
-          url += `?${filterQuery}`
-        }
         const res = await getQuizzes(url)
         this.quizzes = res.data.data
       } catch (err) {
-        console.log(err)
+        console.error('Failed to fetch quizzes:', err)
       }
     },
 
     removeAllQueriesFromUrl() {
-      this.$router.replace({ query: {} })
+      this.$router.replace({ query: {} }).then(() => {
+        this.selectedCategories = []
+        this.getQuizzesData()
+      })
       this.allQuizzesSelected = true
-      this.selectedItems = []
     },
+
     async getInitialData() {
       try {
         const [categoriesResponse, difficultyLevelsResponse] = await Promise.all([
@@ -236,13 +227,11 @@ export default {
 
     debounce(func, wait) {
       let timeout
-
       return function (...args) {
         const later = () => {
           clearTimeout(timeout)
           func.apply(this, args)
         }
-
         clearTimeout(timeout)
         timeout = setTimeout(later, wait)
       }
@@ -251,16 +240,21 @@ export default {
     closeInput() {
       this.searchQuery = ''
     },
-    toggleSelection(genre) {
-      const index = this.selectedItems.indexOf(genre)
+
+    toggleSelection(categoryId) {
+      const index = this.selectedCategories.findIndex(
+        (id) => id.toString() === categoryId.toString()
+      )
       if (index > -1) {
-        this.selectedItems.splice(index, 1)
-      } else {
-        this.allQuizzesSelected = false
-        this.selectedItems.push(genre)
+        this.selectedCategories.splice(index, 1)
+      } else if (!this.selectedCategories.includes(categoryId.toString())) {
+        this.selectedCategories.push(categoryId.toString())
       }
-      this.updateUrl()
+      this.allQuizzesSelected = this.selectedCategories.length === 0
+
+      this.applyFilters()
     },
+
     updateUrl() {
       if (this.selectedItems.length === 0) {
         this.removeAllQueriesFromUrl()
@@ -268,11 +262,10 @@ export default {
         this.$router.replace({ query: { id: this.selectedItems } })
       }
     },
-    isSelected(genre) {
-      return (
-        this.selectedItems.includes(genre) || (this.allQuizzesSelected && genre === 'All Quizzes')
-      )
+    isSelected(categoryId) {
+      return this.selectedCategories.includes(String(categoryId))
     },
+
     scrollLeft() {
       this.scroll(-100)
     },
@@ -296,6 +289,15 @@ export default {
     searchQuery(newQuery) {
       this.$router.push({ query: { ...this.$route.query, search: newQuery } }).catch((err) => {})
       this.debouncedSearch(newQuery)
+    }
+  },
+  computed: {
+    categoryClasses() {
+      return (categoryId) => ({
+        'border-b-2': true,
+        'border-transparent': !this.isSelected(categoryId),
+        'border-black': this.isSelected(categoryId)
+      })
     }
   }
 }
