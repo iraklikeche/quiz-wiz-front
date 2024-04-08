@@ -191,9 +191,15 @@ export default {
     },
 
     async getQuizzesData(filters = {}) {
-      let queryString = Object.keys(filters)
-        .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
-        .join('&')
+      let queryString = ''
+
+      if (typeof filters === 'string') {
+        queryString = `search=${encodeURIComponent(filters)}`
+      } else if (typeof filters === 'object') {
+        queryString = Object.keys(filters)
+          .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
+          .join('&')
+      }
 
       let url = `/api/quizzes?${queryString}`
       try {
