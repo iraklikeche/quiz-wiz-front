@@ -3,12 +3,12 @@
     :name="'fade-in'"
     :show="showModal"
     :modalContentClasses="'bg-white rounded-lg shadow-lg w-full h-full'"
-    class="fixed sm:absolute sm:w-[66rem] inset-0 z-50 sm:bottom-auto sm:left-[20.5%] sm:border-2 sm:rounded-xl sm:border-border-gray sm:bg-white sm:pt-2"
+    class="fixed sm:absolute sm:w-[66rem] inset-0 z-[1000] sm:bottom-auto sm:left-[20.5%] sm:border-2 sm:rounded-xl sm:border-border-gray sm:bg-white sm:pt-2 overflow-y-scroll sm:overflow-auto"
   >
     <div
       class="sm:hidden text-sm font-semibold text-custom-gray flex justify-between items-center bg-[#D0D5DD] p-6 bg-opacity-20"
     >
-      <button>Reset</button>
+      <button @click="resetFilters">Reset</button>
       <button class="uppercase">Filters</button>
       <CloseModalBtn @click="close" />
     </div>
@@ -17,10 +17,12 @@
       <div
         class="sm:bg-[#D0D5DD] sm:bg-opacity-30 sm:rounded-xl sm:flex items-center sm:px-4 sm:py-4 sm:gap-6"
       >
-        <button class="hidden sm:block bg-black py-2 px-6 text-white rounded-xl mr-4 text-sm">
+        <button
+          class="hidden sm:block bg-black py-2 px-6 text-white rounded-xl mr-4 sm:mr-0 text-sm"
+        >
           Filter
         </button>
-        <div class="absolute left-6 sm:left-44 top-1/2 transform -translate-y-1/2">
+        <div class="absolute left-6 sm:left-40 top-1/2 transform -translate-y-1/2">
           <Search />
         </div>
         <div class="flex sm:w-full items-center px-4 sm:bg-white sm:rounded-3xl">
@@ -34,7 +36,7 @@
           />
         </div>
         <div class="flex items-center gap-2">
-          <div class="sm:flex items-center gap-2 hidden" v-if="true">
+          <div class="sm:flex items-center gap-2 hidden" v-if="isFilterSelected">
             <button
               class="bg-[#4B69FD] px-8 py-2 text-white rounded-xl text-sm font-semibold"
               @click="confirmFilters"
@@ -42,9 +44,13 @@
               Confirm
             </button>
             <div class="border-r h-4 w-2 border-border-gray"></div>
-            <button class="text-custom-light-gray text-sm">Reset all filter</button>
+            <button class="text-custom-light-gray text-sm whitespace-nowrap" @click="resetFilters">
+              Reset all filter
+            </button>
           </div>
-          <div class="hidden sm:block cursor-pointer"><CloseModalBtn @click="close" /></div>
+          <div class="hidden sm:block cursor-pointer">
+            <CloseModalBtn @click="close" class="w-3" />
+          </div>
         </div>
       </div>
     </div>
@@ -82,12 +88,22 @@
         <p class="hidden sm:block px-6 mt-4 text-custom-blue font-bol">Filter by</p>
         <div v-if="isLogged" class="flex items-center mb-8 sm:mb-4 mt-12 sm:mt-4 px-6 gap-2">
           <label for="my-quizzes" class="text-[#101828] font-semibold">My quizzes</label>
-          <input id="my-quizzes" type="checkbox" class="mr-2 scale-125" />
+          <input
+            id="my-quizzes"
+            type="checkbox"
+            class="mr-2 scale-125"
+            v-model="isMyQuizzesChecked"
+          />
         </div>
 
         <div v-if="isLogged" class="flex items-center mb-4 px-6 gap-2">
           <label for="not-completed" class="text-[#101828] font-semibold">Not completed</label>
-          <input id="not-completed" type="checkbox" class="mr-2 scale-125" />
+          <input
+            id="not-completed"
+            type="checkbox"
+            class="mr-2 scale-125"
+            v-model="isNotCompletedChecked"
+          />
         </div>
 
         <!-- *********************** LEVELS ******************************** -->
@@ -96,7 +112,7 @@
           <div class="flex flex-wrap gap-2 mt-2">
             <button
               class="py-2 px-6 rounded-3xl font-semibold"
-              v-for="level in diffLevels"
+              v-for="level in filteredCategoriesAndLevels.filteredDiffLevels"
               :key="level.id"
               :style="
                 isSelected(level.id, 'selectedDifficulties')
@@ -116,12 +132,12 @@
           </div>
         </div>
         <!-- ******************** CATEGORIES  ************************* -->
-        <div class="px-6">
+        <div class="px-6 bg-white sm:bg-transparent">
           <p class="text-sm font-semibold border-t border-border-gray pt-4">Categories</p>
           <div class="flex flex-wrap gap-2 mt-2 font-semibold text-custom-gray">
             <button
               class="px-4 py-2 font-semibold"
-              v-for="category in filteredCategories"
+              v-for="category in filteredCategoriesAndLevels.filteredCategories"
               :key="category.id"
               :class="{
                 'bg-transparent': !isSelected(category.id, 'selectedCategories'),
@@ -145,6 +161,23 @@
         />
       </div>
     </div>
+    <div
+      class="sm:hidden bg-white py-4 shadow-2xl px-4 flex gap-4 items-center"
+      v-if="isFilterSelected"
+    >
+      <button
+        class="bg-[#4B69FD] px-8 py-3 text-white rounded-lg text-sm font-semibold flex-1"
+        @click="confirmFilters"
+      >
+        Confirm
+      </button>
+      <button
+        @click="resetFilters"
+        class="text-custom-gray border border-border-gray px-8 py-3 rounded-lg font-bold text-sm"
+      >
+        Cancel
+      </button>
+    </div>
   </TheModal>
 </template>
 
@@ -163,10 +196,15 @@ export default {
   },
   props: {
     showModal: Boolean,
-    categories: Object,
-    diffLevels: Object
+    categories: Array,
+    diffLevels: Array
   },
   emits: ['update:show', 'update:activeButton', 'apply-filters'],
+  watch: {
+    selectedSort(newVal) {
+      this.sort = newVal
+    }
+  },
   data() {
     return {
       activeButton: 'filter',
@@ -175,23 +213,47 @@ export default {
       selectedCategories: [],
       selectedDifficulties: [],
       isLogged: false,
-      selectedSort: ''
+      selectedSort: '',
+      isMyQuizzesChecked: false,
+      isNotCompletedChecked: false,
+      showFilterConfirmation: false
     }
   },
   mounted() {
     this.initialLoginCheck()
   },
   computed: {
-    filteredCategories() {
-      if (!this.search) {
-        return this.categories
-      }
+    filteredCategoriesAndLevels() {
       const searchLower = this.search.toLowerCase()
-      return this.categories.filter((category) => category.name.toLowerCase().includes(searchLower))
+      return {
+        filteredCategories: this.categories.filter((category) =>
+          category.name.toLowerCase().includes(searchLower)
+        ),
+        filteredDiffLevels: this.diffLevels.filter((level) =>
+          level.name.toLowerCase().includes(searchLower)
+        )
+      }
+    },
+    isFilterSelected() {
+      return (
+        this.selectedCategories.length > 0 ||
+        this.selectedDifficulties.length > 0 ||
+        this.selectedSort !== '' ||
+        this.isMyQuizzesChecked ||
+        this.isNotCompletedChecked
+      )
     }
   },
 
   methods: {
+    resetFilters() {
+      this.selectedCategories = []
+      this.selectedDifficulties = []
+      this.selectedSort = ''
+      this.isMyQuizzesChecked = false
+      this.isNotCompletedChecked = false
+      this.$refs.sortListRef.resetSort()
+    },
     initialLoginCheck() {
       const isLoggedIn = localStorage.getItem('isLoggedIn')
       if (isLoggedIn) {
@@ -225,6 +287,7 @@ export default {
         difficulties: this.selectedDifficulties,
         sort: this.selectedSort.toLowerCase()
       })
+      this.close()
     }
   }
 }

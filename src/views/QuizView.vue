@@ -122,7 +122,7 @@ export default {
   methods: {
     updateSelection(question, selectedId) {
       if (question.selectedAnswerId === selectedId) {
-        question.selectedAnswerId = null // Allows for deselecting
+        question.selectedAnswerId = null
       } else {
         question.selectedAnswerId = selectedId
       }
