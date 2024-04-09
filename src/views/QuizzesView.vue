@@ -175,7 +175,8 @@ export default {
       if (filters) {
         queryParams = {
           ...(filters.categories && { categories: filters.categories.join(',') }),
-          ...(filters.difficulties && { difficulties: filters.difficulties.join(',') })
+          ...(filters.difficulties && { difficulties: filters.difficulties.join(',') }),
+          ...(filters.sort && { sort: filters.sort })
         }
       } else {
         queryParams = {

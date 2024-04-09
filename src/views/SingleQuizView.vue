@@ -43,11 +43,12 @@
               <Time />
             </QuizInfoList>
           </ul>
-          <button
-            class="bg-[#4B69FD] py-4 rounded-xl text-white font-semibold w-full sm:w-4/5 mt-auto"
+          <RouterLink
+            :to="{ name: 'test', params: { id: quiz.id } }"
+            class="bg-[#4B69FD] py-4 rounded-xl text-white font-semibold w-full sm:w-4/5 mt-auto flex justify-center"
           >
             Start quizz
-          </button>
+          </RouterLink>
         </div>
         <div class="hidden sm:block max-w-80">
           <img :src="quiz.image" class="rounded-xl" />
