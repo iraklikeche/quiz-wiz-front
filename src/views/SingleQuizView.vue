@@ -115,21 +115,27 @@ export default {
       try {
         const res = await getSingleQuiz(this.$route.params.id)
         this.quiz = res.data.data
+        if (this.quiz && this.quiz.categories) {
+          const categoryIds = this.quiz.categories.map((category) => category.id)
+          await this.getSimilarQuiz(categoryIds, this.quiz.id)
+        }
       } catch (err) {
         console.log(err)
       }
     },
-    async getSimilarQuiz() {
+
+    async getSimilarQuiz(categoryIds, excludeQuizId) {
       try {
-        const res = await getSimilarQuizzes(this.$route.params.id)
+        const res = await getSimilarQuizzes(categoryIds, excludeQuizId) // Updated to include excludeQuizId
         this.similarQuiz = res.data.data
+        console.log(this.similarQuiz)
       } catch (err) {
         console.log(err)
       }
     },
+
     async fetchData() {
       await this.getQuizData()
-      await this.getSimilarQuiz()
     }
   },
   watch: {
