@@ -183,7 +183,6 @@ export default {
     async getUserData() {
       try {
         const data = await getUser()
-        console.log(data.data.data)
         this.email = data.data.data.email
         this.username = data.data.data.username
         this.avatar = data.data.data.avatar

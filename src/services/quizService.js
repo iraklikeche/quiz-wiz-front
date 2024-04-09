@@ -15,3 +15,7 @@ export async function getAllCategories() {
 export async function getAllDifficultyLevels() {
   return await apiClient.get('/api/difficulty-levels')
 }
+
+export async function getSimilarQuizzes(id) {
+  return await apiClient.get(`/api/quizzes/${id}/similar`)
+}

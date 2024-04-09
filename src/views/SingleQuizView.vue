@@ -2,7 +2,7 @@
   <Header />
   <div
     v-if="quiz"
-    class="flex flex-col sm:grid grid-cols-[65fr_35fr] gap-10 sm:gap-2 justify-between sm:px-20"
+    class="flex flex-col sm:grid grid-cols-[65fr_35fr] gap-10 sm:gap-4 justify-between sm:px-20"
   >
     <div>
       <div class="flex gap-10 sm:gap-4 sm:mt-10 justify-between">
@@ -65,8 +65,13 @@
     <div class="px-4 mt-16 sm:mt-10">
       <p class="text-custom-light-gray font-semibold mb-4 sm:hidden">Similar quizzes</p>
       <div class="grid grid-cols-1 gap-8">
-        <!-- <Card class="bg-[#D0D5DD] bg-opacity-20" />
-        <Card class="bg-[#D0D5DD] bg-opacity-20" /> -->
+        <RouterLink
+          :to="{ name: 'quiz', params: { id: similar.id } }"
+          v-for="similar in similarQuiz"
+          :key="similar.id"
+        >
+          <Card class="bg-[#D0D5DD] bg-opacity-20" :quiz="similar" />
+        </RouterLink>
       </div>
     </div>
   </div>
@@ -83,7 +88,7 @@ import Time from '@/components/icons/quiz/Time.vue'
 import Card from '@/components/Card.vue'
 import Footer from '@/components/Footer.vue'
 import QuizInfoList from '@/components/QuizInfoList.vue'
-import { getSingleQuiz } from '@/services/quizService.js'
+import { getSingleQuiz, getSimilarQuizzes } from '@/services/quizService.js'
 
 export default {
   components: {
@@ -98,11 +103,12 @@ export default {
   },
   data() {
     return {
-      quiz: null
+      quiz: null,
+      similarQuiz: null
     }
   },
   mounted() {
-    this.getQuizData()
+    this.fetchData()
   },
   methods: {
     async getQuizData() {
@@ -112,6 +118,23 @@ export default {
       } catch (err) {
         console.log(err)
       }
+    },
+    async getSimilarQuiz() {
+      try {
+        const res = await getSimilarQuizzes(this.$route.params.id)
+        this.similarQuiz = res.data.data
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async fetchData() {
+      await this.getQuizData()
+      await this.getSimilarQuiz()
+    }
+  },
+  watch: {
+    '$route.params.id'() {
+      this.fetchData()
     }
   }
 }
