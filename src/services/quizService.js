@@ -15,3 +15,12 @@ export async function getAllCategories() {
 export async function getAllDifficultyLevels() {
   return await apiClient.get('/api/difficulty-levels')
 }
+
+export async function getSimilarQuizzes(categoryIds, excludeQuizId) {
+  const params = new URLSearchParams({
+    categoryIds: categoryIds.join(','),
+    excludeQuizId: excludeQuizId
+  }).toString()
+  const response = await apiClient.get(`/api/quizzes/similar?${params}`)
+  return response
+}
