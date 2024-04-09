@@ -48,8 +48,25 @@
 
       <div class="flex items-center justify-between gap-4 mt-2 pl-1">
         <div class="flex gap-2">
-          <Field name="remember" type="checkbox" value="true" class="scale-125" />
-          <label class="text-custom-gray text-sm">Remember for 30 days</label>
+          <div class="flex gap-4 items-center">
+            <label
+              class="relative flex items-center rounded-full cursor-pointer text-[#344054] text-sm gap-2"
+              htmlFor="customStyle"
+            >
+              <Field
+                name="remember"
+                type="checkbox"
+                value="true"
+                class="before:content[''] peer relative h-6 w-6 cursor-pointer appearance-none rounded-full border border-gray-900/20 bg-gray-900/10 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:scale-105 hover:before:opacity-0"
+                :serverError="errors.agreed_to_terms"
+              />
+              <span
+                class="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-[6%] -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100"
+              >
+                <Checkbox /> </span
+              >Remember for 30 days
+            </label>
+          </div>
         </div>
         <div>
           <RouterLink :to="{ name: 'forgot' }" class="text-custom-gray text-sm"
@@ -75,6 +92,7 @@ import loginImage from '@/assets/imgs/sessions/login.png'
 import AccountLinks from '@/components/AccountLinks.vue'
 import CustomInput from '@/components/form/CustomInput.vue'
 import TheToast from '@/components/TheToast.vue'
+import Checkbox from '@/components/icons/Checkbox.vue'
 
 import { Form, Field } from 'vee-validate'
 import {
@@ -91,7 +109,8 @@ export default {
     CustomInput,
     Form,
     Field,
-    TheToast
+    TheToast,
+    Checkbox
   },
   props: {
     verified: {
