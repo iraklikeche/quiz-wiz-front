@@ -138,7 +138,11 @@
         <SortList class="flex flex-col gap-8 px-6 mt-12 justify-center" />
       </div>
       <div class="sm:border border-border-gray sm:rounded-xl sm:pb-8 sm:mb-12 hidden sm:block">
-        <SortList ref="sortListRef" class="flex flex-col gap-8 px-6 mt-12 justify-center" />
+        <SortList
+          ref="sortListRef"
+          class="flex flex-col gap-8 px-6 mt-12 justify-center"
+          @update:sort="selectedSort = $event"
+        />
       </div>
     </div>
   </TheModal>
@@ -170,7 +174,8 @@ export default {
       isFocused: false,
       selectedCategories: [],
       selectedDifficulties: [],
-      isLogged: false
+      isLogged: false,
+      selectedSort: ''
     }
   },
   mounted() {
@@ -218,7 +223,7 @@ export default {
       this.$emit('apply-filters', {
         categories: this.selectedCategories,
         difficulties: this.selectedDifficulties,
-        sort: this.selectedSort
+        sort: this.selectedSort.toLowerCase()
       })
     }
   }

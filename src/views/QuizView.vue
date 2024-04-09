@@ -1,59 +1,64 @@
 <!--********************** It is just blueprint ************************** -->
 <template>
-  <div class="p-6 px-20">
-    <header class="">
-      <h1 class="text-4xl font-bold text-center">Timeline of Discoveries</h1>
+  <div class="p-6 px-4" v-if="quiz">
+    <header class="px-16 mb-24">
+      <h1 class="text-4xl font-bold text-center">{{ quiz.title }}</h1>
       <div class="text-sm text-gray-600 text-center mt-2">
-        History • World • 10 Questions • 15 Points • 169 plays • 5m
+        <ul class="flex flex-wrap gap-4 mt-8">
+          <li class="flex items-center gap-2">
+            <ThePin />
+            <span v-for="category in quiz.categories" :key="category.id" class="flex"
+              >{{ category.name }} </span
+            >•
+          </li>
+          <li class="flex items-center gap-2">
+            <Question /> {{ quiz.numberOfQuestions }} Questions
+          </li>
+
+          <li class="flex items-center gap-2"><Points /> {{ quiz.totalPoints }} Points</li>
+          <li class="flex items-center gap-2"><Time /> {{ quiz.totalTime }}m</li>
+          <li class="flex items-center gap-2"><Plays /> 169 plays</li>
+        </ul>
       </div>
     </header>
-    <div class="grid grid-cols-[70fr_30fr] gap-8">
-      <div class="mt-6">
+    <div class="sm:grid grid-cols-[70fr_30fr] gap-8">
+      <div class="mt-6" v-if="quiz.questions">
         <div class="flex justify-between items-center mb-8">
-          <div class="text-gray-700 text-sm">Question 1 - Points 2</div>
+          <div class="text-sm font-bold">
+            <span class="text-custom-blue">Question - 1</span> |
+            <span class="text-[#E72A8B]">Points - 2</span>
+          </div>
         </div>
-
-        <div v-for="(question, index) in questions" :key="index" class="mb-4">
+        <div v-for="question in quiz.questions" :key="question.id" class="mb-4">
           <div class="text-lg font-medium mb-2">
             {{ question.text }}
           </div>
           <div class="flex flex-col">
-            <label v-for="(option, oIndex) in question.options" :key="oIndex" class="block mb-2">
-              <input
-                type="radio"
-                :value="option"
-                v-model="question.selected"
-                class="hidden"
-                :id="'option-' + index + '-' + oIndex"
-              />
-              <div
-                :class="[
-                  question.selected === option ? 'border-blue-500 bg-blue-100' : 'border-gray-300',
-                  'flex items-center p-4 border rounded-lg cursor-pointer'
-                ]"
-              >
-                <span class="text-gray-700">{{ option }}</span>
-                <span class="ml-auto" v-if="question.selected === option">
-                  <svg
-                    class="text-blue-500 w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M5 13l4 4L19 7"
-                    ></path>
-                  </svg>
+            <div
+              v-for="answer in question.answers"
+              :key="answer.id"
+              class="block mb-2 px-4 py-4 rounded-xl border border-custom-gray border-opacity-20"
+              :class="{
+                'border-custom-blue bg-blue-100 border-opacity-50 text-custom-blue text-opacity-80':
+                  question.selectedAnswerId === answer.id
+              }"
+            >
+              <label class="flex justify-between">
+                <span>
+                  {{ answer.text }}
                 </span>
-              </div>
-            </label>
+                <input
+                  type="checkbox"
+                  :value="answer.id"
+                  :checked="question.selectedAnswerId === answer.id"
+                  @change="updateSelection(question, answer.id)"
+                />
+              </label>
+            </div>
           </div>
         </div>
       </div>
+
       <div class="bg-white p-8 rounded-lg shadow-md w-96">
         <div class="flex flex-col items-center">
           <div class="bg-white px-8 py-4 rounded-lg shadow flex items-center flex-col">
@@ -73,23 +78,31 @@
       </div>
     </div>
   </div>
+  <div v-else>Loading...</div>
 </template>
 
 <script>
+import { getSingleQuiz } from '@/services/quizService.js'
+import ThePin from '@/components/icons/quiz/ThePin.vue'
+import Question from '@/components/icons/quiz/Question.vue'
+import Points from '@/components/icons/quiz/Points.vue'
+import Plays from '@/components/icons/quiz/Plays.vue'
+import Time from '@/components/icons/quiz/Time.vue'
+
 export default {
+  components: {
+    ThePin,
+    Question,
+    Points,
+    Plays,
+    Time
+  },
   data() {
     return {
       totalTime: 300,
       timer: null,
       startTime: 300,
-
-      questions: [
-        {
-          text: 'What is the study of medicines and their action called?',
-          options: ['Pharmacology', 'Toxicology', 'Pathology', 'Zoology'],
-          selected: []
-        }
-      ]
+      quiz: null
     }
   },
   computed: {
@@ -101,11 +114,20 @@ export default {
   },
   mounted() {
     this.startTimer()
+    this.getQuizData()
   },
   beforeUnmount() {
     this.clearTimer()
   },
   methods: {
+    updateSelection(question, selectedId) {
+      if (question.selectedAnswerId === selectedId) {
+        question.selectedAnswerId = null // Allows for deselecting
+      } else {
+        question.selectedAnswerId = selectedId
+      }
+    },
+
     startTimer() {
       this.timer = setInterval(() => {
         if (this.totalTime > 0) {
@@ -128,6 +150,15 @@ export default {
       console.log(`Time passed: ${timePassed} seconds`)
 
       console.log(this.questions)
+    },
+    async getQuizData() {
+      try {
+        const res = await getSingleQuiz(this.$route.params.id)
+        this.quiz = res.data.data
+        console.log(this.quiz)
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }

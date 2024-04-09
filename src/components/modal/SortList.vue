@@ -47,7 +47,9 @@ export default {
   methods: {
     toggleSort(sort) {
       this.sort = this.sort === sort ? '' : sort
+      this.$emit('update:sort', this.sort)
     },
+
     isSelectedSort(sort) {
       return this.sort === sort
     }
