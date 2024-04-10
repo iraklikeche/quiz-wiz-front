@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import { getSingleQuiz } from '@/services/quizService.js'
+import { getSingleQuiz, submitQuizAnswers } from '@/services/quizService.js'
 import ThePin from '@/components/icons/quiz/ThePin.vue'
 import Question from '@/components/icons/quiz/Question.vue'
 import Points from '@/components/icons/quiz/Points.vue'
@@ -157,14 +157,11 @@ export default {
       const maxSelections = this.getMaxSelections(question)
 
       if (index === -1) {
-        // If attempting to select a new answer and selections are at the max, remove the last selection
         if (question.selectedAnswerIds.length >= maxSelections) {
-          question.selectedAnswerIds.pop() // Adjust based on your requirements: pop() for last, shift() for first
+          question.selectedAnswerIds.pop()
         }
-        // Add the new selection
         question.selectedAnswerIds.push(answerId)
       } else {
-        // If the answer is already selected, remove it
         question.selectedAnswerIds.splice(index, 1)
       }
     },
@@ -183,26 +180,30 @@ export default {
       clearInterval(this.timer)
       this.timer = null
     },
-    submitAnswers() {
+
+    async submitAnswers() {
       this.clearTimer()
 
       const timePassed = this.startTime - this.totalTime
-
       console.log(`Time passed: ${timePassed} seconds`)
+      const payload = {
+        timeSpent: timePassed,
+        answers: this.quiz.questions.map((question) => ({
+          questionId: question.id,
+          selectedAnswerIds: question.selectedAnswerIds
+        }))
+      }
 
-      const userResponses = this.quiz.questions.map((question) => ({
-        questionId: question.id,
-        selectedAnswers: question.selectedAnswerIds.map((answerId) => {
-          const answer = question.answers.find((a) => a.id === answerId)
-          return {
-            answerId: answer.id,
-            isCorrect: answer.isCorrect === 1
-          }
-        })
-      }))
+      try {
+        console.log(payload)
 
-      console.log(userResponses)
+        const response = await submitQuizAnswers(this.quiz.id, payload)
+        console.log('Submission successful:', response.data)
+      } catch (error) {
+        console.error('Failed to submit quiz answers:', error)
+      }
     },
+
     async getQuizData() {
       try {
         const res = await getSingleQuiz(this.$route.params.id)

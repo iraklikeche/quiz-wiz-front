@@ -24,3 +24,7 @@ export async function getSimilarQuizzes(categoryIds, excludeQuizId) {
   const response = await apiClient.get(`/api/quizzes/similar?${params}`)
   return response
 }
+
+export async function submitQuizAnswers(quizId, payload) {
+  return await apiClient.post(`/api/quizzes/${quizId}/submit`, payload)
+}
