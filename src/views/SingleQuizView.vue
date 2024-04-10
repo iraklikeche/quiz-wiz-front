@@ -8,9 +8,17 @@
       <div class="flex gap-10 sm:gap-4 sm:mt-10 justify-between">
         <div class="mt-4 sm:mt-0 px-4 sm:px-0 flex flex-col gap-4 sm:gap-8">
           <div class="flex flex-col gap-4">
-            <p class="text-custom-blue text-sm font-semibold sm:hidden">category</p>
+            <div class="flex gap-2 sm:hidden">
+              <p
+                class="text-custom-blue text-sm font-semibold"
+                v-for="category in quiz.categories"
+                :key="category.id"
+              >
+                {{ category.name }}
+              </p>
+            </div>
             <h1 class="text-4xl font-bold font-raleway">{{ quiz.title }}</h1>
-            <div class="flex gap-2">
+            <div class="sm:flex gap-2 hidden">
               <p
                 class="text-custom-blue text-sm font-semibold"
                 v-for="category in quiz.categories"
@@ -126,7 +134,7 @@ export default {
 
     async getSimilarQuiz(categoryIds, excludeQuizId) {
       try {
-        const res = await getSimilarQuizzes(categoryIds, excludeQuizId) // Updated to include excludeQuizId
+        const res = await getSimilarQuizzes(categoryIds, excludeQuizId)
         this.similarQuiz = res.data.data
         console.log(this.similarQuiz)
       } catch (err) {
