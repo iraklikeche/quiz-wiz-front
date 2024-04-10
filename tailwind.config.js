@@ -11,6 +11,7 @@ export default {
         'custom-light-gray': '#667085',
         'border-gray': '#D0D5DD',
         'custom-blue': '#4B69FD',
+        'modal-gray': '#344054',
         'toast-green': '#01E17B',
         'toast-yellow': '#FFD21F',
         'toast-red': '#F04349'
