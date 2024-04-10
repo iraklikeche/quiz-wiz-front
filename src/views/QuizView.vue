@@ -1,4 +1,3 @@
-<!--********************** It is just blueprint ************************** -->
 <template>
   <div class="p-6 px-4" v-if="quiz">
     <header class="px-16 mb-24">
@@ -34,7 +33,7 @@
             {{ question.text }}
           </div>
           <div class="flex flex-col">
-            <label
+            <!-- <label
               v-for="answer in question.answers"
               :key="answer.id"
               class="flex justify-between items-center mb-2 px-4 py-4 rounded-xl border border-custom-gray border-opacity-20"
@@ -42,7 +41,7 @@
                 'border-custom-blue bg-blue-100 border-opacity-50 text-custom-blue text-opacity-80':
                   question.selectedAnswerId === answer.id
               }"
-              htmlFor="customStyle"
+              :htmlFor="'customStyle-' + answer.id"
             >
               <span>
                 {{ answer.text }}
@@ -52,11 +51,40 @@
                 :value="answer.id"
                 :checked="question.selectedAnswerId === answer.id"
                 @change="updateSelection(question, answer.id)"
+                :id="'customStyle-' + answer.id"
                 class="before:content[''] peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-gray-900/20 bg-gray-900/10 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-custom-blue checked:bg-custom-blue checked:before:bg-custom-blue hover:scale-105 hover:before:opacity-0"
-                id="customStyle"
               />
               <span
+                v-if="question.selectedAnswerId === answer.id"
                 class="absolute text-white transition-opacity opacity-0 pointer-events-none top-[60%] left-[90%] -translate-y-2/4 -translate-x-1/3 peer-checked:opacity-100"
+              >
+                <Checkbox />
+              </span>
+            </label> -->
+            <label
+              v-for="answer in question.answers"
+              :key="answer.id"
+              class="relative flex justify-between items-center mb-2 px-4 py-4 rounded-xl border border-custom-gray border-opacity-20"
+              :class="{
+                'border-custom-blue bg-blue-100 border-opacity-50 text-custom-blue text-opacity-80':
+                  question.selectedAnswerId === answer.id
+              }"
+              :for="'customStyle-' + answer.id"
+            >
+              <span>
+                {{ answer.text }}
+              </span>
+              <input
+                type="checkbox"
+                :value="answer.id"
+                :checked="question.selectedAnswerId === answer.id"
+                @change="updateSelection(question, answer.id)"
+                class="peer relative h-4 w-4 cursor-pointer appearance-none rounded-full border border-gray-900/20 bg-gray-900/10 transition-all checked:border-custom-blue checked:bg-custom-blue checked:before:bg-custom-blue hover:scale-105"
+                :id="'customStyle-' + answer.id"
+              />
+              <span
+                v-if="question.selectedAnswerId === answer.id"
+                class="absolute text-white transition-opacity pointer-events-none top-1/2 left-[93%] -translate-y-2/4 -translate-x-[20%] opacity-100"
               >
                 <Checkbox />
               </span>
