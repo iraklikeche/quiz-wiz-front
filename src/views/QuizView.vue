@@ -1,4 +1,59 @@
 <template>
+  <TheModal
+    :name="'fade-in'"
+    :show="showModal"
+    @update:show="showModal = $event"
+    :modalContentClasses="'bg-white p-4 rounded-lg shadow-lg w-full max-w-xs'"
+    class="backdrop-blur bg-black bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center"
+  >
+    <div v-if="quiz">
+      <div class="flex flex-col items-center">
+        <div class="px-2 self-end">
+          <CloseModalBtn @click="showModal = false" class="cursor-pointer w-3" />
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <CompleteModal />
+          <h4>Quiz finished</h4>
+          <p>Your result</p>
+        </div>
+      </div>
+      <div class="mt-4">
+        <div class="border-b mb-2 pb-2">
+          <p class="text-modal-gray font-medium text-sm mb-1">Quiz Name</p>
+          <p class="font-medium text-sm">{{ quiz.title }}</p>
+        </div>
+        <div class="border-b mb-2 pb-2">
+          <p class="text-modal-gray font-medium text-sm mb-1">Quiz Level</p>
+          <p
+            class="text-sm font-medium"
+            :style="{
+              color: quiz.difficultyLevel.textColor
+            }"
+          >
+            {{ quiz.difficultyLevel.name }}
+          </p>
+        </div>
+        <div class="border-b mb-2 pb-2">
+          <p class="text-modal-gray font-medium text-sm mb-1">Time</p>
+          <p class="font-medium text-sm">{{ formattedTime }}</p>
+        </div>
+        <div class="border-b mb-2 pb-2">
+          <p class="text-modal-gray font-medium text-sm mb-1">Mistakes</p>
+          <p class="text-[#E64646] font-medium text-sm">Mistakes</p>
+        </div>
+        <div class="mb-4 pb-2">
+          <p class="text-modal-gray font-medium text-sm mb-1">Right answers</p>
+          <p class="font-medium text-sm text-[#12B76A]">right answers</p>
+        </div>
+      </div>
+      <RouterLink
+        :to="{ name: 'home' }"
+        class="bg-custom-blue w-full py-2 rounded-lg text-white font-semibold flex items-center justify-center"
+      >
+        Back to home
+      </RouterLink>
+    </div>
+  </TheModal>
   <div class="p-6 px-4 sm:px-20" v-if="quiz">
     <header class="px-16 mb-24">
       <h1 class="text-4xl font-bold text-center">{{ quiz.title }}</h1>
@@ -109,6 +164,9 @@ import Plays from '@/components/icons/quiz/Plays.vue'
 import Time from '@/components/icons/quiz/Time.vue'
 import Checkbox from '@/components/icons/Checkbox.vue'
 import Info from '@/components/icons/Info.vue'
+import TheModal from '@/components/modal/TheModal.vue'
+import CompleteModal from '@/components/icons/quiz/CompleteModal.vue'
+import CloseModalBtn from '@/components/icons/CloseModalBtn.vue'
 
 export default {
   components: {
@@ -118,28 +176,36 @@ export default {
     Plays,
     Time,
     Checkbox,
-    Info
+    Info,
+    TheModal,
+    CompleteModal,
+    CloseModalBtn
   },
   data() {
     return {
-      totalTime: 300,
+      totalTime: null,
       timer: null,
-      startTime: 300,
-      quiz: null
+      startTime: null,
+      quiz: null,
+      showModal: true
     }
   },
   computed: {
     formattedTime() {
-      const minutes = Math.floor(this.totalTime / 60)
-      const seconds = this.totalTime % 60
-      return `${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`
+      if (this.totalTime !== null) {
+        const minutes = Math.floor(this.totalTime / 60)
+        const seconds = this.totalTime % 60
+        return `${minutes.toString().padStart(2, '0')} : ${seconds.toString().padStart(2, '0')}`
+      } else {
+        return '00:00'
+      }
     },
+
     hasTwoCorrectAnswers() {
       return this.quiz.question.answers.filter((answer) => answer.isCorrect === 1).length === 2
     }
   },
   mounted() {
-    this.startTimer()
     this.getQuizData()
   },
   beforeUnmount() {
@@ -172,7 +238,7 @@ export default {
           this.totalTime -= 1
         } else {
           this.clearTimer()
-          console.log('finish')
+          this.submitAnswers()
         }
       }, 1000)
     },
@@ -213,6 +279,9 @@ export default {
           question.selectedAnswerIds = []
         })
         this.quiz = quizData
+        this.totalTime = quizData.totalTime * 60
+        this.startTime = quizData.totalTime * 60
+        this.startTimer()
         console.log(this.quiz)
       } catch (err) {
         console.log(err)
