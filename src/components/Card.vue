@@ -16,24 +16,33 @@
         </p>
       </div>
       <div class="flex justify-between items-center">
-        <h2 class="text-[#101828] font-bold text-2xl">{{ quiz.title }}</h2>
+        <h2 class="text-[#101828] font-bold text-2xl">
+          {{ quiz.title }}
+        </h2>
         <span class="opacity-0 group-hover:opacity-100">
           <ArrowTilted class="w-4 stroke-black" />
         </span>
       </div>
 
       <div class="flex gap-4">
-        <InfoDisplay label="Completed" value="DATE">
-          <Completed />
+        <InfoDisplay
+          label="Completed"
+          :value="quiz.hasUserCompletedQuiz ? `${formattedCompletionDate}` : 'Date,Time'"
+        >
+          <Completed v-if="quiz.hasUserCompletedQuiz" />
+          <NotCompleted v-else />
         </InfoDisplay>
         <InfoDisplay label="Total Minutes" :value="`${quiz.totalTime}Minutes`" />
-        <InfoDisplay label="Total Users" value="8" />
+        <InfoDisplay label="Total Users" :value="`${quiz.totalAttempts}`" />
       </div>
       <div class="flex gap-4">
         <InfoDisplay label="Difficulty Level" :value="quiz.difficultyLevel.name">
           <DifficultyLevel />
         </InfoDisplay>
-        <InfoDisplay label="Points" value="10/10">
+        <InfoDisplay
+          label="Points"
+          :value="quiz.hasUserCompletedQuiz ? `${quiz.userScore}/${quiz.totalPoints}` : 'N/A'"
+        >
           <PointsMainCard />
         </InfoDisplay>
       </div>
@@ -49,6 +58,7 @@ import ArrowTilted from '@/components/icons/ArrowTilted.vue'
 import DifficultyLevel from '@/components/icons/quiz/DifficultyLevel.vue'
 import Points from './icons/quiz/Points.vue'
 import PointsMainCard from '@/components/icons/quiz/PointsMainCard.vue'
+import NotCompleted from './icons/quiz/NotCompleted.vue'
 
 export default {
   components: {
@@ -57,7 +67,8 @@ export default {
     ArrowTilted,
     DifficultyLevel,
     Points,
-    PointsMainCard
+    PointsMainCard,
+    NotCompleted
   },
   props: {
     quiz: {
@@ -68,6 +79,32 @@ export default {
   data() {
     return {
       resetImage
+    }
+  },
+  computed: {
+    formattedCompletionDate() {
+      if (!this.quiz.hasUserCompletedQuiz) return 'Date, Time'
+
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ]
+      const date = new Date(this.quiz.completedAt)
+      const day = date.getDate()
+      const monthIndex = date.getMonth()
+      const year = date.getFullYear()
+
+      return `${day} ${months[monthIndex]}, ${year}`
     }
   }
 }

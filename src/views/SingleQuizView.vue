@@ -52,11 +52,13 @@
             </QuizInfoList>
           </ul>
           <RouterLink
+            v-if="!quiz.hasUserCompletedQuiz"
             :to="{ name: 'test', params: { id: quiz.id } }"
             class="bg-[#4B69FD] py-4 rounded-xl text-white font-semibold w-full sm:w-4/5 mt-auto flex justify-center"
           >
             Start quizz
           </RouterLink>
+          <p class="text-red-500 font-semibold">You have already done this quiz.</p>
         </div>
         <div class="hidden sm:block max-w-80">
           <img :src="quiz.image" class="rounded-xl" />

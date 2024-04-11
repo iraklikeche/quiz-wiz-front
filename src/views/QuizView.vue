@@ -3,10 +3,10 @@
     :name="'fade-in'"
     :show="showModal"
     @update:show="showModal = $event"
-    :modalContentClasses="'bg-white p-4 rounded-lg shadow-lg w-full max-w-xs'"
-    class="backdrop-blur bg-black bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center"
+    :modalContentClasses="'bg-white p-4 rounded-lg shadow-lg w-full max-w-xs min-w-96'"
+    class="backdrop-blur bg-black bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center max-w"
   >
-    <div v-if="quiz">
+    <div v-if="quiz" class="">
       <div class="flex flex-col items-center">
         <div class="px-2 self-end">
           <CloseModalBtn @click="showModal = false" class="cursor-pointer w-3" />
@@ -39,11 +39,11 @@
         </div>
         <div class="border-b mb-2 pb-2">
           <p class="text-modal-gray font-medium text-sm mb-1">Mistakes</p>
-          <p class="text-[#E64646] font-medium text-sm">Mistakes</p>
+          <p class="text-[#E64646] font-medium text-sm">{{ wrong }}</p>
         </div>
         <div class="mb-4 pb-2">
           <p class="text-modal-gray font-medium text-sm mb-1">Right answers</p>
-          <p class="font-medium text-sm text-[#12B76A]">right answers</p>
+          <p class="font-medium text-sm text-[#12B76A]">{{ right }}</p>
         </div>
       </div>
       <RouterLink
@@ -133,10 +133,17 @@
         </div>
       </div>
 
-      <div class="bg-white p-8 rounded-lg shadow-md w-96">
+      <div
+        class="bg-white relative p-8 rounded-lg shadow-md w-96 max-h-64 border border-border-gray border-opacity-50"
+      >
+        <div class="absolute -top-3 left-1/2 bg-white -translate-x-1/2 z-20">
+          <span
+            class="text-sm font-bold text-custom-gray border border-border-gray px-8 py-3 rounded-lg"
+            >Timer</span
+          >
+        </div>
         <div class="flex flex-col items-center">
-          <div class="bg-white px-8 py-4 rounded-lg shadow flex items-center flex-col">
-            <span class="text-sm font-semibold text-gray-500 mb-1">Timer</span>
+          <div class="bg-white px-8 py-4 rounded-lg flex items-center flex-col">
             <span class="text-5xl font-semibold text-gray-800">{{ formattedTime }}</span>
           </div>
 
@@ -187,7 +194,9 @@ export default {
       timer: null,
       startTime: null,
       quiz: null,
-      showModal: true
+      showModal: false,
+      right: null,
+      wrong: null
     }
   },
   computed: {
@@ -265,6 +274,9 @@ export default {
 
         const response = await submitQuizAnswers(this.quiz.id, payload)
         console.log('Submission successful:', response.data)
+        this.showModal = true
+        this.right = response.data.score
+        this.wrong = this.quiz.totalPoints - this.right
       } catch (error) {
         console.error('Failed to submit quiz answers:', error)
       }
