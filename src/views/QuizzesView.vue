@@ -169,14 +169,19 @@ export default {
   },
 
   methods: {
-    applyFilters(filters = null) {
+    applyFilters(filters = {}) {
       let queryParams = {}
 
       if (filters) {
         queryParams = {
+          ...queryParams,
           ...(filters.categories && { categories: filters.categories.join(',') }),
           ...(filters.difficulties && { difficulties: filters.difficulties.join(',') }),
-          ...(filters.sort && { sort: filters.sort })
+          ...(filters.sort && { sort: filters.sort }),
+          ...(typeof filters.my_quizzes !== 'undefined' && { my_quizzes: filters.my_quizzes }),
+          ...(typeof filters.not_completed !== 'undefined' && {
+            not_completed: filters.not_completed
+          })
         }
       } else {
         queryParams = {
@@ -192,15 +197,9 @@ export default {
     },
 
     async getQuizzesData(filters = {}) {
-      let queryString = ''
-
-      if (typeof filters === 'string') {
-        queryString = `search=${encodeURIComponent(filters)}`
-      } else if (typeof filters === 'object') {
-        queryString = Object.keys(filters)
-          .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
-          .join('&')
-      }
+      let queryString = Object.keys(filters)
+        .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
+        .join('&')
 
       let url = `/api/quizzes?${queryString}`
       try {

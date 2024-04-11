@@ -58,7 +58,7 @@
           >
             Start quizz
           </RouterLink>
-          <p class="text-red-500 font-semibold">You have already done this quiz.</p>
+          <p class="text-red-500 font-semibold" v-else>You have already done this quiz.</p>
         </div>
         <div class="hidden sm:block max-w-80">
           <img :src="quiz.image" class="rounded-xl" />
@@ -125,6 +125,7 @@ export default {
       try {
         const res = await getSingleQuiz(this.$route.params.id)
         this.quiz = res.data.data
+        console.log(this.quiz)
         if (this.quiz && this.quiz.categories) {
           const categoryIds = this.quiz.categories.map((category) => category.id)
           await this.getSimilarQuiz(categoryIds, this.quiz.id)

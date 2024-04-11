@@ -285,7 +285,9 @@ export default {
       this.$emit('apply-filters', {
         categories: this.selectedCategories,
         difficulties: this.selectedDifficulties,
-        sort: this.selectedSort.toLowerCase()
+        sort: this.selectedSort.toLowerCase(),
+        my_quizzes: this.isMyQuizzesChecked,
+        not_completed: this.isNotCompletedChecked
       })
       this.close()
     }
