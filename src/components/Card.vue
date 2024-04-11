@@ -32,7 +32,14 @@
           <Completed v-if="quiz.hasUserCompletedQuiz" />
           <NotCompleted v-else />
         </InfoDisplay>
-        <InfoDisplay label="Total Minutes" :value="`${quiz.totalTime}Minutes`" />
+        <InfoDisplay
+          label="Total Minutes"
+          :value="
+            quiz.hasUserCompletedQuiz
+              ? `${quiz.timeSpent < 60 ? 1 : Math.floor(quiz.timeSpent / 60)} Minutes`
+              : 'N/A'
+          "
+        />
         <InfoDisplay label="Total Users" :value="`${quiz.totalAttempts}`" />
       </div>
       <div class="flex gap-4">
