@@ -1,5 +1,5 @@
 <template>
-  <Header>
+  <Header :isFocused="isFocused">
     <div class="relative bg-[#f9fafb] rounded-xl">
       <div class="absolute left-2 top-1/2 transform -translate-y-1/2">
         <Search />
@@ -11,7 +11,7 @@
           placeholder="Search"
           @focus="isFocused = true"
           @blur="isFocused = false"
-          class="outline-none pl-8 py-2 rounded-xl bg-transparent w-32 transition-all duration-300 focus:w-[10rem] sm:focus:w-[21.5rem]"
+          class="outline-none pl-8 py-2 rounded-xl bg-transparent w-32 transition-all duration-300 focus:w-[21rem] sm:focus:w-[21.5rem]"
         />
         <button
           class="bg-white py-[0.9rem] px-4 rounded-r-xl border-l"
@@ -26,15 +26,18 @@
   <div class="sm:px-20">
     <div class="sm:flex items-center">
       <div class="flex flex-grow gap-2 pt-10 items-center">
-        <button @click="scrollLeft" class="rotate-180 flex items-center justify-center pt-2">
+        <button
+          @click="scrollLeft"
+          class="rotate-180 items-center justify-center pt-2 hidden sm:flex"
+        >
           <SliderArrow />
         </button>
         <ul
-          class="flex gap-8 overflow-hidden border-b border-gray-300 max-w-[71rem]"
+          class="flex items-center gap-8 overflow-hidden border-b border-gray-300 max-w-[26rem] sm:max-w-[71rem] overflow-x-scroll sm:overflow-x-auto px-4"
           ref="scrollContainer"
         >
           <li
-            class="text-custom-light-gray text-sm font-semibold cursor-pointer pb-2"
+            class="text-custom-light-gray text-sm font-semibold cursor-pointer pb-2 whitespace-nowrap"
             :class="{
               'border-b-2': true,
               'border-transparent': !allQuizzesSelected,
@@ -55,7 +58,7 @@
           </li>
         </ul>
 
-        <button @click="scrollRight" class="pb-2">
+        <button @click="scrollRight" class="pb-2 hidden sm:block">
           <SliderArrow />
         </button>
       </div>
@@ -254,12 +257,13 @@ export default {
       )
       if (index > -1) {
         this.selectedCategories.splice(index, 1)
-      } else if (!this.selectedCategories.includes(categoryId.toString())) {
+      } else {
         this.selectedCategories.push(categoryId.toString())
       }
       this.allQuizzesSelected = this.selectedCategories.length === 0
-
-      this.applyFilters()
+      this.applyFilters({
+        categories: this.selectedCategories
+      })
     },
 
     updateUrl() {

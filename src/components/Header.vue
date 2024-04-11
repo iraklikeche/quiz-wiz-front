@@ -56,7 +56,10 @@
     class="flex justify-between items-center border-b-2 border-[#666666] border-opacity-25 px-4 sm:px-20 py-5 w-full max-h-[4.5rem]"
   >
     <div class="flex gap-20 items-center">
-      <RouterLink :to="{ name: 'home' }">
+      <RouterLink :to="{ name: 'home' }" v-show="!isFocused" class="sm:hidden">
+        <Logo />
+      </RouterLink>
+      <RouterLink :to="{ name: 'home' }" class="hidden sm:block">
         <Logo />
       </RouterLink>
       <RouterLink
@@ -121,7 +124,7 @@
         </RouterLink>
       </div>
       <div class="sm:hidden">
-        <MobileMenu @click="showModal = true" />
+        <MobileMenu @click="showModal = true" v-show="!isFocused" />
       </div>
     </div>
   </nav>
@@ -161,6 +164,9 @@ export default {
       username: '',
       avatar: ''
     }
+  },
+  props: {
+    isFocused: Boolean
   },
   beforeMount() {
     this.initialLoginCheck()
