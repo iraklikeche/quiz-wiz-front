@@ -296,9 +296,6 @@ export default {
     selectedSort(newVal) {
       this.sort = newVal
     }
-    // parentSelectedCategories(newVal) {
-    //   this.selectedCategories = [...newVal]
-    // }
   }
 }
 </script>

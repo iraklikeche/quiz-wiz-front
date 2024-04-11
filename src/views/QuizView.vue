@@ -91,7 +91,7 @@
 
           <li class="flex items-center gap-2"><Points /> {{ quiz.totalPoints }} Points</li>
           <li class="flex items-center gap-2"><Time /> {{ quiz.totalTime }}m</li>
-          <li class="flex items-center gap-2"><Plays /> 169 plays</li>
+          <li class="flex items-center gap-2"><Plays /> {{ quiz.totalAttempts }} plays</li>
         </ul>
       </div>
     </header>
@@ -101,10 +101,7 @@
           <div class="flex justify-between items-center mb-8">
             <div class="text-sm font-bold">
               <span class="text-custom-blue">Question - {{ index + 1 }}</span> |
-              <span class="text-[#E72A8B]"
-                >Points -
-                {{ question.answers.filter((answer) => answer.isCorrect === 1).length }}</span
-              >
+              <span class="text-[#E72A8B]">Points - {{ question.points }}</span>
             </div>
           </div>
           <div class="text-lg font-medium mb-2">
@@ -295,8 +292,8 @@ export default {
         const response = await submitQuizAnswers(this.quiz.id, payload)
         console.log('Submission successful:', response.data)
         this.showModal = true
-        this.right = response.data.score
-        this.wrong = this.quiz.totalPoints - this.right
+        this.right = response.data.correctQuestionsCount
+        this.wrong = this.quiz.numberOfQuestions - this.right
       } catch (error) {
         console.error('Failed to submit quiz answers:', error)
       }
