@@ -178,6 +178,8 @@
         Cancel
       </button>
     </div>
+    {{ parentSelectedCategories }}
+    {{ selectedCategories }}
   </TheModal>
 </template>
 
@@ -197,20 +199,17 @@ export default {
   props: {
     showModal: Boolean,
     categories: Array,
-    diffLevels: Array
+    diffLevels: Array,
+    parentSelectedCategories: Array
   },
   emits: ['update:show', 'update:activeButton', 'apply-filters'],
-  watch: {
-    selectedSort(newVal) {
-      this.sort = newVal
-    }
-  },
+
   data() {
     return {
       activeButton: 'filter',
       search: '',
       isFocused: false,
-      selectedCategories: [],
+      selectedCategories: this.parentSelectedCategories,
       selectedDifficulties: [],
       isLogged: false,
       selectedSort: '',
@@ -261,16 +260,17 @@ export default {
       }
     },
     toggleSelection(itemId, selectedArray) {
-      const index = this[selectedArray].indexOf(itemId)
+      const itemString = itemId.toString()
+      const index = this[selectedArray].indexOf(itemString)
       if (index > -1) {
         this[selectedArray].splice(index, 1)
       } else {
-        this[selectedArray].push(itemId)
+        this[selectedArray].push(itemString)
       }
     },
 
     isSelected(itemId, selectedArray) {
-      return this[selectedArray].includes(itemId)
+      return this[selectedArray].includes(itemId.toString())
     },
 
     setActiveButton(button) {
@@ -291,6 +291,14 @@ export default {
       })
       this.close()
     }
+  },
+  watch: {
+    selectedSort(newVal) {
+      this.sort = newVal
+    }
+    // parentSelectedCategories(newVal) {
+    //   this.selectedCategories = [...newVal]
+    // }
   }
 }
 </script>

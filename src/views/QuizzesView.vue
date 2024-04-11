@@ -64,7 +64,7 @@
       </div>
       <div class="mt-4 sm:mt-0 px-2 sm:px-0 sm:pt-8">
         <button
-          @click="showModal = !showModal"
+          @click="toggleModal"
           class="group flex gap-2 items-center border border-custom-light-gray border-opacity-60 py-2 px-4 rounded-xl hover:bg-[#4B69FD] hover:bg-opacity-10 hover:scale-105 hover:border-custom-blue"
         >
           <Filter />
@@ -82,6 +82,7 @@
         :categories="categories"
         :diffLevels="difficultyLevels"
         @apply-filters="applyFilters"
+        :parentSelectedCategories="selectedCategories"
       />
     </div>
 
@@ -172,6 +173,11 @@ export default {
   },
 
   methods: {
+    toggleModal() {
+      this.showModal = !this.showModal
+      this.tempSelectedCategories = [...this.selectedCategories]
+    },
+
     applyFilters(filters = {}) {
       let queryParams = {}
 
