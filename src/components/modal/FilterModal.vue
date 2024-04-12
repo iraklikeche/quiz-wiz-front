@@ -36,7 +36,7 @@
           />
         </div>
         <div class="flex items-center gap-2">
-          <div class="sm:flex items-center gap-2 hidden" v-if="isFilterSelected">
+          <div class="sm:flex items-center gap-2 hidden" v-if="localChangesMade">
             <button
               class="bg-[#4B69FD] px-8 py-2 text-white rounded-xl text-sm font-semibold"
               @click="confirmFilters"
@@ -178,8 +178,6 @@
         Cancel
       </button>
     </div>
-    {{ parentSelectedCategories }}
-    {{ selectedCategories }}
   </TheModal>
 </template>
 
@@ -210,17 +208,19 @@ export default {
       search: '',
       isFocused: false,
       selectedCategories: [...this.parentSelectedCategories],
-      tempSelectedCategories: [],
       selectedDifficulties: [],
+      initialSelectedDifficulties: [],
       isLogged: false,
       selectedSort: '',
       isMyQuizzesChecked: false,
       isNotCompletedChecked: false,
-      showFilterConfirmation: false
+      showFilterConfirmation: false,
+      localChangesMade: false
     }
   },
   mounted() {
     this.initialLoginCheck()
+    this.checkLocalChanges()
   },
   computed: {
     filteredCategoriesAndLevels() {
@@ -246,6 +246,13 @@ export default {
   },
 
   methods: {
+    checkLocalChanges() {
+      const initialCategories = [...this.parentSelectedCategories].sort().join(',')
+      const currentCategories = this.selectedCategories.sort().join(',')
+
+      this.localChangesMade = initialCategories !== currentCategories
+    },
+
     resetFilters() {
       this.selectedCategories = []
       this.selectedDifficulties = []
@@ -253,6 +260,7 @@ export default {
       this.isMyQuizzesChecked = false
       this.isNotCompletedChecked = false
       this.$refs.sortListRef.resetSort()
+      this.checkLocalChanges()
     },
     initialLoginCheck() {
       const isLoggedIn = localStorage.getItem('isLoggedIn')
@@ -268,6 +276,7 @@ export default {
       } else {
         this[selectedArray].push(itemString)
       }
+      this.checkLocalChanges()
     },
 
     isSelected(itemId, selectedArray) {
@@ -290,15 +299,24 @@ export default {
         my_quizzes: this.isMyQuizzesChecked,
         not_completed: this.isNotCompletedChecked
       })
+      this.localChangesMade = false
+
       this.close()
     }
   },
   watch: {
-    selectedSort(newVal) {
-      this.sort = newVal
+    selectedSort: {
+      handler(newVal) {
+        this.sort = newVal
+      },
+      immediate: true
     },
-    parentSelectedCategories(newVal) {
-      this.selectedCategories = [...newVal]
+    parentSelectedCategories: {
+      handler(newVal) {
+        this.selectedCategories = [...newVal]
+      },
+      deep: true,
+      immediate: true
     }
   }
 }

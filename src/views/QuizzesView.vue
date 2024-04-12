@@ -81,7 +81,7 @@
         @close-modal="showModal = false"
         :categories="categories"
         :diffLevels="difficultyLevels"
-        @apply-filters="applyFilters"
+        @apply-filters="handleFilterApply"
         :parentSelectedCategories="selectedCategories"
       />
     </div>
@@ -164,18 +164,18 @@ export default {
       this.getQuizzesData(this.searchQuery)
     }
   },
-
   mounted() {
     this.getInitialData()
     let queryParams = { ...this.$route.query }
-    if (queryParams.categories) {
-      this.selectedCategories = queryParams.categories.split(',')
-    }
-    if (Object.keys(queryParams).length > 0) {
-      this.applyFilters()
-    } else {
-      this.getQuizzesData()
-    }
+
+    this.selectedCategories = queryParams.categories ? queryParams.categories.split(',') : []
+    this.selectedDifficulties = queryParams.difficulties ? queryParams.difficulties.split(',') : []
+    this.selectedSort = queryParams.sort || ''
+    this.isMyQuizzesChecked = queryParams.my_quizzes === 'true'
+    this.isNotCompletedChecked = queryParams.not_completed === 'true'
+    this.allQuizzesSelected = this.selectedCategories.length === 0
+
+    this.applyFilters(queryParams)
   },
 
   methods: {
@@ -184,26 +184,19 @@ export default {
     },
 
     applyFilters(filters = {}) {
-      let queryParams = {}
+      const ensureArray = (value) => (Array.isArray(value) ? value : value ? [value] : [])
 
-      if (filters) {
-        queryParams = {
-          ...queryParams,
-          ...(filters.categories && { categories: filters.categories.join(',') }),
-          ...(filters.difficulties && { difficulties: filters.difficulties.join(',') }),
-          ...(filters.sort && { sort: filters.sort }),
-          ...(typeof filters.my_quizzes !== 'undefined' && { my_quizzes: filters.my_quizzes }),
-          ...(typeof filters.not_completed !== 'undefined' && {
-            not_completed: filters.not_completed
-          })
-        }
-      } else {
-        queryParams = {
-          ...(this.searchQuery && { search: this.searchQuery }),
-          ...(this.selectedCategories.length > 0 && {
-            categories: this.selectedCategories.join(',')
-          })
-        }
+      let categories = ensureArray(filters.categories)
+      let difficulties = ensureArray(filters.difficulties)
+
+      let queryParams = {
+        ...(categories.length && { categories: categories.join(',') }),
+        ...(difficulties.length && { difficulties: difficulties.join(',') }),
+        ...(filters.sort && { sort: filters.sort }),
+        ...(typeof filters.my_quizzes !== 'undefined' && { my_quizzes: filters.my_quizzes }),
+        ...(typeof filters.not_completed !== 'undefined' && {
+          not_completed: filters.not_completed
+        })
       }
 
       this.$router.push({ query: queryParams }).catch((err) => {})
@@ -239,8 +232,6 @@ export default {
           currentPage: res.data.meta.current_page,
           lastPage: res.data.meta.last_page
         }
-        console.log(res.data)
-        console.log(this.quizzes)
       } catch (err) {
         console.error('Failed to fetch quizzes:', err)
       }
@@ -294,6 +285,7 @@ export default {
       const index = this.selectedCategories.findIndex(
         (id) => id.toString() === categoryId.toString()
       )
+
       if (index > -1) {
         this.selectedCategories.splice(index, 1)
       } else {
@@ -333,6 +325,11 @@ export default {
     },
     handleActiveButtonChange(newActiveButton) {
       this.activeButton = newActiveButton
+    },
+    handleFilterApply(newFilters) {
+      this.selectedCategories = newFilters.categories || this.selectedCategories
+      // Handle other filters similarly if needed
+      this.applyFilters(newFilters)
     }
   },
   watch: {

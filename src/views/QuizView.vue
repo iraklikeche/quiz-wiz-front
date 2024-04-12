@@ -8,9 +8,9 @@
   >
     <div v-if="quiz" class="">
       <div class="flex flex-col items-center">
-        <div class="px-2 self-end">
+        <RouterLink :to="{ name: 'home' }" class="px-2 self-end">
           <CloseModalBtn @click="showModal = false" class="cursor-pointer w-3" />
-        </div>
+        </RouterLink>
         <div class="flex flex-col items-center gap-2">
           <CompleteModal />
           <h4>Quiz finished</h4>
@@ -64,6 +64,7 @@
         >
           Submit
         </button>
+
         <div class="px-2 pr-12 rounded-lg border py-2 border-border-gray flex flex-col">
           <span class="text-sm font-bold font-raleway">Timer</span>
           <span class="font-semibold text-gray-800 text-sm min-w-[3.2rem]">{{
@@ -172,6 +173,12 @@
           >
             Submit
           </button>
+          <RouterLink
+            :to="{ name: 'home' }"
+            class="bg-white hover:bg-[#181818] hover:text-white text-black font-bold py-3 px-12 rounded flex justify-center focus:outline-none focus:shadow-outline w-full transition duration-300 my-2"
+          >
+            Back to home
+          </RouterLink>
         </div>
       </div>
     </div>
