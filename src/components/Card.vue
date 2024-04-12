@@ -6,11 +6,15 @@
       <img :src="quiz.image" class="max-w-60 max-h-60 min-h-60" />
     </div>
     <div class="flex flex-col gap-4 mt-12">
-      <div class="flex gap-2">
+      <div class="flex gap-6">
         <p
-          class="text-custom-blue text-sm font-semibold"
-          v-for="category in quiz.categories"
+          class="text-custom-blue text-sm font-semibold relative"
+          v-for="(category, index) in quiz.categories"
           :key="category.id"
+          :class="{
+            'before:absolute before:w-1 before:h-1 before:rounded-full  before:top-1/2 before:-translate-y-1/2 before:left-full before:ml-2.5 before:bg-[#d0d5dd]':
+              index !== quiz.categories.length - 1
+          }"
         >
           {{ category.name }}
         </p>

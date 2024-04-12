@@ -97,8 +97,8 @@
     </div>
     <div class="flex items-center justify-center mt-12 mb-24">
       <button
+        v-if="pagination.currentPage < pagination.lastPage"
         @click="loadMoreQuizzes"
-        v-if="pagination.currentPage <= pagination.lastPage"
         class="bg-[#4B69FD] bg-opacity-10 py-3 px-5 rounded-lg text-custom-blue font-semibold flex gap-2 items-center"
       >
         <ArrowDown />
@@ -181,7 +181,6 @@ export default {
   methods: {
     toggleModal() {
       this.showModal = !this.showModal
-      this.tempSelectedCategories = [...this.selectedCategories]
     },
 
     applyFilters(filters = {}) {
@@ -211,7 +210,13 @@ export default {
       this.getQuizzesData(queryParams)
     },
 
-    async getQuizzesData(filters = {}) {
+    async getQuizzesData(filters = {}, isLoadMore = false) {
+      if (!isLoadMore) {
+        this.quizzes = []
+        this.pagination.currentPage = 1
+      } else {
+        filters = { ...filters, page: this.pagination.currentPage + 1 }
+      }
       filters = { ...filters, page: this.pagination.currentPage }
 
       let queryString = Object.keys(filters)
@@ -223,31 +228,25 @@ export default {
       try {
         const res = await getQuizzes(url)
 
-        // this.quizzes = [...this.quizzes, ...res.data.data]
-        // console.log(res.data)
-        // console.log(this.quizzes)
-        // this.pagination.lastPage = res.data.meta.last_page
-        // if (this.pagination.currentPage < this.pagination.lastPage) {
-        //   this.pagination.currentPage++
-        // }
-        if (res.data.data && Array.isArray(res.data.data)) {
-          this.quizzes = [...this.quizzes, ...res.data.data]
-          // Update pagination data based on the response
-          this.pagination.lastPage = res.data.meta.last_page
-          console.log(res.data)
+        this.quizzes = isLoadMore ? [...this.quizzes, ...res.data.data] : res.data.data
 
-          // Prepare for fetching the next page
-          if (this.pagination.currentPage < this.pagination.lastPage) {
-            this.pagination.currentPage++
-          }
+        this.pagination = {
+          ...this.pagination,
+          currentPage: res.data.meta.current_page,
+          lastPage: res.data.meta.last_page
         }
+        console.log(res.data)
+        console.log(this.quizzes)
       } catch (err) {
         console.error('Failed to fetch quizzes:', err)
       }
     },
 
     loadMoreQuizzes() {
-      this.getQuizzesData()
+      if (this.pagination.currentPage < this.pagination.lastPage) {
+        this.pagination.currentPage += 1
+        this.getQuizzesData({}, true)
+      }
     },
 
     removeAllQueriesFromUrl() {

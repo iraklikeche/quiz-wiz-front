@@ -209,7 +209,9 @@ export default {
       activeButton: 'filter',
       search: '',
       isFocused: false,
-      selectedCategories: this.parentSelectedCategories,
+      // selectedCategories: this.parentSelectedCategories,
+      selectedCategories: [...this.parentSelectedCategories],
+      tempSelectedCategories: [],
       selectedDifficulties: [],
       isLogged: false,
       selectedSort: '',
@@ -295,6 +297,9 @@ export default {
   watch: {
     selectedSort(newVal) {
       this.sort = newVal
+    },
+    parentSelectedCategories(newVal) {
+      this.selectedCategories = [...newVal]
     }
   }
 }
