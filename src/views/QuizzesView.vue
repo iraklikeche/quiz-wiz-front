@@ -75,6 +75,7 @@
 
     <div class="relative">
       <FilterModal
+        ref="filterModal"
         :showModal="showModal"
         @update:show="showModal = $event"
         @update:activeButton="handleActiveButtonChange($event)"
@@ -83,6 +84,7 @@
         :diffLevels="difficultyLevels"
         @apply-filters="handleFilterApply"
         :parentSelectedCategories="selectedCategories"
+        @resetAllFilters="resetFiltersInModal"
       />
     </div>
 
@@ -165,6 +167,8 @@ export default {
     }
   },
   mounted() {
+    document.addEventListener('click', this.handleClickOutside)
+
     this.getInitialData()
     let queryParams = { ...this.$route.query }
 
@@ -178,8 +182,22 @@ export default {
     this.applyFilters(queryParams)
   },
 
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside)
+  },
   methods: {
-    toggleModal() {
+    handleClickOutside(e) {
+      if (this.$refs.filterModal && !this.$refs.filterModal.$el.contains(e.target)) {
+        this.showModal = false
+      }
+    },
+    resetFiltersInModal() {
+      if (this.$refs.filterModal) {
+        this.$refs.filterModal.resetFilters()
+      }
+    },
+    toggleModal(e) {
+      e.stopPropagation()
       this.showModal = !this.showModal
     },
 
@@ -248,6 +266,9 @@ export default {
       this.$router.replace({ query: {} }).then(() => {
         this.selectedCategories = []
         this.getQuizzesData()
+        if (this.$refs.filterModal) {
+          this.$refs.filterModal.hardReset()
+        }
       })
       this.allQuizzesSelected = true
     },
@@ -328,7 +349,6 @@ export default {
     },
     handleFilterApply(newFilters) {
       this.selectedCategories = newFilters.categories || this.selectedCategories
-      // Handle other filters similarly if needed
       this.applyFilters(newFilters)
     }
   },

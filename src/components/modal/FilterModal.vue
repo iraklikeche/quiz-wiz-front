@@ -92,7 +92,7 @@
             id="my-quizzes"
             type="checkbox"
             class="mr-2 scale-125"
-            v-model="isMyQuizzesChecked"
+            v-model="filterState.myQuizzesChecked.current"
           />
         </div>
 
@@ -102,7 +102,7 @@
             id="not-completed"
             type="checkbox"
             class="mr-2 scale-125"
-            v-model="isNotCompletedChecked"
+            v-model="filterState.notCompletedChecked.current"
           />
         </div>
 
@@ -115,7 +115,7 @@
               v-for="level in filteredCategoriesAndLevels.filteredDiffLevels"
               :key="level.id"
               :style="
-                isSelected(level.id, 'selectedDifficulties')
+                isSelected(level.id, 'difficulties')
                   ? {
                       color: 'white',
                       background: level.textColor
@@ -125,7 +125,7 @@
                       background: level.backgroundColor
                     }
               "
-              @click="toggleSelection(level.id, 'selectedDifficulties')"
+              @click="toggleSelection(level.id, 'difficulties')"
             >
               {{ level.name }}
             </button>
@@ -140,10 +140,10 @@
               v-for="category in filteredCategoriesAndLevels.filteredCategories"
               :key="category.id"
               :class="{
-                'bg-transparent': !isSelected(category.id, 'selectedCategories'),
-                'bg-black text-white rounded-full': isSelected(category.id, 'selectedCategories')
+                'bg-transparent': !isSelected(category.id, 'categories'),
+                'bg-black text-white rounded-full': isSelected(category.id, 'categories')
               }"
-              @click="toggleSelection(category.id, 'selectedCategories')"
+              @click="toggleSelection(category.id, 'categories')"
             >
               {{ category.name }}
             </button>
@@ -155,7 +155,7 @@
       </div>
       <div class="sm:border border-border-gray sm:rounded-xl sm:pb-8 sm:mb-12 hidden sm:block">
         <SortList
-          :currentSort="selectedSort"
+          :currentSort="filterState.sort.current"
           ref="sortListRef"
           class="flex flex-col gap-8 px-6 mt-12 justify-center"
           @update:sort="handleSortChange"
@@ -164,7 +164,7 @@
     </div>
     <div
       class="sm:hidden bg-white py-4 shadow-2xl px-4 flex gap-4 items-center"
-      v-if="isFilterSelected"
+      v-if="localChangesMade"
     >
       <button
         class="bg-[#4B69FD] px-8 py-3 text-white rounded-lg text-sm font-semibold flex-1"
@@ -201,26 +201,26 @@ export default {
     diffLevels: Array,
     parentSelectedCategories: Array
   },
-  emits: ['update:show', 'update:activeButton', 'apply-filters'],
+  emits: ['update:show', 'update:activeButton', 'apply-filters', 'reset-filters'],
 
   data() {
     return {
       activeButton: 'filter',
       search: '',
       isFocused: false,
-      confirmedCategories: [...this.parentSelectedCategories],
-      confirmedDifficulties: [],
-
-      selectedCategories: [...this.parentSelectedCategories],
-      selectedDifficulties: [],
-
       isLogged: false,
-      selectedSort: '',
-      confirmedSort: '',
-      confirmedMyQuizzesChecked: false,
-      confirmedNotCompletedChecked: false,
-      isMyQuizzesChecked: false,
-      isNotCompletedChecked: false,
+
+      filterState: {
+        categories: {
+          current: [...this.parentSelectedCategories],
+          confirmed: [...this.parentSelectedCategories]
+        },
+        difficulties: { current: [], confirmed: [] },
+        sort: { current: '', confirmed: '' },
+        myQuizzesChecked: { current: false, confirmed: false },
+        notCompletedChecked: { current: false, confirmed: false }
+      },
+
       showFilterConfirmation: false,
       localChangesMade: false
     }
@@ -243,61 +243,69 @@ export default {
     },
     isFilterSelected() {
       return (
-        this.selectedCategories.length > 0 ||
-        this.selectedDifficulties.length > 0 ||
-        this.selectedSort !== '' ||
-        this.isMyQuizzesChecked ||
-        this.isNotCompletedChecked
+        this.filterState.categories.current.length > 0 ||
+        this.filterState.difficulties.current.length > 0 ||
+        this.filterState.sort.current !== '' ||
+        this.filterState.myQuizzesChecked.current ||
+        this.filterState.notCompletedChecked.current
       )
     }
   },
 
   methods: {
     initializeFilterStatesFromConfirmed() {
-      this.selectedCategories = [...this.confirmedCategories]
-      this.selectedDifficulties = [...this.confirmedDifficulties]
-      this.selectedSort = this.confirmedSort
-      this.isMyQuizzesChecked = this.confirmedMyQuizzesChecked
-      this.isNotCompletedChecked = this.confirmedNotCompletedChecked
+      Object.keys(this.filterState).forEach((key) => {
+        if (Array.isArray(this.filterState[key].current)) {
+          this.filterState[key].current = [...this.filterState[key].confirmed]
+        } else {
+          this.filterState[key].current = this.filterState[key].confirmed
+        }
+      })
     },
+
     checkLocalChanges() {
-      const initialCategories = [...this.parentSelectedCategories].sort().join(',')
-      const currentCategories = [...this.selectedCategories].sort().join(',')
-      const currentDifficulties = [...this.selectedDifficulties].sort().join(',')
-
-      const sortChanged = this.selectedSort !== ''
-      const myQuizzesChanged = this.isMyQuizzesChecked !== false
-      const notCompletedChanged = this.isNotCompletedChecked !== false
-
-      this.localChangesMade =
-        initialCategories !== currentCategories ||
-        currentDifficulties !== '' ||
-        sortChanged ||
-        myQuizzesChanged ||
-        notCompletedChanged
+      this.localChangesMade = Object.values(this.filterState).some(
+        (state) => JSON.stringify(state.current) !== JSON.stringify(state.confirmed)
+      )
     },
 
-    resetFilters() {
-      this.selectedCategories = [...this.confirmedCategories]
-      this.selectedDifficulties = [...this.confirmedDifficulties]
-      this.selectedSort = this.confirmedSort
-      this.isNotCompletedChecked = this.confirmedNotCompletedChecked
+    hardReset() {
+      this.filterState = {
+        categories: {
+          current: [],
+          confirmed: []
+        },
+        difficulties: { current: [], confirmed: [] },
+        sort: { current: '', confirmed: '' },
+        myQuizzesChecked: { current: false, confirmed: false },
+        notCompletedChecked: { current: false, confirmed: false }
+      }
+
+      this.search = ''
 
       this.checkLocalChanges()
     },
 
+    resetFilters() {
+      this.initializeFilterStatesFromConfirmed()
+      this.checkLocalChanges()
+    },
+
     confirmFilters() {
-      this.confirmedCategories = [...this.selectedCategories]
-      this.confirmedDifficulties = [...this.selectedDifficulties]
-      this.confirmedSort = this.selectedSort
-      this.confirmedMyQuizzesChecked = this.isMyQuizzesChecked
-      this.confirmedNotCompletedChecked = this.isNotCompletedChecked
+      Object.keys(this.filterState).forEach((key) => {
+        if (Array.isArray(this.filterState[key].current)) {
+          this.filterState[key].confirmed = [...this.filterState[key].current]
+        } else {
+          this.filterState[key].confirmed = this.filterState[key].current
+        }
+      })
+
       this.$emit('apply-filters', {
-        categories: this.selectedCategories,
-        difficulties: this.selectedDifficulties,
-        sort: this.selectedSort.toLowerCase(),
-        my_quizzes: this.isMyQuizzesChecked,
-        not_completed: this.isNotCompletedChecked
+        categories: this.filterState.categories.current,
+        difficulties: this.filterState.difficulties.current,
+        sort: this.filterState.sort.current,
+        myQuizzes: this.filterState.myQuizzesChecked.current,
+        notCompleted: this.filterState.notCompletedChecked.current
       })
       this.localChangesMade = false
 
@@ -309,36 +317,44 @@ export default {
         this.isLogged = true
       }
     },
+
     toggleSelection(itemId, selectedArray) {
-      const itemString = itemId.toString()
-      const index = this[selectedArray].indexOf(itemString)
+      const index = this.filterState[selectedArray].current.indexOf(itemId.toString())
       if (index > -1) {
-        this[selectedArray].splice(index, 1)
+        this.filterState[selectedArray].current.splice(index, 1)
       } else {
-        this[selectedArray].push(itemString)
+        this.filterState[selectedArray].current.push(itemId.toString())
       }
       this.checkLocalChanges()
     },
 
     handleSortChange(newSortValue) {
-      this.selectedSort = newSortValue
+      this.filterState.sort.current = newSortValue
+
       this.checkLocalChanges()
     },
 
     toggleMyQuizzes() {
-      this.isMyQuizzesChecked = !this.isMyQuizzesChecked
+      this.filterState.myQuizzesChecked.current = !this.filterState.myQuizzesChecked.current
       this.checkLocalChanges()
     },
 
     toggleNotCompleted() {
-      this.isNotCompletedChecked = !this.isNotCompletedChecked
+      this.filterState.notCompletedChecked.current = !this.filterState.notCompletedChecked.current
       this.checkLocalChanges()
     },
 
     isSelected(itemId, selectedArray) {
-      return this[selectedArray].includes(itemId.toString())
+      if (this.filterState[selectedArray]) {
+        if (Array.isArray(this.filterState[selectedArray].current)) {
+          return this.filterState[selectedArray].current.includes(itemId.toString())
+        } else {
+          return this.filterState[selectedArray].current
+        }
+      }
+      console.error(`Key ${selectedArray} does not exist in filterState.`)
+      return false
     },
-
     setActiveButton(button) {
       this.activeButton = button
       this.$emit('update:activeButton', button)
@@ -348,16 +364,10 @@ export default {
     }
   },
   watch: {
-    selectedSort: {
-      handler(newVal) {
-        this.sort = newVal
-      },
-      immediate: true
-    },
     parentSelectedCategories: {
       handler(newVal) {
-        this.confirmedCategories = [...newVal]
-        this.selectedCategories = [...newVal]
+        this.filterState.categories.current = [...newVal]
+        this.filterState.categories.confirmed = [...newVal]
       },
       deep: true,
       immediate: true
