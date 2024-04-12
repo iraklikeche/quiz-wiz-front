@@ -81,7 +81,7 @@
         @close-modal="showModal = false"
         :categories="categories"
         :diffLevels="difficultyLevels"
-        @apply-filters="applyFilters"
+        @apply-filters="handleFilterApply"
         :parentSelectedCategories="selectedCategories"
       />
     </div>
@@ -164,24 +164,6 @@ export default {
       this.getQuizzesData(this.searchQuery)
     }
   },
-
-  // mounted() {
-  //   this.getInitialData()
-  //   let queryParams = { ...this.$route.query }
-
-  //   if (queryParams.categories) {
-  //     this.selectedCategories = queryParams.categories.split(',')
-  //     this.allQuizzesSelected = false
-  //   } else {
-  //     this.allQuizzesSelected = true
-  //   }
-
-  //   if (Object.keys(queryParams).length > 0) {
-  //     this.applyFilters({ categories: this.selectedCategories })
-  //   } else {
-  //     this.getQuizzesData()
-  //   }
-  // },
   mounted() {
     this.getInitialData()
     let queryParams = { ...this.$route.query }
@@ -191,6 +173,7 @@ export default {
     this.selectedSort = queryParams.sort || ''
     this.isMyQuizzesChecked = queryParams.my_quizzes === 'true'
     this.isNotCompletedChecked = queryParams.not_completed === 'true'
+    this.allQuizzesSelected = this.selectedCategories.length === 0
 
     this.applyFilters(queryParams)
   },
@@ -201,16 +184,10 @@ export default {
     },
 
     applyFilters(filters = {}) {
-      let categories = Array.isArray(filters.categories)
-        ? filters.categories
-        : filters.categories
-          ? [filters.categories]
-          : []
-      let difficulties = Array.isArray(filters.difficulties)
-        ? filters.difficulties
-        : filters.difficulties
-          ? [filters.difficulties]
-          : []
+      const ensureArray = (value) => (Array.isArray(value) ? value : value ? [value] : [])
+
+      let categories = ensureArray(filters.categories)
+      let difficulties = ensureArray(filters.difficulties)
 
       let queryParams = {
         ...(categories.length && { categories: categories.join(',') }),
@@ -308,9 +285,7 @@ export default {
       const index = this.selectedCategories.findIndex(
         (id) => id.toString() === categoryId.toString()
       )
-      console.log(this.$route.query)
-      console.log(this.allQuizzesSelected)
-      console.log(this.selectedCategories)
+
       if (index > -1) {
         this.selectedCategories.splice(index, 1)
       } else {
@@ -320,9 +295,6 @@ export default {
       this.applyFilters({
         categories: this.selectedCategories
       })
-      console.log(this.$route.query)
-      console.log(this.allQuizzesSelected)
-      console.log(this.selectedCategories)
     },
 
     updateUrl() {
@@ -353,6 +325,11 @@ export default {
     },
     handleActiveButtonChange(newActiveButton) {
       this.activeButton = newActiveButton
+    },
+    handleFilterApply(newFilters) {
+      this.selectedCategories = newFilters.categories || this.selectedCategories
+      // Handle other filters similarly if needed
+      this.applyFilters(newFilters)
     }
   },
   watch: {
@@ -372,166 +349,3 @@ export default {
   }
 }
 </script>
-
-<!-- 
-
-<template>
-        <ul
-          class="flex items-center gap-8 overflow-hidden border-b border-gray-300 max-w-[26rem] sm:max-w-[71rem] overflow-x-scroll sm:overflow-x-auto px-4"
-          ref="scrollContainer"
-        >
-          <li
-            class="text-custom-light-gray text-sm font-semibold cursor-pointer pb-2 whitespace-nowrap"
-            :class="{
-              'border-b-2': true,
-              'border-transparent': !allQuizzesSelected,
-              'border-black': allQuizzesSelected
-            }"
-            @click="removeAllQueriesFromUrl"
-          >
-            All Quizzes
-          </li>
-          <li
-            class="text-custom-light-gray text-sm font-semibold cursor-pointer pb-2"
-            v-for="category in categories"
-            :key="category.id"
-            :class="categoryClasses(category.id)"
-            @click="toggleSelection(category.id)"
-          >
-            {{ category.name }}
-          </li>
-        </ul>
-
-
-      </div>
-     
-    </div>
-
-    <div class="relative">
-      <FilterModal
-        :showModal="showModal"
-        @update:show="showModal = $event"
-        @update:activeButton="handleActiveButtonChange($event)"
-        @close-modal="showModal = false"
-        :categories="categories"
-        :diffLevels="difficultyLevels"
-        @apply-filters="applyFilters"
-        :parentSelectedCategories="selectedCategories"
-      />
-    </div>
-
-   
-</template>
-
-<script>
-export default {
- 
-  data() {
-    return {
-      selectedCategories: [],
-    }
-  },
- 
-
-  mounted() {
-    this.getInitialData()
-    let queryParams = { ...this.$route.query }
-    if (queryParams.categories) {
-      this.selectedCategories = queryParams.categories.split(',')
-    }
-    if (Object.keys(queryParams).length > 0) {
-      this.applyFilters()
-    } else {
-      this.getQuizzesData()
-    }
-  },
-
-
-    applyFilters(filters = {}) {
-      let queryParams = {}
-
-      if (filters) {
-        queryParams = {
-          ...queryParams,
-          ...(filters.categories && { categories: filters.categories.join(',') }),
-          ...(filters.difficulties && { difficulties: filters.difficulties.join(',') }),
-          ...(filters.sort && { sort: filters.sort }),
-          ...(typeof filters.my_quizzes !== 'undefined' && { my_quizzes: filters.my_quizzes }),
-          ...(typeof filters.not_completed !== 'undefined' && {
-            not_completed: filters.not_completed
-          })
-        }
-      } else {
-        queryParams = {
-          ...(this.searchQuery && { search: this.searchQuery }),
-          ...(this.selectedCategories.length > 0 && {
-            categories: this.selectedCategories.join(',')
-          })
-        }
-      }
-
-      this.$router.push({ query: queryParams }).catch((err) => {})
-      this.getQuizzesData(queryParams)
-    },
-
-    async getQuizzesData(filters = {}, isLoadMore = false) {
-      if (!isLoadMore) {
-        this.quizzes = []
-        this.pagination.currentPage = 1
-      } else {
-        filters = { ...filters, page: this.pagination.currentPage + 1 }
-      }
-      filters = { ...filters, page: this.pagination.currentPage }
-
-      let queryString = Object.keys(filters)
-        .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
-        .join('&')
-
-      let url = `/api/quizzes?${queryString}`
-
-      try {
-        const res = await getQuizzes(url)
-
-        if (isLoadMore) {
-          res.data.data.forEach((quiz) => this.quizzes.push(quiz))
-        } else {
-          this.quizzes = res.data.data
-        }
-
-      } catch (err) {
-      }
-    },
-
-
-   
-    toggleSelection(categoryId) {
-      const index = this.selectedCategories.findIndex(
-        (id) => id.toString() === categoryId.toString()
-      )
-      if (index > -1) {
-        this.selectedCategories.splice(index, 1)
-      } else {
-        this.selectedCategories.push(categoryId.toString())
-      }
-      this.allQuizzesSelected = this.selectedCategories.length === 0
-      this.applyFilters({
-        categories: this.selectedCategories
-      })
-    },
-
-    updateUrl() {
-      if (this.selectedItems.length === 0) {
-        this.removeAllQueriesFromUrl()
-      } else {
-        this.$router.replace({ query: { id: this.selectedItems } })
-      }
-    },
-    isSelected(categoryId) {
-      return this.selectedCategories.includes(String(categoryId))
-    },
- 
-}
-</script>
-
-
- -->
