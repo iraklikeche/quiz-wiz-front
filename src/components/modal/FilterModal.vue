@@ -2,7 +2,7 @@
   <TheModal
     :name="'fade-in'"
     :show="showModal"
-    :modalContentClasses="'bg-white rounded-lg shadow-lg w-full h-full'"
+    :modalContentClasses="'bg-white rounded-lg shadow-lg w-full min-h-[40rem]'"
     class="fixed sm:absolute sm:w-[66rem] inset-0 z-[1000] sm:bottom-auto sm:left-[17.5%] sm:border-2 sm:rounded-xl sm:border-border-gray sm:bg-white sm:pt-2 overflow-y-scroll sm:overflow-auto"
   >
     <div
@@ -80,11 +80,8 @@
       </div>
     </div>
 
-    <div class="sm:px-4 sm:grid grid-cols-[70fr_30fr] gap-2">
-      <div
-        v-if="activeButton === 'filter'"
-        class="sm:border border-border-gray sm:rounded-xl sm:pb-8 sm:mb-12"
-      >
+    <div class="sm:px-4 sm:grid grid-cols-[70fr_30fr] gap-2 h-full">
+      <div v-if="activeButton === 'filter'" class="sm:border border-border-gray sm:rounded-xl">
         <p class="hidden sm:block px-6 mt-4 text-custom-blue font-bol">Filter by</p>
         <div v-if="isLogged" class="flex items-center mb-8 sm:mb-4 mt-12 sm:mt-4 px-6 gap-2">
           <label for="my-quizzes" class="text-[#101828] font-semibold">My quizzes</label>
@@ -151,14 +148,19 @@
         </div>
       </div>
       <div v-else class="sm:hidden">
-        <SortList class="flex flex-col gap-8 px-6 mt-12 justify-center" />
+        <SortList
+          class="flex flex-col gap-8 px-6 mt-12 justify-center"
+          :currentSort="filterState.sort.current"
+          ref="sortListRef"
+          @update:sort="handleSortChange"
+        />
       </div>
-      <div class="sm:border border-border-gray sm:rounded-xl sm:pb-8 sm:mb-12 hidden sm:block">
+      <div class="sm:border border-border-gray sm:rounded-xl sm:pb-8 hidden sm:block">
         <SortList
           :currentSort="filterState.sort.current"
           ref="sortListRef"
-          class="flex flex-col gap-8 px-6 mt-12 justify-center"
           @update:sort="handleSortChange"
+          class="flex flex-col gap-4 px-4 mt-12 justify-center"
         />
       </div>
     </div>
