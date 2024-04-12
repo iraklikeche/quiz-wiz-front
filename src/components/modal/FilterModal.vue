@@ -303,3 +303,210 @@ export default {
   }
 }
 </script>
+
+<!-- 
+
+<template>
+  <TheModal
+    :name="'fade-in'"
+    :show="showModal"
+    :modalContentClasses="'bg-white rounded-lg shadow-lg w-full h-full'"
+    class="fixed sm:absolute sm:w-[66rem] inset-0 z-[1000] sm:bottom-auto sm:left-[17.5%] sm:border-2 sm:rounded-xl sm:border-border-gray sm:bg-white sm:pt-2 overflow-y-scroll sm:overflow-auto"
+  >
+    <div
+      class="sm:hidden text-sm font-semibold text-custom-gray flex justify-between items-center bg-[#D0D5DD] p-6 bg-opacity-20"
+    >
+      <button @click="resetFilters">Reset</button>
+      <button class="uppercase">Filters</button>
+      <CloseModalBtn @click="close" />
+    </div>
+
+    
+    <div class="sm:px-4 sm:grid grid-cols-[70fr_30fr] gap-2">
+      <div
+        v-if="activeButton === 'filter'"
+        class="sm:border border-border-gray sm:rounded-xl sm:pb-8 sm:mb-12"
+      >
+        <p class="hidden sm:block px-6 mt-4 text-custom-blue font-bol">Filter by</p>
+        <div v-if="isLogged" class="flex items-center mb-8 sm:mb-4 mt-12 sm:mt-4 px-6 gap-2">
+          <label for="my-quizzes" class="text-[#101828] font-semibold">My quizzes</label>
+          <input
+            id="my-quizzes"
+            type="checkbox"
+            class="mr-2 scale-125"
+            v-model="isMyQuizzesChecked"
+          />
+        </div>
+
+        <div v-if="isLogged" class="flex items-center mb-4 px-6 gap-2">
+          <label for="not-completed" class="text-[#101828] font-semibold">Not completed</label>
+          <input
+            id="not-completed"
+            type="checkbox"
+            class="mr-2 scale-125"
+            v-model="isNotCompletedChecked"
+          />
+        </div>
+
+        <div class="my-4 px-6">
+          <p class="text-sm font-semibold border-t border-border-gray pt-4">Levels</p>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <button
+              class="py-2 px-6 rounded-3xl font-semibold"
+              v-for="level in filteredCategoriesAndLevels.filteredDiffLevels"
+              :key="level.id"
+              :style="
+                isSelected(level.id, 'selectedDifficulties')
+                  ? {
+                      color: 'white',
+                      background: level.textColor
+                    }
+                  : {
+                      color: level.textColor,
+                      background: level.backgroundColor
+                    }
+              "
+              @click="toggleSelection(level.id, 'selectedDifficulties')"
+            >
+              {{ level.name }}
+            </button>
+          </div>
+        </div>
+        <div class="px-6 bg-white sm:bg-transparent">
+          <p class="text-sm font-semibold border-t border-border-gray pt-4">Categories</p>
+          <div class="flex flex-wrap gap-2 mt-2 font-semibold text-custom-gray">
+            <button
+              class="px-4 py-2 font-semibold"
+              v-for="category in filteredCategoriesAndLevels.filteredCategories"
+              :key="category.id"
+              :class="{
+                'bg-transparent': !isSelected(category.id, 'selectedCategories'),
+                'bg-black text-white rounded-full': isSelected(category.id, 'selectedCategories')
+              }"
+              @click="toggleSelection(category.id, 'selectedCategories')"
+            >
+              {{ category.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+    
+    </div>
+  
+
+  </TheModal>
+</template>
+
+<script>
+export default {
+ 
+  props: {
+    showModal: Boolean,
+    categories: Array,
+    diffLevels: Array,
+    parentSelectedCategories: Array
+  },
+  emits: ['update:show', 'update:activeButton', 'apply-filters'],
+
+  data() {
+    return {
+      activeButton: 'filter',
+      search: '',
+      isFocused: false,
+      selectedCategories: [...this.parentSelectedCategories],
+      tempSelectedCategories: [],
+      selectedDifficulties: [],
+      isLogged: false,
+      selectedSort: '',
+      isMyQuizzesChecked: false,
+      isNotCompletedChecked: false,
+      showFilterConfirmation: false
+    }
+  },
+  mounted() {
+    this.initialLoginCheck()
+  },
+  computed: {
+    filteredCategoriesAndLevels() {
+      const searchLower = this.search.toLowerCase()
+      return {
+        filteredCategories: this.categories.filter((category) =>
+          category.name.toLowerCase().includes(searchLower)
+        ),
+        filteredDiffLevels: this.diffLevels.filter((level) =>
+          level.name.toLowerCase().includes(searchLower)
+        )
+      }
+    },
+    isFilterSelected() {
+      return (
+        this.selectedCategories.length > 0 ||
+        this.selectedDifficulties.length > 0 ||
+        this.selectedSort !== '' ||
+        this.isMyQuizzesChecked ||
+        this.isNotCompletedChecked
+      )
+    }
+  },
+
+  methods: {
+    resetFilters() {
+      this.selectedCategories = []
+      this.selectedDifficulties = []
+      this.selectedSort = ''
+      this.isMyQuizzesChecked = false
+      this.isNotCompletedChecked = false
+      this.$refs.sortListRef.resetSort()
+    },
+    initialLoginCheck() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn')
+      if (isLoggedIn) {
+        this.isLogged = true
+      }
+    },
+    toggleSelection(itemId, selectedArray) {
+      const itemString = itemId.toString()
+      const index = this[selectedArray].indexOf(itemString)
+      if (index > -1) {
+        this[selectedArray].splice(index, 1)
+      } else {
+        this[selectedArray].push(itemString)
+      }
+    },
+
+    isSelected(itemId, selectedArray) {
+      return this[selectedArray].includes(itemId.toString())
+    },
+
+    setActiveButton(button) {
+      this.activeButton = button
+      this.$emit('update:activeButton', button)
+    },
+    close() {
+      this.$emit('update:show', false)
+    },
+
+    confirmFilters() {
+      this.$emit('apply-filters', {
+        categories: this.selectedCategories,
+        difficulties: this.selectedDifficulties,
+        sort: this.selectedSort.toLowerCase(),
+        my_quizzes: this.isMyQuizzesChecked,
+        not_completed: this.isNotCompletedChecked
+      })
+      this.close()
+    }
+  },
+  watch: {
+    selectedSort(newVal) {
+      this.sort = newVal
+    },
+    parentSelectedCategories(newVal) {
+      this.selectedCategories = [...newVal]
+    }
+  }
+}
+</script>
+
+
+ -->
