@@ -209,7 +209,6 @@ export default {
       activeButton: 'filter',
       search: '',
       isFocused: false,
-      // selectedCategories: this.parentSelectedCategories,
       selectedCategories: [...this.parentSelectedCategories],
       tempSelectedCategories: [],
       selectedDifficulties: [],
