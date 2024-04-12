@@ -155,9 +155,10 @@
       </div>
       <div class="sm:border border-border-gray sm:rounded-xl sm:pb-8 sm:mb-12 hidden sm:block">
         <SortList
+          :currentSort="selectedSort"
           ref="sortListRef"
           class="flex flex-col gap-8 px-6 mt-12 justify-center"
-          @update:sort="selectedSort = $event"
+          @update:sort="handleSortChange"
         />
       </div>
     </div>
@@ -207,11 +208,17 @@ export default {
       activeButton: 'filter',
       search: '',
       isFocused: false,
+      confirmedCategories: [...this.parentSelectedCategories],
+      confirmedDifficulties: [],
+
       selectedCategories: [...this.parentSelectedCategories],
       selectedDifficulties: [],
-      initialSelectedDifficulties: [],
+
       isLogged: false,
       selectedSort: '',
+      confirmedSort: '',
+      confirmedMyQuizzesChecked: false,
+      confirmedNotCompletedChecked: false,
       isMyQuizzesChecked: false,
       isNotCompletedChecked: false,
       showFilterConfirmation: false,
@@ -246,21 +253,55 @@ export default {
   },
 
   methods: {
+    initializeFilterStatesFromConfirmed() {
+      this.selectedCategories = [...this.confirmedCategories]
+      this.selectedDifficulties = [...this.confirmedDifficulties]
+      this.selectedSort = this.confirmedSort
+      this.isMyQuizzesChecked = this.confirmedMyQuizzesChecked
+      this.isNotCompletedChecked = this.confirmedNotCompletedChecked
+    },
     checkLocalChanges() {
       const initialCategories = [...this.parentSelectedCategories].sort().join(',')
-      const currentCategories = this.selectedCategories.sort().join(',')
+      const currentCategories = [...this.selectedCategories].sort().join(',')
+      const currentDifficulties = [...this.selectedDifficulties].sort().join(',')
 
-      this.localChangesMade = initialCategories !== currentCategories
+      const sortChanged = this.selectedSort !== ''
+      const myQuizzesChanged = this.isMyQuizzesChecked !== false
+      const notCompletedChanged = this.isNotCompletedChecked !== false
+
+      this.localChangesMade =
+        initialCategories !== currentCategories ||
+        currentDifficulties !== '' ||
+        sortChanged ||
+        myQuizzesChanged ||
+        notCompletedChanged
     },
 
     resetFilters() {
-      this.selectedCategories = []
-      this.selectedDifficulties = []
-      this.selectedSort = ''
-      this.isMyQuizzesChecked = false
-      this.isNotCompletedChecked = false
-      this.$refs.sortListRef.resetSort()
+      this.selectedCategories = [...this.confirmedCategories]
+      this.selectedDifficulties = [...this.confirmedDifficulties]
+      this.selectedSort = this.confirmedSort
+      this.isNotCompletedChecked = this.confirmedNotCompletedChecked
+
       this.checkLocalChanges()
+    },
+
+    confirmFilters() {
+      this.confirmedCategories = [...this.selectedCategories]
+      this.confirmedDifficulties = [...this.selectedDifficulties]
+      this.confirmedSort = this.selectedSort
+      this.confirmedMyQuizzesChecked = this.isMyQuizzesChecked
+      this.confirmedNotCompletedChecked = this.isNotCompletedChecked
+      this.$emit('apply-filters', {
+        categories: this.selectedCategories,
+        difficulties: this.selectedDifficulties,
+        sort: this.selectedSort.toLowerCase(),
+        my_quizzes: this.isMyQuizzesChecked,
+        not_completed: this.isNotCompletedChecked
+      })
+      this.localChangesMade = false
+
+      this.close()
     },
     initialLoginCheck() {
       const isLoggedIn = localStorage.getItem('isLoggedIn')
@@ -279,6 +320,21 @@ export default {
       this.checkLocalChanges()
     },
 
+    handleSortChange(newSortValue) {
+      this.selectedSort = newSortValue
+      this.checkLocalChanges()
+    },
+
+    toggleMyQuizzes() {
+      this.isMyQuizzesChecked = !this.isMyQuizzesChecked
+      this.checkLocalChanges()
+    },
+
+    toggleNotCompleted() {
+      this.isNotCompletedChecked = !this.isNotCompletedChecked
+      this.checkLocalChanges()
+    },
+
     isSelected(itemId, selectedArray) {
       return this[selectedArray].includes(itemId.toString())
     },
@@ -289,19 +345,6 @@ export default {
     },
     close() {
       this.$emit('update:show', false)
-    },
-
-    confirmFilters() {
-      this.$emit('apply-filters', {
-        categories: this.selectedCategories,
-        difficulties: this.selectedDifficulties,
-        sort: this.selectedSort.toLowerCase(),
-        my_quizzes: this.isMyQuizzesChecked,
-        not_completed: this.isNotCompletedChecked
-      })
-      this.localChangesMade = false
-
-      this.close()
     }
   },
   watch: {
@@ -313,10 +356,22 @@ export default {
     },
     parentSelectedCategories: {
       handler(newVal) {
+        this.confirmedCategories = [...newVal]
         this.selectedCategories = [...newVal]
       },
       deep: true,
       immediate: true
+    },
+    isMyQuizzesChecked() {
+      this.checkLocalChanges()
+    },
+    isNotCompletedChecked() {
+      this.checkLocalChanges()
+    },
+    showModal(newValue) {
+      if (newValue) {
+        this.initializeFilterStatesFromConfirmed()
+      }
     }
   }
 }
