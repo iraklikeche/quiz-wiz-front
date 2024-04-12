@@ -3,7 +3,7 @@
     :name="'fade-in'"
     :show="showModal"
     :modalContentClasses="'bg-white rounded-lg shadow-lg w-full h-full'"
-    class="fixed sm:absolute sm:w-[66rem] inset-0 z-[1000] sm:bottom-auto sm:left-[20.5%] sm:border-2 sm:rounded-xl sm:border-border-gray sm:bg-white sm:pt-2 overflow-y-scroll sm:overflow-auto"
+    class="fixed sm:absolute sm:w-[66rem] inset-0 z-[1000] sm:bottom-auto sm:left-[17.5%] sm:border-2 sm:rounded-xl sm:border-border-gray sm:bg-white sm:pt-2 overflow-y-scroll sm:overflow-auto"
   >
     <div
       class="sm:hidden text-sm font-semibold text-custom-gray flex justify-between items-center bg-[#D0D5DD] p-6 bg-opacity-20"
@@ -178,6 +178,8 @@
         Cancel
       </button>
     </div>
+    {{ parentSelectedCategories }}
+    {{ selectedCategories }}
   </TheModal>
 </template>
 
@@ -197,20 +199,18 @@ export default {
   props: {
     showModal: Boolean,
     categories: Array,
-    diffLevels: Array
+    diffLevels: Array,
+    parentSelectedCategories: Array
   },
   emits: ['update:show', 'update:activeButton', 'apply-filters'],
-  watch: {
-    selectedSort(newVal) {
-      this.sort = newVal
-    }
-  },
+
   data() {
     return {
       activeButton: 'filter',
       search: '',
       isFocused: false,
-      selectedCategories: [],
+      selectedCategories: [...this.parentSelectedCategories],
+      tempSelectedCategories: [],
       selectedDifficulties: [],
       isLogged: false,
       selectedSort: '',
@@ -261,16 +261,17 @@ export default {
       }
     },
     toggleSelection(itemId, selectedArray) {
-      const index = this[selectedArray].indexOf(itemId)
+      const itemString = itemId.toString()
+      const index = this[selectedArray].indexOf(itemString)
       if (index > -1) {
         this[selectedArray].splice(index, 1)
       } else {
-        this[selectedArray].push(itemId)
+        this[selectedArray].push(itemString)
       }
     },
 
     isSelected(itemId, selectedArray) {
-      return this[selectedArray].includes(itemId)
+      return this[selectedArray].includes(itemId.toString())
     },
 
     setActiveButton(button) {
@@ -290,6 +291,14 @@ export default {
         not_completed: this.isNotCompletedChecked
       })
       this.close()
+    }
+  },
+  watch: {
+    selectedSort(newVal) {
+      this.sort = newVal
+    },
+    parentSelectedCategories(newVal) {
+      this.selectedCategories = [...newVal]
     }
   }
 }

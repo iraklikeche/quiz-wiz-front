@@ -54,8 +54,28 @@
       </RouterLink>
     </div>
   </TheModal>
+
   <div class="p-6 px-4 sm:px-20" v-if="quiz">
-    <header class="px-16 mb-24">
+    <div class="border-b pb-4 sm:hidden">
+      <div class="flex gap-4">
+        <button
+          @click="submitAnswers"
+          class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-12 rounded-lg focus:outline-none focus:shadow-outline transition duration-150 w-full"
+        >
+          Submit
+        </button>
+        <div class="px-2 pr-12 rounded-lg border py-2 border-border-gray flex flex-col">
+          <span class="text-sm font-bold font-raleway">Timer</span>
+          <span class="font-semibold text-gray-800 text-sm min-w-[3.2rem]">{{
+            formattedTime
+          }}</span>
+        </div>
+        <button class="ml-auto" @click="goBack">
+          <CloseModalBtn />
+        </button>
+      </div>
+    </div>
+    <header class="px-16 mb-24 mt-8 sm:mt-0">
       <h1 class="text-4xl font-bold text-center">{{ quiz.title }}</h1>
       <div class="text-sm text-gray-600 text-center mt-2">
         <ul class="flex sm:justify-center flex-wrap gap-4 mt-8">
@@ -71,7 +91,7 @@
 
           <li class="flex items-center gap-2"><Points /> {{ quiz.totalPoints }} Points</li>
           <li class="flex items-center gap-2"><Time /> {{ quiz.totalTime }}m</li>
-          <li class="flex items-center gap-2"><Plays /> 169 plays</li>
+          <li class="flex items-center gap-2"><Plays /> {{ quiz.totalAttempts }} plays</li>
         </ul>
       </div>
     </header>
@@ -81,10 +101,7 @@
           <div class="flex justify-between items-center mb-8">
             <div class="text-sm font-bold">
               <span class="text-custom-blue">Question - {{ index + 1 }}</span> |
-              <span class="text-[#E72A8B]"
-                >Points -
-                {{ question.answers.filter((answer) => answer.isCorrect === 1).length }}</span
-              >
+              <span class="text-[#E72A8B]">Points - {{ question.points }}</span>
             </div>
           </div>
           <div class="text-lg font-medium mb-2">
@@ -134,7 +151,7 @@
       </div>
 
       <div
-        class="bg-white relative p-8 rounded-lg shadow-md w-96 max-h-64 border border-border-gray border-opacity-50"
+        class="bg-white relative p-8 rounded-lg shadow-md w-96 max-h-64 border border-border-gray border-opacity-50 hidden sm:block"
       >
         <div class="absolute -top-3 left-1/2 bg-white -translate-x-1/2 z-20">
           <span
@@ -275,8 +292,8 @@ export default {
         const response = await submitQuizAnswers(this.quiz.id, payload)
         console.log('Submission successful:', response.data)
         this.showModal = true
-        this.right = response.data.score
-        this.wrong = this.quiz.totalPoints - this.right
+        this.right = response.data.correctQuestionsCount
+        this.wrong = this.quiz.numberOfQuestions - this.right
       } catch (error) {
         console.error('Failed to submit quiz answers:', error)
       }
@@ -298,6 +315,9 @@ export default {
       } catch (err) {
         console.log(err)
       }
+    },
+    goBack() {
+      this.$router.go(-1)
     }
   }
 }
