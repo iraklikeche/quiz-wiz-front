@@ -228,7 +228,11 @@ export default {
       try {
         const res = await getQuizzes(url)
 
-        this.quizzes = isLoadMore ? [...this.quizzes, ...res.data.data] : res.data.data
+        if (isLoadMore) {
+          res.data.data.forEach((quiz) => this.quizzes.push(quiz))
+        } else {
+          this.quizzes = res.data.data
+        }
 
         this.pagination = {
           ...this.pagination,
