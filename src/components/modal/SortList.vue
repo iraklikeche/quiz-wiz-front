@@ -3,10 +3,10 @@
     <li
       v-for="sortOption in sortOptions"
       :key="sortOption.key"
-      class="flex gap-2 items-center cursor-pointer"
+      class="flex gap-2 py-2 px-2 items-center cursor-pointer"
       :class="{
-        'border-transparent': !isSelectedSort(sortOption.key),
-        'px-4 py-2 bg-black text-white rounded-full': isSelectedSort(sortOption.key)
+        'bg-transparent': !isSelectedSort(sortOption.key),
+        ' bg-[#D9D9D9]  text-white rounded-md bg-opacity-20': isSelectedSort(sortOption.key)
       }"
       @click="toggleSort(sortOption.key)"
     >
@@ -14,6 +14,7 @@
       <span class="text-custom-gray text-sm font-semibold">
         {{ sortOption.label }}
       </span>
+      <SortSelected v-if="isSelectedSort(sortOption.key)" class="ml-auto" />
     </li>
   </ul>
 </template>
@@ -24,13 +25,21 @@ import MostPopular from '../icons/MostPopular.vue'
 import Newest from '../icons/Newest.vue'
 import Oldest from '../icons/Oldest.vue'
 import { markRaw } from 'vue'
+import SortSelected from '../icons/quiz/SortSelected.vue'
 
 export default {
   components: {
     SortArrowUp,
     Oldest,
     Newest,
-    MostPopular
+    MostPopular,
+    SortSelected
+  },
+  props: {
+    currentSort: {
+      type: String,
+      default: ''
+    }
   },
   data() {
     return {
@@ -44,6 +53,14 @@ export default {
       ]
     }
   },
+  watch: {
+    currentSort(newValue) {
+      this.sort = newValue
+    }
+  },
+  mounted() {
+    this.sort = this.currentSort
+  },
   methods: {
     toggleSort(sort) {
       this.sort = this.sort === sort ? '' : sort
@@ -52,7 +69,6 @@ export default {
     resetSort() {
       this.sort = ''
     },
-
     isSelectedSort(sort) {
       return this.sort === sort
     }

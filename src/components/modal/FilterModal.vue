@@ -2,7 +2,7 @@
   <TheModal
     :name="'fade-in'"
     :show="showModal"
-    :modalContentClasses="'bg-white rounded-lg shadow-lg w-full h-full'"
+    :modalContentClasses="'bg-white rounded-lg shadow-lg w-full min-h-[40rem]'"
     class="fixed sm:absolute sm:w-[66rem] inset-0 z-[1000] sm:bottom-auto sm:left-[17.5%] sm:border-2 sm:rounded-xl sm:border-border-gray sm:bg-white sm:pt-2 overflow-y-scroll sm:overflow-auto"
   >
     <div
@@ -80,11 +80,8 @@
       </div>
     </div>
 
-    <div class="sm:px-4 sm:grid grid-cols-[70fr_30fr] gap-2">
-      <div
-        v-if="activeButton === 'filter'"
-        class="sm:border border-border-gray sm:rounded-xl sm:pb-8 sm:mb-12"
-      >
+    <div class="sm:px-4 sm:grid grid-cols-[70fr_30fr] gap-2 h-full">
+      <div v-if="activeButton === 'filter'" class="sm:border border-border-gray sm:rounded-xl">
         <p class="hidden sm:block px-6 mt-4 text-custom-blue font-bol">Filter by</p>
         <div v-if="isLogged" class="flex items-center mb-8 sm:mb-4 mt-12 sm:mt-4 px-6 gap-2">
           <label for="my-quizzes" class="text-[#101828] font-semibold">My quizzes</label>
@@ -92,7 +89,7 @@
             id="my-quizzes"
             type="checkbox"
             class="mr-2 scale-125"
-            v-model="isMyQuizzesChecked"
+            v-model="filterState.myQuizzesChecked.current"
           />
         </div>
 
@@ -102,7 +99,7 @@
             id="not-completed"
             type="checkbox"
             class="mr-2 scale-125"
-            v-model="isNotCompletedChecked"
+            v-model="filterState.notCompletedChecked.current"
           />
         </div>
 
@@ -115,7 +112,7 @@
               v-for="level in filteredCategoriesAndLevels.filteredDiffLevels"
               :key="level.id"
               :style="
-                isSelected(level.id, 'selectedDifficulties')
+                isSelected(level.id, 'difficulties')
                   ? {
                       color: 'white',
                       background: level.textColor
@@ -125,7 +122,7 @@
                       background: level.backgroundColor
                     }
               "
-              @click="toggleSelection(level.id, 'selectedDifficulties')"
+              @click="toggleSelection(level.id, 'difficulties')"
             >
               {{ level.name }}
             </button>
@@ -140,10 +137,10 @@
               v-for="category in filteredCategoriesAndLevels.filteredCategories"
               :key="category.id"
               :class="{
-                'bg-transparent': !isSelected(category.id, 'selectedCategories'),
-                'bg-black text-white rounded-full': isSelected(category.id, 'selectedCategories')
+                'bg-transparent': !isSelected(category.id, 'categories'),
+                'bg-black text-white rounded-full': isSelected(category.id, 'categories')
               }"
-              @click="toggleSelection(category.id, 'selectedCategories')"
+              @click="toggleSelection(category.id, 'categories')"
             >
               {{ category.name }}
             </button>
@@ -151,19 +148,25 @@
         </div>
       </div>
       <div v-else class="sm:hidden">
-        <SortList class="flex flex-col gap-8 px-6 mt-12 justify-center" />
-      </div>
-      <div class="sm:border border-border-gray sm:rounded-xl sm:pb-8 sm:mb-12 hidden sm:block">
         <SortList
-          ref="sortListRef"
           class="flex flex-col gap-8 px-6 mt-12 justify-center"
-          @update:sort="selectedSort = $event"
+          :currentSort="filterState.sort.current"
+          ref="sortListRef"
+          @update:sort="handleSortChange"
+        />
+      </div>
+      <div class="sm:border border-border-gray sm:rounded-xl sm:pb-8 hidden sm:block">
+        <SortList
+          :currentSort="filterState.sort.current"
+          ref="sortListRef"
+          @update:sort="handleSortChange"
+          class="flex flex-col gap-4 px-4 mt-12 justify-center"
         />
       </div>
     </div>
     <div
       class="sm:hidden bg-white py-4 shadow-2xl px-4 flex gap-4 items-center"
-      v-if="isFilterSelected"
+      v-if="localChangesMade"
     >
       <button
         class="bg-[#4B69FD] px-8 py-3 text-white rounded-lg text-sm font-semibold flex-1"
@@ -200,20 +203,26 @@ export default {
     diffLevels: Array,
     parentSelectedCategories: Array
   },
-  emits: ['update:show', 'update:activeButton', 'apply-filters'],
+  emits: ['update:show', 'update:activeButton', 'apply-filters', 'reset-filters'],
 
   data() {
     return {
       activeButton: 'filter',
       search: '',
       isFocused: false,
-      selectedCategories: [...this.parentSelectedCategories],
-      selectedDifficulties: [],
-      initialSelectedDifficulties: [],
       isLogged: false,
-      selectedSort: '',
-      isMyQuizzesChecked: false,
-      isNotCompletedChecked: false,
+
+      filterState: {
+        categories: {
+          current: [...this.parentSelectedCategories],
+          confirmed: [...this.parentSelectedCategories]
+        },
+        difficulties: { current: [], confirmed: [] },
+        sort: { current: '', confirmed: '' },
+        myQuizzesChecked: { current: false, confirmed: false },
+        notCompletedChecked: { current: false, confirmed: false }
+      },
+
       showFilterConfirmation: false,
       localChangesMade: false
     }
@@ -236,31 +245,73 @@ export default {
     },
     isFilterSelected() {
       return (
-        this.selectedCategories.length > 0 ||
-        this.selectedDifficulties.length > 0 ||
-        this.selectedSort !== '' ||
-        this.isMyQuizzesChecked ||
-        this.isNotCompletedChecked
+        this.filterState.categories.current.length > 0 ||
+        this.filterState.difficulties.current.length > 0 ||
+        this.filterState.sort.current !== '' ||
+        this.filterState.myQuizzesChecked.current ||
+        this.filterState.notCompletedChecked.current
       )
     }
   },
 
   methods: {
-    checkLocalChanges() {
-      const initialCategories = [...this.parentSelectedCategories].sort().join(',')
-      const currentCategories = this.selectedCategories.sort().join(',')
+    initializeFilterStatesFromConfirmed() {
+      Object.keys(this.filterState).forEach((key) => {
+        if (Array.isArray(this.filterState[key].current)) {
+          this.filterState[key].current = [...this.filterState[key].confirmed]
+        } else {
+          this.filterState[key].current = this.filterState[key].confirmed
+        }
+      })
+    },
 
-      this.localChangesMade = initialCategories !== currentCategories
+    checkLocalChanges() {
+      this.localChangesMade = Object.values(this.filterState).some(
+        (state) => JSON.stringify(state.current) !== JSON.stringify(state.confirmed)
+      )
+    },
+
+    hardReset() {
+      this.filterState = {
+        categories: {
+          current: [],
+          confirmed: []
+        },
+        difficulties: { current: [], confirmed: [] },
+        sort: { current: '', confirmed: '' },
+        myQuizzesChecked: { current: false, confirmed: false },
+        notCompletedChecked: { current: false, confirmed: false }
+      }
+
+      this.search = ''
+
+      this.checkLocalChanges()
     },
 
     resetFilters() {
-      this.selectedCategories = []
-      this.selectedDifficulties = []
-      this.selectedSort = ''
-      this.isMyQuizzesChecked = false
-      this.isNotCompletedChecked = false
-      this.$refs.sortListRef.resetSort()
+      this.initializeFilterStatesFromConfirmed()
       this.checkLocalChanges()
+    },
+
+    confirmFilters() {
+      Object.keys(this.filterState).forEach((key) => {
+        if (Array.isArray(this.filterState[key].current)) {
+          this.filterState[key].confirmed = [...this.filterState[key].current]
+        } else {
+          this.filterState[key].confirmed = this.filterState[key].current
+        }
+      })
+
+      this.$emit('apply-filters', {
+        categories: this.filterState.categories.current,
+        difficulties: this.filterState.difficulties.current,
+        sort: this.filterState.sort.current,
+        myQuizzes: this.filterState.myQuizzesChecked.current,
+        notCompleted: this.filterState.notCompletedChecked.current
+      })
+      this.localChangesMade = false
+
+      this.close()
     },
     initialLoginCheck() {
       const isLoggedIn = localStorage.getItem('isLoggedIn')
@@ -268,55 +319,71 @@ export default {
         this.isLogged = true
       }
     },
+
     toggleSelection(itemId, selectedArray) {
-      const itemString = itemId.toString()
-      const index = this[selectedArray].indexOf(itemString)
+      const index = this.filterState[selectedArray].current.indexOf(itemId.toString())
       if (index > -1) {
-        this[selectedArray].splice(index, 1)
+        this.filterState[selectedArray].current.splice(index, 1)
       } else {
-        this[selectedArray].push(itemString)
+        this.filterState[selectedArray].current.push(itemId.toString())
       }
       this.checkLocalChanges()
     },
 
-    isSelected(itemId, selectedArray) {
-      return this[selectedArray].includes(itemId.toString())
+    handleSortChange(newSortValue) {
+      this.filterState.sort.current = newSortValue
+
+      this.checkLocalChanges()
     },
 
+    toggleMyQuizzes() {
+      this.filterState.myQuizzesChecked.current = !this.filterState.myQuizzesChecked.current
+      this.checkLocalChanges()
+    },
+
+    toggleNotCompleted() {
+      this.filterState.notCompletedChecked.current = !this.filterState.notCompletedChecked.current
+      this.checkLocalChanges()
+    },
+
+    isSelected(itemId, selectedArray) {
+      if (this.filterState[selectedArray]) {
+        if (Array.isArray(this.filterState[selectedArray].current)) {
+          return this.filterState[selectedArray].current.includes(itemId.toString())
+        } else {
+          return this.filterState[selectedArray].current
+        }
+      }
+      console.error(`Key ${selectedArray} does not exist in filterState.`)
+      return false
+    },
     setActiveButton(button) {
       this.activeButton = button
       this.$emit('update:activeButton', button)
     },
     close() {
       this.$emit('update:show', false)
-    },
-
-    confirmFilters() {
-      this.$emit('apply-filters', {
-        categories: this.selectedCategories,
-        difficulties: this.selectedDifficulties,
-        sort: this.selectedSort.toLowerCase(),
-        my_quizzes: this.isMyQuizzesChecked,
-        not_completed: this.isNotCompletedChecked
-      })
-      this.localChangesMade = false
-
-      this.close()
     }
   },
   watch: {
-    selectedSort: {
-      handler(newVal) {
-        this.sort = newVal
-      },
-      immediate: true
-    },
     parentSelectedCategories: {
       handler(newVal) {
-        this.selectedCategories = [...newVal]
+        this.filterState.categories.current = [...newVal]
+        this.filterState.categories.confirmed = [...newVal]
       },
       deep: true,
       immediate: true
+    },
+    isMyQuizzesChecked() {
+      this.checkLocalChanges()
+    },
+    isNotCompletedChecked() {
+      this.checkLocalChanges()
+    },
+    showModal(newValue) {
+      if (newValue) {
+        this.initializeFilterStatesFromConfirmed()
+      }
     }
   }
 }
