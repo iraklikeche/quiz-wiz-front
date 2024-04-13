@@ -12,12 +12,16 @@
       <li class="text-custom-gray text-xs">Quizzes</li>
     </FooterList>
     <FooterList heading="Contact us">
-      <li class="text-custom-gray text-xs">Email: quizwiz@gmail.com</li>
-      <li class="text-custom-gray text-xs">Tel: +995 328989</li>
+      <li class="text-custom-gray text-xs">Email: {{ details.email }}</li>
+      <li class="text-custom-gray text-xs">Tel: {{ details.number }}</li>
     </FooterList>
     <FooterList heading="Social media">
-      <li class="text-custom-gray text-xs">Facebook</li>
-      <li class="text-custom-gray text-xs">LinkedIn</li>
+      <li class="text-custom-gray text-xs">
+        <a :href="details.facebook_link">Facebook</a>
+      </li>
+      <li class="text-custom-gray text-xs">
+        <a :href="details.facebook_link">LinkedIn</a>
+      </li>
     </FooterList>
   </div>
   <div
@@ -32,6 +36,7 @@
 <script>
 import Logo from '@/components/icons/Logo.vue'
 import FooterList from '@/components/FooterList.vue'
+import { getCompanyDetails } from '@/services/footerService'
 
 export default {
   components: {
@@ -40,6 +45,7 @@ export default {
   },
   data() {
     return {
+      details: null,
       year: new Date().getFullYear()
     }
   },
@@ -49,6 +55,20 @@ export default {
       default: ''
     },
     logoBorderMobile: String
+  },
+  mounted() {
+    this.getData()
+  },
+  methods: {
+    async getData() {
+      try {
+        const response = await getCompanyDetails()
+        this.details = response.data
+        console.log(this.details)
+      } catch (err) {
+        console.log(err)
+      }
+    }
   }
 }
 </script>
