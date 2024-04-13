@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="details"
     :class="[
       'flex sm:flex-row flex-col gap-8 sm:gap-32 py-12 px-10 sm:pl-20 relative z-50,',
       customClass
@@ -64,7 +65,6 @@ export default {
       try {
         const response = await getCompanyDetails()
         this.details = response.data
-        console.log(this.details)
       } catch (err) {
         console.log(err)
       }
