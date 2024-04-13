@@ -70,7 +70,7 @@
           class="group flex gap-2 items-center border border-custom-light-gray border-opacity-60 py-2 px-4 rounded-xl hover:bg-[#4B69FD] hover:bg-opacity-10 hover:scale-105 hover:border-custom-blue"
           :class="{ 'border-[#000] border-2': selectedCategoriesCount > 0 }"
         >
-          <Filter :fill="filterFillColor" />
+          <Filter :currentColor="filterFillColor" />
           <span
             class="text-sm text-custom-light-gray group-hover:text-custom-blue"
             :class="{ 'border-black text-[#000] font-semibold': selectedCategoriesCount > 0 }"
