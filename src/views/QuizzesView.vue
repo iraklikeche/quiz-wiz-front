@@ -68,16 +68,17 @@
           @mouseleave="isHovering = false"
           @click="toggleModal"
           class="group flex gap-2 items-center border border-custom-light-gray border-opacity-60 py-2 px-4 rounded-xl hover:bg-[#4B69FD] hover:bg-opacity-10 hover:scale-105 hover:border-custom-blue"
-          :class="{ 'border-[#000] border-2': selectedCategoriesCount > 0 }"
+          :style="buttonStyle"
+          :class="{ 'border-[#000] border-2 text-[#000]': selectedCategoriesCount > 0 }"
         >
-          <Filter :currentColor="filterFillColor" />
+          <Filter />
           <span
             class="text-sm text-custom-light-gray group-hover:text-custom-blue"
-            :class="{ 'border-black text-[#000] font-semibold': selectedCategoriesCount > 0 }"
+            :class="{ 'text-[#000': selectedCategoriesCount > 0 }"
             >Filter</span
           >
         </button>
-        <div class="bg-white absolute top-[30%] right-1 translate-x-1/2 py-1 pl-1">
+        <div class="bg-white absolute top-[30%] right-1 translate-x-1/2 py-1 pl-1 rounded-full">
           <span
             v-if="selectedCategoriesCount > 0"
             class="font-bold text-white text-xs bg-black w-1 h-1 p-3 rounded-full flex items-center justify-center"
@@ -292,6 +293,7 @@ export default {
         }
       })
       this.allQuizzesSelected = true
+      this.selectedCategoriesCount = 0
     },
 
     async getInitialData() {
@@ -387,11 +389,27 @@ export default {
         'border-black': this.isSelected(categoryId)
       })
     },
-    filterFillColor() {
+    // filterFillColor() {
+    //   if (this.selectedCategoriesCount > 0) {
+    //     return this.isHovering ? '#000' : '#000000'
+    //   } else {
+    //     return this.isHovering ? '#4B69FD' : '#667085'
+    //   }
+    // },
+    filterClass() {
       if (this.selectedCategoriesCount > 0) {
-        return this.isHovering ? '#000' : '#000000'
+        return 'border-black text-black font-semibold'
       } else {
-        return this.isHovering ? '#4B69FD' : '#667085'
+        return 'text-custom-light-gray group-hover:text-custom-blue'
+      }
+    },
+    buttonStyle() {
+      if (this.selectedCategoriesCount > 0) {
+        return { '--filter-icon-color': 'var(--filter-icon-active)' }
+      } else if (this.isHovering) {
+        return { '--filter-icon-color': 'var(--filter-icon-hover)' }
+      } else {
+        return { '--filter-icon-color': 'var(--filter-icon-default)' }
       }
     }
   }

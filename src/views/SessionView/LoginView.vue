@@ -156,7 +156,7 @@ export default {
         200: {
           header: 'Success!',
           msg: 'Email has been successfully verified.',
-          type: 'warning'
+          type: 'success'
         },
         403: {
           header: 'Token is expired',
