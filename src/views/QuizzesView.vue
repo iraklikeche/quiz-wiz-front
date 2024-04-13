@@ -78,7 +78,9 @@
             >Filter</span
           >
         </button>
-        <div class="bg-white absolute top-[30%] right-1 translate-x-1/2 py-1 pl-1 rounded-full">
+        <div
+          class="bg-white absolute bottom-1/2 sm:top-[30%] sm:right-1 left-16 translate-x-1/2 py-1 pl-1 rounded-full"
+        >
           <span
             v-if="selectedCategoriesCount > 0"
             class="font-bold text-white text-xs bg-black w-1 h-1 p-3 rounded-full flex items-center justify-center"
