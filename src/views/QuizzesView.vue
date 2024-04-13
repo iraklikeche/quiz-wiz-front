@@ -62,14 +62,29 @@
           <SliderArrow />
         </button>
       </div>
-      <div class="mt-4 sm:mt-0 px-2 sm:px-0 sm:pt-8">
+      <div class="mt-4 sm:mt-0 px-2 sm:px-0 sm:pt-8 relative">
         <button
+          @mouseenter="isHovering = true"
+          @mouseleave="isHovering = false"
           @click="toggleModal"
           class="group flex gap-2 items-center border border-custom-light-gray border-opacity-60 py-2 px-4 rounded-xl hover:bg-[#4B69FD] hover:bg-opacity-10 hover:scale-105 hover:border-custom-blue"
+          :class="{ 'border-[#000] border-2': selectedCategoriesCount > 0 }"
         >
-          <Filter />
-          <span class="text-sm text-custom-light-gray group-hover:text-custom-blue">Filter</span>
+          <Filter :fill="filterFillColor" />
+          <span
+            class="text-sm text-custom-light-gray group-hover:text-custom-blue"
+            :class="{ 'border-black text-[#000] font-semibold': selectedCategoriesCount > 0 }"
+            >Filter</span
+          >
         </button>
+        <div class="bg-white absolute top-[30%] right-1 translate-x-1/2 py-1 pl-1">
+          <span
+            v-if="selectedCategoriesCount > 0"
+            class="font-bold text-white text-xs bg-black w-1 h-1 p-3 rounded-full flex items-center justify-center"
+          >
+            {{ selectedCategoriesCount }}</span
+          >
+        </div>
       </div>
     </div>
 
@@ -85,6 +100,7 @@
         @apply-filters="handleFilterApply"
         :parentSelectedCategories="selectedCategories"
         @resetAllFilters="resetFiltersInModal"
+        @update-selected-categories-count="selectedCategoriesCount = $event"
       />
     </div>
 
@@ -156,7 +172,9 @@ export default {
       },
       debouncedSearch: null,
       categories: null,
-      difficultyLevels: null
+      difficultyLevels: null,
+      selectedCategoriesCount: 0,
+      isHovering: false
     }
   },
   created() {
@@ -186,6 +204,9 @@ export default {
     document.removeEventListener('click', this.handleClickOutside)
   },
   methods: {
+    updateSelectedCategoriesCount(count) {
+      this.selectedCategoriesCount = count
+    },
     handleClickOutside(e) {
       if (this.$refs.filterModal && !this.$refs.filterModal.$el.contains(e.target)) {
         this.showModal = false
@@ -365,6 +386,13 @@ export default {
         'border-transparent': !this.isSelected(categoryId),
         'border-black': this.isSelected(categoryId)
       })
+    },
+    filterFillColor() {
+      if (this.selectedCategoriesCount > 0) {
+        return this.isHovering ? '#000' : '#000000'
+      } else {
+        return this.isHovering ? '#4B69FD' : '#667085'
+      }
     }
   }
 }

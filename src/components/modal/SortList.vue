@@ -47,7 +47,7 @@ export default {
       sortOptions: [
         { key: 'A-Z', label: 'A-Z', icon: markRaw(SortArrowUp) },
         { key: 'Z-A', label: 'Z-A', icon: markRaw(SortArrowUp), rotationClass: 'rotate-180' },
-        { key: 'Most popular', label: 'Most popular', icon: markRaw(MostPopular) },
+        { key: 'popular', label: 'Most popular', icon: markRaw(MostPopular) },
         { key: 'Newest', label: 'Newest', icon: markRaw(Newest) },
         { key: 'Oldest', label: 'Oldest', icon: markRaw(Oldest) }
       ]
