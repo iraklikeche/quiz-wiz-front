@@ -9,9 +9,3 @@ html {
 body {
   font-family: 'Inter', sans-serif;
 }
-
-:root {
-  --filter-icon-default: #667085;
-  --filter-icon-hover: #4b69fd;
-  --filter-icon-active: #000000;
-}

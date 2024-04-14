@@ -68,18 +68,21 @@
           @mouseleave="isHovering = false"
           @click="toggleModal"
           class="group flex gap-2 items-center border border-custom-light-gray border-opacity-60 py-2 px-4 rounded-xl hover:bg-[#4B69FD] hover:bg-opacity-10 hover:scale-105 hover:border-custom-blue"
-          :style="buttonStyle"
-          :class="{ 'border-[#000] border-2 text-[#000]': selectedCategoriesCount > 0 }"
+          :style="{ border: selectedCategoriesCount > 0 ? '2px solid #000' : undefined }"
         >
-          <Filter />
+          <Filter
+            class="group-hover:text-[#4B69FD]"
+            :style="{ color: selectedCategoriesCount > 0 ? '#000' : undefined }"
+          />
           <span
             class="text-sm text-custom-light-gray group-hover:text-custom-blue"
-            :class="{ 'text-[#000': selectedCategoriesCount > 0 }"
+            :style="{ color: selectedCategoriesCount > 0 ? '#000' : undefined }"
             >Filter</span
           >
         </button>
         <div
-          class="bg-white absolute bottom-1/2 sm:top-[30%] sm:right-1 left-16 translate-x-1/2 py-1 pl-1 rounded-full"
+          class="absolute bottom-1/2 sm:top-[30%] sm:right-1 left-16 translate-x-1/2 py-1 pl-1 rounded-full"
+          :class="{ 'bg-white': selectedCategoriesCount > 0 }"
         >
           <span
             v-if="selectedCategoriesCount > 0"
@@ -390,29 +393,6 @@ export default {
         'border-transparent': !this.isSelected(categoryId),
         'border-black': this.isSelected(categoryId)
       })
-    },
-    // filterFillColor() {
-    //   if (this.selectedCategoriesCount > 0) {
-    //     return this.isHovering ? '#000' : '#000000'
-    //   } else {
-    //     return this.isHovering ? '#4B69FD' : '#667085'
-    //   }
-    // },
-    filterClass() {
-      if (this.selectedCategoriesCount > 0) {
-        return 'border-black text-black font-semibold'
-      } else {
-        return 'text-custom-light-gray group-hover:text-custom-blue'
-      }
-    },
-    buttonStyle() {
-      if (this.selectedCategoriesCount > 0) {
-        return { '--filter-icon-color': 'var(--filter-icon-active)' }
-      } else if (this.isHovering) {
-        return { '--filter-icon-color': 'var(--filter-icon-hover)' }
-      } else {
-        return { '--filter-icon-color': 'var(--filter-icon-default)' }
-      }
     }
   }
 }
