@@ -43,7 +43,7 @@
               <Points />
             </QuizInfoList>
 
-            <QuizInfoList text="169 plays">
+            <QuizInfoList :text="`${quiz.totalAttempts} plays`">
               <Plays />
             </QuizInfoList>
 

@@ -11,12 +11,15 @@
       :validateOnBlur="false"
       :rules="rules"
     />
+    <div v-if="serverError" class="absolute right-2 top-[38%] translate-y-1/2 -translate-x-1/2">
+      <ErrorIcon />
+    </div>
 
     <div class="h-4">
       <ErrorMessage :name="name" class="text-[#F04438] text-sm mt-1 mb-2 leading-3" />
 
       <ShowPassword
-        v-if="isPasswordField"
+        v-if="isPasswordField && !serverError"
         :customClass="'absolute top-[45%] right-[4%] cursor-pointer cursor-pointer'"
         @toggle="togglePasswordVisibility"
       />
@@ -27,11 +30,13 @@
 <script>
 import { Field, ErrorMessage } from 'vee-validate'
 import ShowPassword from '@/components/icons/ShowPassword.vue'
+import ErrorIcon from '../icons/ErrorIcon.vue'
 export default {
   components: {
     Field,
     ErrorMessage,
-    ShowPassword
+    ShowPassword,
+    ErrorIcon
   },
   props: {
     label: String,

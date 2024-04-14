@@ -80,9 +80,12 @@
       </div>
     </div>
 
-    <div class="sm:px-4 sm:grid grid-cols-[70fr_30fr] gap-2 h-full">
-      <div v-if="activeButton === 'filter'" class="sm:border border-border-gray sm:rounded-xl">
-        <p class="hidden sm:block px-6 mt-4 text-custom-blue font-bol">Filter by</p>
+    <div class="sm:px-4 sm:grid grid-cols-[60fr_40fr] gap-2 h-full">
+      <div
+        v-if="activeButton === 'filter'"
+        class="sm:border border-border-gray sm:rounded-xl min-h-[34rem]"
+      >
+        <p class="hidden sm:block px-6 mt-4 text-custom-blue font-bold">Filter by</p>
         <div v-if="isLogged" class="flex items-center mb-8 sm:mb-4 mt-12 sm:mt-4 px-6 gap-2">
           <label for="my-quizzes" class="text-[#101828] font-semibold">My quizzes</label>
           <input
@@ -90,6 +93,7 @@
             type="checkbox"
             class="mr-2 scale-125"
             v-model="filterState.myQuizzesChecked.current"
+            @change="checkLocalChanges"
           />
         </div>
 
@@ -100,6 +104,7 @@
             type="checkbox"
             class="mr-2 scale-125"
             v-model="filterState.notCompletedChecked.current"
+            @change="checkLocalChanges"
           />
         </div>
 
@@ -129,7 +134,7 @@
           </div>
         </div>
         <!-- ******************** CATEGORIES  ************************* -->
-        <div class="px-6 bg-white sm:bg-transparent">
+        <div class="px-6 bg-white sm:bg-transparent pb-6">
           <p class="text-sm font-semibold border-t border-border-gray pt-4">Categories</p>
           <div class="flex flex-wrap gap-2 mt-2 font-semibold text-custom-gray">
             <button
@@ -156,11 +161,12 @@
         />
       </div>
       <div class="sm:border border-border-gray sm:rounded-xl sm:pb-8 hidden sm:block">
+        <p class="hidden sm:block px-6 mt-4 text-custom-blue font-bold">Sort by</p>
         <SortList
           :currentSort="filterState.sort.current"
           ref="sortListRef"
           @update:sort="handleSortChange"
-          class="flex flex-col gap-4 px-4 mt-12 justify-center"
+          class="flex flex-col gap-4 px-4 mt-4 pl-8 justify-center"
         />
       </div>
     </div>
@@ -203,7 +209,13 @@ export default {
     diffLevels: Array,
     parentSelectedCategories: Array
   },
-  emits: ['update:show', 'update:activeButton', 'apply-filters', 'reset-filters'],
+  emits: [
+    'update:show',
+    'update:activeButton',
+    'apply-filters',
+    'reset-filters',
+    'update-selected-categories-count'
+  ],
 
   data() {
     return {
@@ -302,6 +314,13 @@ export default {
         }
       })
 
+      const totalSelections =
+        this.filterState.categories.current.length +
+        this.filterState.difficulties.current.length +
+        (this.filterState.sort.current ? 1 : 0) +
+        (this.filterState.myQuizzesChecked.current ? 1 : 0) +
+        (this.filterState.notCompletedChecked.current ? 1 : 0)
+
       this.$emit('apply-filters', {
         categories: this.filterState.categories.current,
         difficulties: this.filterState.difficulties.current,
@@ -310,6 +329,7 @@ export default {
         notCompleted: this.filterState.notCompletedChecked.current
       })
       this.localChangesMade = false
+      this.$emit('update-selected-categories-count', totalSelections)
 
       this.close()
     },
@@ -339,11 +359,13 @@ export default {
     toggleMyQuizzes() {
       this.filterState.myQuizzesChecked.current = !this.filterState.myQuizzesChecked.current
       this.checkLocalChanges()
+      console.log(this.filterState.myQuizzesChecked.current)
     },
 
     toggleNotCompleted() {
       this.filterState.notCompletedChecked.current = !this.filterState.notCompletedChecked.current
       this.checkLocalChanges()
+      console.log(this.filterState.notCompletedChecked.current)
     },
 
     isSelected(itemId, selectedArray) {

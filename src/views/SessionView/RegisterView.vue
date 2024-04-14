@@ -52,7 +52,7 @@
       />
 
       <div>
-        <div class="flex gap-4 items-center">
+        <div class="flex gap-4 items-center mb-2">
           <label
             class="relative flex items-center rounded-full cursor-pointer text-[#344054] text-sm gap-4"
             htmlFor="customStyle"
@@ -62,7 +62,6 @@
               type="checkbox"
               value="true"
               class="before:content[''] peer relative h-6 w-6 cursor-pointer appearance-none rounded-full border border-gray-900/20 bg-gray-900/10 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:scale-105 hover:before:opacity-0"
-              :serverError="errors.agreed_to_terms"
             />
             <span
               class="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-[4%] -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100"
@@ -71,6 +70,9 @@
             >I accept the terms and privacy policy
           </label>
         </div>
+        <span v-if="errors.agreed_to_terms" class="text-red-500">
+          {{ errors.agreed_to_terms }}
+        </span>
       </div>
 
       <button class="bg-black text-white py-4 rounded-xl mt-6 font-semibold">Sign Up</button>
