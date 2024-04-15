@@ -210,7 +210,6 @@ export default {
         this.email = data.data.data.email
         this.username = data.data.data.username
         this.avatar = data.data.data.avatar
-        console.log(this.avatar)
       } catch (err) {
         if (err.response?.status === 401 && localStorage.getItem('isLoggedIn')) {
           localStorage.removeItem('isLoggedIn')

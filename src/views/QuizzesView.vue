@@ -205,7 +205,7 @@ export default {
     this.isMyQuizzesChecked = queryParams.my_quizzes === 'true'
     this.isNotCompletedChecked = queryParams.not_completed === 'true'
     this.allQuizzesSelected = this.selectedCategories.length === 0
-    console.log(queryParams)
+
     this.applyFilters(queryParams)
 
     this.setInitialState(queryParams)
@@ -262,9 +262,12 @@ export default {
         ...(categories.length && { categories: categories.join(',') }),
         ...(difficulties.length && { difficulties: difficulties.join(',') }),
         ...(filters.sort && { sort: filters.sort }),
-        ...(typeof filters.myQuizzes !== 'undefined' && { my_quizzes: filters.myQuizzes }),
-        ...(typeof filters.notCompleted !== 'undefined' && { not_completed: filters.notCompleted })
+        ...(typeof filters.my_quizzes !== 'undefined' && { my_quizzes: filters.my_quizzes }),
+        ...(typeof filters.not_completed !== 'undefined' && {
+          not_completed: filters.not_completed
+        })
       }
+      console.log(filters)
 
       this.$router.push({ query: queryParams }).catch((err) => {})
       this.getQuizzesData(queryParams)
@@ -364,9 +367,22 @@ export default {
         this.selectedCategories.push(categoryId.toString())
       }
       this.allQuizzesSelected = this.selectedCategories.length === 0
-      this.applyFilters({
-        categories: this.selectedCategories
+
+      let updatedQueryParams = { ...this.$route.query }
+
+      if (this.selectedCategories.length > 0) {
+        updatedQueryParams.categories = this.selectedCategories.join(',')
+      } else {
+        delete updatedQueryParams.categories
+      }
+
+      this.$router.push({ query: updatedQueryParams }).catch((err) => {
+        if (err.name !== 'NavigationDuplicated') {
+          console.error(err)
+        }
       })
+
+      this.applyFilters(updatedQueryParams)
     },
 
     updateUrl() {
@@ -399,16 +415,31 @@ export default {
       this.activeButton = newActiveButton
     },
     handleFilterApply(newFilters) {
-      this.selectedCategories = newFilters.categories || this.selectedCategories
-
+      this.selectedCategories = newFilters.categories || []
+      this.allQuizzesSelected = this.selectedCategories.length === 0
       this.applyFilters(newFilters)
+
       console.log(newFilters)
+    },
+    updateQueryParams(newParams) {
+      const currentQuery = { ...this.$route.query, ...newParams }
+      this.$router.replace({ query: currentQuery }).catch((err) => {
+        if (err.name !== 'NavigationDuplicated') {
+          console.error(err)
+        }
+      })
     }
   },
   watch: {
     searchQuery(newQuery) {
       this.$router.push({ query: { ...this.$route.query, search: newQuery } }).catch((err) => {})
       this.debouncedSearch(newQuery)
+    },
+    isMyQuizzesChecked(newVal) {
+      this.updateQueryParams({ my_quizzes: newVal })
+    },
+    isNotCompletedChecked(newVal) {
+      this.updateQueryParams({ not_completed: newVal })
     }
   },
   computed: {

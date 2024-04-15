@@ -242,7 +242,6 @@ export default {
   mounted() {
     this.initialLoginCheck()
     this.checkLocalChanges()
-    console.log(this.filterState)
     // this.setInitialStateFromUrl()
   },
   computed: {
@@ -270,15 +269,6 @@ export default {
 
   methods: {
     setInitialStateFromQueryParams(queryParams) {
-      // this.filterState.categories.current = queryParams.categories
-      //   ? queryParams.categories.split(',')
-      //   : []
-      // this.filterState.difficulties.current = queryParams.difficulties
-      //   ? queryParams.difficulties.split(',')
-      //   : []
-      // this.filterState.sort.current = queryParams.sort || ''
-      // this.filterState.myQuizzesChecked.current = queryParams.my_quizzes === 'true'
-      // this.filterState.notCompletedChecked.current = queryParams.not_completed === 'true'
       this.filterState.categories.current = queryParams.categories
         ? queryParams.categories.split(',')
         : []
@@ -301,23 +291,9 @@ export default {
       // Not Completed Checked
       this.filterState.notCompletedChecked.current = queryParams.not_completed === 'true'
       this.filterState.notCompletedChecked.confirmed = this.filterState.notCompletedChecked.current
-      console.log(this.filterState)
 
       this.checkLocalChanges()
     },
-
-    // setInitialStateFromUrl() {
-    //   const urlParams = new URLSearchParams(window.location.search)
-    //   this.filterState.categories.current = urlParams.get('categories')
-    //     ? urlParams.get('categories').split(',')
-    //     : [...this.parentSelectedCategories]
-    //   this.filterState.difficulties.current = urlParams.get('difficulties')
-    //     ? urlParams.get('difficulties').split(',')
-    //     : []
-    //   this.filterState.sort.current = urlParams.get('sort') || ''
-    //   this.filterState.myQuizzesChecked.current = urlParams.get('my_quizzes') === 'true'
-    //   this.filterState.notCompletedChecked.current = urlParams.get('not_completed') === 'true'
-    // },
 
     initializeFilterStatesFromConfirmed() {
       Object.keys(this.filterState).forEach((key) => {
@@ -366,22 +342,14 @@ export default {
         }
       })
 
-      // const totalSelections =
-      // this.filterState.categories.current.length +
-      // this.filterState.difficulties.current.length +
-      // (this.filterState.sort.current ? 1 : 0) +
-      // (this.filterState.myQuizzesChecked.current ? 1 : 0) +
-      // (this.filterState.notCompletedChecked.current ? 1 : 0)
-
       this.$emit('apply-filters', {
         categories: this.filterState.categories.current,
         difficulties: this.filterState.difficulties.current,
         sort: this.filterState.sort.current,
-        myQuizzes: this.filterState.myQuizzesChecked.current,
-        notCompleted: this.filterState.notCompletedChecked.current
+        my_quizzes: this.filterState.myQuizzesChecked.current,
+        not_completed: this.filterState.notCompletedChecked.current
       })
       this.localChangesMade = false
-      // this.$emit('update-selected-categories-count', )
 
       this.close()
     },
@@ -407,18 +375,6 @@ export default {
 
       this.checkLocalChanges()
     },
-
-    // toggleMyQuizzes() {
-    //   this.filterState.myQuizzesChecked.current = !this.filterState.myQuizzesChecked.current
-    //   this.checkLocalChanges()
-    //   console.log(this.filterState.myQuizzesChecked.current)
-    // },
-
-    // toggleNotCompleted() {
-    //   this.filterState.notCompletedChecked.current = !this.filterState.notCompletedChecked.current
-    //   this.checkLocalChanges()
-    //   console.log(this.filterState.notCompletedChecked.current)
-    // },
 
     isSelected(itemId, selectedArray) {
       if (this.filterState[selectedArray]) {
@@ -448,19 +404,10 @@ export default {
       deep: true,
       immediate: true
     },
-    isMyQuizzesChecked() {
-      this.checkLocalChanges()
-    },
-    isNotCompletedChecked() {
-      this.checkLocalChanges()
-    },
     showModal(newValue) {
       if (newValue) {
         this.initializeFilterStatesFromConfirmed()
       }
-    },
-    'filterState.difficulties'(val) {
-      console.log(val)
     }
   }
 }
