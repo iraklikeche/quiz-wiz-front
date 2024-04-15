@@ -68,27 +68,27 @@
           @mouseleave="isHovering = false"
           @click="toggleModal"
           class="group flex gap-2 items-center border border-custom-light-gray border-opacity-60 py-2 px-4 rounded-xl hover:bg-[#4B69FD] hover:bg-opacity-10 hover:scale-105 hover:border-custom-blue"
-          :style="{ border: selectedCategoriesCount > 0 ? '2px solid #000' : undefined }"
+          :style="{ border: filterCount > 0 ? '2px solid #000' : undefined }"
         >
           <Filter
             class="group-hover:text-[#4B69FD]"
-            :style="{ color: selectedCategoriesCount > 0 ? '#000' : undefined }"
+            :style="{ color: filterCount > 0 ? '#000' : undefined }"
           />
           <span
             class="text-sm text-custom-light-gray group-hover:text-custom-blue"
-            :style="{ color: selectedCategoriesCount > 0 ? '#000' : undefined }"
+            :style="{ color: filterCount > 0 ? '#000' : undefined }"
             >Filter</span
           >
         </button>
         <div
           class="absolute bottom-1/2 sm:top-[30%] sm:right-1 left-16 translate-x-1/2 py-1 pl-1 rounded-full"
-          :class="{ 'bg-white': selectedCategoriesCount > 0 }"
+          :class="{ 'bg-white': filterCount > 0 }"
         >
           <span
-            v-if="selectedCategoriesCount > 0"
+            v-if="filterCount > 0"
             class="font-bold text-white text-xs bg-black w-1 h-1 p-3 rounded-full flex items-center justify-center"
           >
-            {{ selectedCategoriesCount }}</span
+            {{ filterCount }}</span
           >
         </div>
       </div>
@@ -205,12 +205,9 @@ export default {
     this.isMyQuizzesChecked = queryParams.my_quizzes === 'true'
     this.isNotCompletedChecked = queryParams.not_completed === 'true'
     this.allQuizzesSelected = this.selectedCategories.length === 0
-
+    console.log(queryParams)
     this.applyFilters(queryParams)
-    const savedCount = localStorage.getItem('selectedCategoriesCount')
-    if (savedCount !== null) {
-      this.selectedCategoriesCount = parseInt(savedCount, 10)
-    }
+
     this.setInitialState(queryParams)
   },
 
@@ -265,10 +262,8 @@ export default {
         ...(categories.length && { categories: categories.join(',') }),
         ...(difficulties.length && { difficulties: difficulties.join(',') }),
         ...(filters.sort && { sort: filters.sort }),
-        ...(typeof filters.my_quizzes !== 'undefined' && { my_quizzes: filters.my_quizzes }),
-        ...(typeof filters.not_completed !== 'undefined' && {
-          not_completed: filters.not_completed
-        })
+        ...(typeof filters.myQuizzes !== 'undefined' && { my_quizzes: filters.myQuizzes }),
+        ...(typeof filters.notCompleted !== 'undefined' && { not_completed: filters.notCompleted })
       }
 
       this.$router.push({ query: queryParams }).catch((err) => {})
@@ -405,7 +400,9 @@ export default {
     },
     handleFilterApply(newFilters) {
       this.selectedCategories = newFilters.categories || this.selectedCategories
+
       this.applyFilters(newFilters)
+      console.log(newFilters)
     }
   },
   watch: {
@@ -421,6 +418,16 @@ export default {
         'border-transparent': !this.isSelected(categoryId),
         'border-black': this.isSelected(categoryId)
       })
+    },
+    filterCount() {
+      const { categories, difficulties, sort, my_quizzes, not_completed } = this.$route.query
+      const arrayTotal = []
+      if (categories) arrayTotal.push(...categories.split(','))
+      if (difficulties) arrayTotal.push(...difficulties.split(','))
+      if (sort) arrayTotal.push(sort)
+      if (my_quizzes && my_quizzes === 'true') arrayTotal.push(my_quizzes)
+      if (not_completed && not_completed === 'true') arrayTotal.push(not_completed)
+      return arrayTotal.length
     }
   }
 }
