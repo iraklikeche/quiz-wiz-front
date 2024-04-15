@@ -217,20 +217,6 @@ export default {
     setInitialState(queryParams) {
       this.$refs.filterModal.setInitialStateFromQueryParams(queryParams)
     },
-    // updateSelectedCategoriesCountFromUrl() {
-    //   const urlParams = new URLSearchParams(window.location.search)
-    //   const categories = urlParams.get('categories') ? urlParams.get('categories').split(',') : []
-    //   const difficulties = urlParams.get('difficulties')
-    //     ? urlParams.get('difficulties').split(',')
-    //     : []
-    //   const sort = urlParams.get('sort') ? 1 : 0
-    //   const myQuizzes = urlParams.get('my_quizzes') === 'true' ? 1 : 0
-    //   const notCompleted = urlParams.get('not_completed') === 'true' ? 1 : 0
-
-    //   const totalSelectedCount =
-    //     categories.length + difficulties.length + sort + myQuizzes + notCompleted
-    //   this.selectedCategoriesCount = totalSelectedCount
-    // },
     updateSelectedCategoriesCount(count) {
       localStorage.setItem('selectedCategoriesCount', count)
 
