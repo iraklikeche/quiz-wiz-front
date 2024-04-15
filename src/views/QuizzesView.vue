@@ -106,7 +106,7 @@
         @apply-filters="handleFilterApply"
         :parentSelectedCategories="selectedCategories"
         @resetAllFilters="resetFiltersInModal"
-        @update-selected-categories-count="selectedCategoriesCount = $event"
+        @update-selected-categories-count="updateSelectedCategoriesCount($event)"
       />
     </div>
 
@@ -204,6 +204,10 @@ export default {
     this.allQuizzesSelected = this.selectedCategories.length === 0
 
     this.applyFilters(queryParams)
+    const savedCount = localStorage.getItem('selectedCategoriesCount')
+    if (savedCount !== null) {
+      this.selectedCategoriesCount = parseInt(savedCount, 10)
+    }
   },
 
   beforeUnmount() {
@@ -211,6 +215,8 @@ export default {
   },
   methods: {
     updateSelectedCategoriesCount(count) {
+      localStorage.setItem('selectedCategoriesCount', count)
+
       this.selectedCategoriesCount = count
     },
     handleClickOutside(e) {
