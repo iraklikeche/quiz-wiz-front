@@ -192,7 +192,6 @@ export default {
   },
   mounted() {
     this.getInitialData()
-    // this.updateSelectedCategoriesCountFromUrl()
 
     document.addEventListener('click', this.handleClickOutside)
 
