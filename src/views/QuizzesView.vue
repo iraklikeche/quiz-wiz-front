@@ -107,6 +107,7 @@
         :parentSelectedCategories="selectedCategories"
         @resetAllFilters="resetFiltersInModal"
         @update-selected-categories-count="updateSelectedCategoriesCount($event)"
+        @initial-state="setInitialState"
       />
     </div>
 
@@ -191,9 +192,11 @@ export default {
     }
   },
   mounted() {
+    this.getInitialData()
+    this.updateSelectedCategoriesCountFromUrl()
+
     document.addEventListener('click', this.handleClickOutside)
 
-    this.getInitialData()
     let queryParams = { ...this.$route.query }
 
     this.selectedCategories = queryParams.categories ? queryParams.categories.split(',') : []
@@ -208,12 +211,30 @@ export default {
     if (savedCount !== null) {
       this.selectedCategoriesCount = parseInt(savedCount, 10)
     }
+    this.setInitialState(queryParams)
   },
 
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
   },
   methods: {
+    setInitialState(queryParams) {
+      this.$refs.filterModal.setInitialStateFromQueryParams(queryParams)
+    },
+    updateSelectedCategoriesCountFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search)
+      const categories = urlParams.get('categories') ? urlParams.get('categories').split(',') : []
+      const difficulties = urlParams.get('difficulties')
+        ? urlParams.get('difficulties').split(',')
+        : []
+      const sort = urlParams.get('sort') ? 1 : 0
+      const myQuizzes = urlParams.get('my_quizzes') === 'true' ? 1 : 0
+      const notCompleted = urlParams.get('not_completed') === 'true' ? 1 : 0
+
+      const totalSelectedCount =
+        categories.length + difficulties.length + sort + myQuizzes + notCompleted
+      this.selectedCategoriesCount = totalSelectedCount
+    },
     updateSelectedCategoriesCount(count) {
       localStorage.setItem('selectedCategoriesCount', count)
 
@@ -305,6 +326,7 @@ export default {
       })
       this.allQuizzesSelected = true
       this.selectedCategoriesCount = 0
+      localStorage.removeItem('selectedCategoriesCount')
     },
 
     async getInitialData() {

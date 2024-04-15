@@ -242,6 +242,7 @@ export default {
   mounted() {
     this.initialLoginCheck()
     this.checkLocalChanges()
+    this.setInitialStateFromUrl()
   },
   computed: {
     filteredCategoriesAndLevels() {
@@ -267,6 +268,33 @@ export default {
   },
 
   methods: {
+    setInitialStateFromQueryParams(queryParams) {
+      this.filterState.categories.current = queryParams.categories
+        ? queryParams.categories.split(',')
+        : []
+      this.filterState.difficulties.current = queryParams.difficulties
+        ? queryParams.difficulties.split(',')
+        : []
+      this.filterState.sort.current = queryParams.sort || ''
+      this.filterState.myQuizzesChecked.current = queryParams.my_quizzes === 'true'
+      this.filterState.notCompletedChecked.current = queryParams.not_completed === 'true'
+
+      this.checkLocalChanges()
+    },
+
+    setInitialStateFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search)
+      this.filterState.categories.current = urlParams.get('categories')
+        ? urlParams.get('categories').split(',')
+        : [...this.parentSelectedCategories]
+      this.filterState.difficulties.current = urlParams.get('difficulties')
+        ? urlParams.get('difficulties').split(',')
+        : []
+      this.filterState.sort.current = urlParams.get('sort') || ''
+      this.filterState.myQuizzesChecked.current = urlParams.get('my_quizzes') === 'true'
+      this.filterState.notCompletedChecked.current = urlParams.get('not_completed') === 'true'
+    },
+
     initializeFilterStatesFromConfirmed() {
       Object.keys(this.filterState).forEach((key) => {
         if (Array.isArray(this.filterState[key].current)) {
