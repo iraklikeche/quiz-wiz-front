@@ -209,13 +209,7 @@ export default {
     diffLevels: Array,
     parentSelectedCategories: Array
   },
-  emits: [
-    'update:show',
-    'update:activeButton',
-    'apply-filters',
-    'reset-filters',
-    'update-selected-categories-count'
-  ],
+  emits: ['update:show', 'update:activeButton', 'apply-filters', 'reset-filters'],
 
   data() {
     return {
@@ -242,7 +236,6 @@ export default {
   mounted() {
     this.initialLoginCheck()
     this.checkLocalChanges()
-    // this.setInitialStateFromUrl()
   },
   computed: {
     filteredCategoriesAndLevels() {
