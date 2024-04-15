@@ -267,7 +267,6 @@ export default {
           not_completed: filters.not_completed
         })
       }
-      console.log(filters)
 
       this.$router.push({ query: queryParams }).catch((err) => {})
       this.getQuizzesData(queryParams)
@@ -418,8 +417,6 @@ export default {
       this.selectedCategories = newFilters.categories || []
       this.allQuizzesSelected = this.selectedCategories.length === 0
       this.applyFilters(newFilters)
-
-      console.log(newFilters)
     },
     updateQueryParams(newParams) {
       const currentQuery = { ...this.$route.query, ...newParams }

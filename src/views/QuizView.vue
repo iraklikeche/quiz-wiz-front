@@ -284,7 +284,6 @@ export default {
       this.clearTimer()
 
       const timePassed = this.startTime - this.totalTime
-      console.log(`Time passed: ${timePassed} seconds`)
       const payload = {
         timeSpent: timePassed,
         answers: this.quiz.questions.map((question) => ({
@@ -294,10 +293,8 @@ export default {
       }
 
       try {
-        console.log(payload)
 
         const response = await submitQuizAnswers(this.quiz.id, payload)
-        console.log('Submission successful:', response.data)
         this.showModal = true
         this.right = response.data.correctQuestionsCount
         this.wrong = this.quiz.numberOfQuestions - this.right
@@ -318,7 +315,6 @@ export default {
         this.totalTime = quizData.totalTime * 60
         this.startTime = quizData.totalTime * 60
         this.startTimer()
-        console.log(this.quiz)
       } catch (err) {
         console.log(err)
       }

@@ -147,7 +147,6 @@ export default {
 
       try {
         const data = await resendPasswordResetLink(this.$route.query.email)
-        console.log('resend', data)
       } catch (error) {
         if (error.response && error.response.status === 403) {
           //
@@ -158,7 +157,6 @@ export default {
     },
     async onSubmit(values, { resetForm, setFieldError }) {
       try {
-        console.log(values, this.token, this.email)
         await getCsrfCookie()
         const data = await resetPassword({
           token: this.token,

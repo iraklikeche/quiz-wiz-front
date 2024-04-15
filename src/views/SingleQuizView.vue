@@ -35,15 +35,24 @@
             <img :src="quiz.image" class="rounded-xl" />
           </div>
           <ul class="flex flex-col sm:flex-row gap-4">
-            <QuizInfoList :text="`${quiz.numberOfQuestions} Questions`">
+            <QuizInfoList
+              :text="`${quiz.numberOfQuestions} Questions`"
+              class="border-r border-gray-400 pr-2"
+            >
               <Question />
             </QuizInfoList>
 
-            <QuizInfoList :text="`${quiz.totalPoints} Points`">
+            <QuizInfoList
+              :text="`${quiz.totalPoints} Points`"
+              class="border-r border-gray-400 pr-2"
+            >
               <Points />
             </QuizInfoList>
 
-            <QuizInfoList :text="`${quiz.totalAttempts} plays`">
+            <QuizInfoList
+              :text="`${quiz.totalAttempts} plays`"
+              class="border-r border-gray-400 pr-2"
+            >
               <Plays />
             </QuizInfoList>
 
@@ -125,7 +134,6 @@ export default {
       try {
         const res = await getSingleQuiz(this.$route.params.id)
         this.quiz = res.data.data
-        console.log(this.quiz)
         if (this.quiz && this.quiz.categories) {
           const categoryIds = this.quiz.categories.map((category) => category.id)
           await this.getSimilarQuiz(categoryIds, this.quiz.id)
@@ -139,7 +147,6 @@ export default {
       try {
         const res = await getSimilarQuizzes(categoryIds, excludeQuizId)
         this.similarQuiz = res.data.data
-        console.log(this.similarQuiz)
       } catch (err) {
         console.log(err)
       }
