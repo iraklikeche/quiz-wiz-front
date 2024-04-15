@@ -46,6 +46,11 @@ const router = createRouter({
       component: () => import('../views/QuizView.vue')
     },
     {
+      path: '/error',
+      name: 'error',
+      component: () => import('../views/errors/ServerError500.vue')
+    },
+    {
       path: '/:catchAll(.*)',
       name: 'notFound',
       component: () => import('../views/errors/NotFound404.vue')

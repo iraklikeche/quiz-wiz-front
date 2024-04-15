@@ -21,7 +21,10 @@
 
     <div v-if="isLogged">
       <div class="flex gap-2 items-center">
-        <TheAvatar />
+        <TheAvatar class="cursor-pointer" v-if="!avatar" />
+        <div v-else>
+          <img :src="avatar" class="w-12 cursor-pointer" />
+        </div>
         <div>
           <h4 class="text-sm font-bold">{{ username }}</h4>
           <p class="text-sm text-custom-light-gray">{{ email }}</p>
@@ -62,7 +65,9 @@
       <RouterLink :to="{ name: 'home' }" class="hidden sm:block">
         <Logo />
       </RouterLink>
+
       <RouterLink
+        v-if="$route.name !== 'quizzes'"
         class="text-sm font-semibold text-custom-gray hidden sm:flex items-center gap-2"
         :to="{ name: 'quizzes' }"
       >
@@ -72,6 +77,14 @@
         ></div>
         <span>Quizzes</span>
       </RouterLink>
+
+      <div v-else class="text-sm font-semibold text-custom-gray hidden sm:flex items-center gap-2">
+        <div
+          :class="{ block: isQuizzesActive, hidden: !isQuizzesActive }"
+          class="bg-[#4B69FD] w-2 h-2 rounded-full"
+        ></div>
+        <span>Quizzes</span>
+      </div>
     </div>
     <div class="flex gap-4 sm:gap-6 items-center">
       <slot />
@@ -80,7 +93,10 @@
         @click.stop="showProfileModal"
         class="hidden sm:flex items-center justify-center relative"
       >
-        <TheAvatar class="cursor-pointer" />
+        <TheAvatar class="cursor-pointer" v-if="!avatar" />
+        <div v-else>
+          <img :src="avatar" class="w-12 cursor-pointer" />
+        </div>
 
         <div
           v-if="showProfile"
@@ -90,7 +106,9 @@
           <div class="bg-white p-6 rounded-lg shadow-lg min-w-[19rem] flex flex-col pt-10">
             <div>
               <TheAvatar v-if="!avatar" />
-              <img :src="avatar" v-else class="w-12" />
+              <div v-else>
+                <img :src="avatar" class="w-12" />
+              </div>
             </div>
             <h4 class="text-sm font-bold mt-4">{{ username }}</h4>
             <div class="flex justify-between items-center">

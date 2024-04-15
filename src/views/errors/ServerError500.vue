@@ -1,5 +1,5 @@
 <template>
-  <ErrorView :errorType="'500'" :errorImage="ServerError" />
+  <ErrorView :errorType="'500'" :errorImage="serverError" />
 </template>
 
 <script>

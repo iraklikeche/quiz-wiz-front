@@ -209,13 +209,7 @@ export default {
     diffLevels: Array,
     parentSelectedCategories: Array
   },
-  emits: [
-    'update:show',
-    'update:activeButton',
-    'apply-filters',
-    'reset-filters',
-    'update-selected-categories-count'
-  ],
+  emits: ['update:show', 'update:activeButton', 'apply-filters', 'reset-filters'],
 
   data() {
     return {
@@ -267,6 +261,33 @@ export default {
   },
 
   methods: {
+    setInitialStateFromQueryParams(queryParams) {
+      this.filterState.categories.current = queryParams.categories
+        ? queryParams.categories.split(',')
+        : []
+      this.filterState.categories.confirmed = [...this.filterState.categories.current]
+
+      // Difficulties
+      this.filterState.difficulties.current = queryParams.difficulties
+        ? queryParams.difficulties.split(',')
+        : []
+      this.filterState.difficulties.confirmed = [...this.filterState.difficulties.current]
+
+      // Sort
+      this.filterState.sort.current = queryParams.sort || ''
+      this.filterState.sort.confirmed = this.filterState.sort.current
+
+      // My Quizzes Checked
+      this.filterState.myQuizzesChecked.current = queryParams.my_quizzes === 'true'
+      this.filterState.myQuizzesChecked.confirmed = this.filterState.myQuizzesChecked.current
+
+      // Not Completed Checked
+      this.filterState.notCompletedChecked.current = queryParams.not_completed === 'true'
+      this.filterState.notCompletedChecked.confirmed = this.filterState.notCompletedChecked.current
+
+      this.checkLocalChanges()
+    },
+
     initializeFilterStatesFromConfirmed() {
       Object.keys(this.filterState).forEach((key) => {
         if (Array.isArray(this.filterState[key].current)) {
@@ -314,22 +335,14 @@ export default {
         }
       })
 
-      const totalSelections =
-        this.filterState.categories.current.length +
-        this.filterState.difficulties.current.length +
-        (this.filterState.sort.current ? 1 : 0) +
-        (this.filterState.myQuizzesChecked.current ? 1 : 0) +
-        (this.filterState.notCompletedChecked.current ? 1 : 0)
-
       this.$emit('apply-filters', {
         categories: this.filterState.categories.current,
         difficulties: this.filterState.difficulties.current,
         sort: this.filterState.sort.current,
-        myQuizzes: this.filterState.myQuizzesChecked.current,
-        notCompleted: this.filterState.notCompletedChecked.current
+        my_quizzes: this.filterState.myQuizzesChecked.current,
+        not_completed: this.filterState.notCompletedChecked.current
       })
       this.localChangesMade = false
-      this.$emit('update-selected-categories-count', totalSelections)
 
       this.close()
     },
@@ -354,18 +367,6 @@ export default {
       this.filterState.sort.current = newSortValue
 
       this.checkLocalChanges()
-    },
-
-    toggleMyQuizzes() {
-      this.filterState.myQuizzesChecked.current = !this.filterState.myQuizzesChecked.current
-      this.checkLocalChanges()
-      console.log(this.filterState.myQuizzesChecked.current)
-    },
-
-    toggleNotCompleted() {
-      this.filterState.notCompletedChecked.current = !this.filterState.notCompletedChecked.current
-      this.checkLocalChanges()
-      console.log(this.filterState.notCompletedChecked.current)
     },
 
     isSelected(itemId, selectedArray) {
@@ -395,12 +396,6 @@ export default {
       },
       deep: true,
       immediate: true
-    },
-    isMyQuizzesChecked() {
-      this.checkLocalChanges()
-    },
-    isNotCompletedChecked() {
-      this.checkLocalChanges()
     },
     showModal(newValue) {
       if (newValue) {

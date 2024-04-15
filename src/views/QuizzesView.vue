@@ -68,27 +68,27 @@
           @mouseleave="isHovering = false"
           @click="toggleModal"
           class="group flex gap-2 items-center border border-custom-light-gray border-opacity-60 py-2 px-4 rounded-xl hover:bg-[#4B69FD] hover:bg-opacity-10 hover:scale-105 hover:border-custom-blue"
-          :style="{ border: selectedCategoriesCount > 0 ? '2px solid #000' : undefined }"
+          :style="{ border: filterCount > 0 ? '2px solid #000' : undefined }"
         >
           <Filter
             class="group-hover:text-[#4B69FD]"
-            :style="{ color: selectedCategoriesCount > 0 ? '#000' : undefined }"
+            :style="{ color: filterCount > 0 ? '#000' : undefined }"
           />
           <span
             class="text-sm text-custom-light-gray group-hover:text-custom-blue"
-            :style="{ color: selectedCategoriesCount > 0 ? '#000' : undefined }"
+            :style="{ color: filterCount > 0 ? '#000' : undefined }"
             >Filter</span
           >
         </button>
         <div
           class="absolute bottom-1/2 sm:top-[30%] sm:right-1 left-16 translate-x-1/2 py-1 pl-1 rounded-full"
-          :class="{ 'bg-white': selectedCategoriesCount > 0 }"
+          :class="{ 'bg-white': filterCount > 0 }"
         >
           <span
-            v-if="selectedCategoriesCount > 0"
+            v-if="filterCount > 0"
             class="font-bold text-white text-xs bg-black w-1 h-1 p-3 rounded-full flex items-center justify-center"
           >
-            {{ selectedCategoriesCount }}</span
+            {{ filterCount }}</span
           >
         </div>
       </div>
@@ -106,7 +106,7 @@
         @apply-filters="handleFilterApply"
         :parentSelectedCategories="selectedCategories"
         @resetAllFilters="resetFiltersInModal"
-        @update-selected-categories-count="selectedCategoriesCount = $event"
+        @initial-state="setInitialState"
       />
     </div>
 
@@ -191,9 +191,10 @@ export default {
     }
   },
   mounted() {
+    this.getInitialData()
+
     document.addEventListener('click', this.handleClickOutside)
 
-    this.getInitialData()
     let queryParams = { ...this.$route.query }
 
     this.selectedCategories = queryParams.categories ? queryParams.categories.split(',') : []
@@ -204,13 +205,20 @@ export default {
     this.allQuizzesSelected = this.selectedCategories.length === 0
 
     this.applyFilters(queryParams)
+
+    this.setInitialState(queryParams)
   },
 
   beforeUnmount() {
     document.removeEventListener('click', this.handleClickOutside)
   },
   methods: {
+    setInitialState(queryParams) {
+      this.$refs.filterModal.setInitialStateFromQueryParams(queryParams)
+    },
     updateSelectedCategoriesCount(count) {
+      localStorage.setItem('selectedCategoriesCount', count)
+
       this.selectedCategoriesCount = count
     },
     handleClickOutside(e) {
@@ -299,6 +307,7 @@ export default {
       })
       this.allQuizzesSelected = true
       this.selectedCategoriesCount = 0
+      localStorage.removeItem('selectedCategoriesCount')
     },
 
     async getInitialData() {
@@ -341,9 +350,22 @@ export default {
         this.selectedCategories.push(categoryId.toString())
       }
       this.allQuizzesSelected = this.selectedCategories.length === 0
-      this.applyFilters({
-        categories: this.selectedCategories
+
+      let updatedQueryParams = { ...this.$route.query }
+
+      if (this.selectedCategories.length > 0) {
+        updatedQueryParams.categories = this.selectedCategories.join(',')
+      } else {
+        delete updatedQueryParams.categories
+      }
+
+      this.$router.push({ query: updatedQueryParams }).catch((err) => {
+        if (err.name !== 'NavigationDuplicated') {
+          console.error(err)
+        }
       })
+
+      this.applyFilters(updatedQueryParams)
     },
 
     updateUrl() {
@@ -376,14 +398,29 @@ export default {
       this.activeButton = newActiveButton
     },
     handleFilterApply(newFilters) {
-      this.selectedCategories = newFilters.categories || this.selectedCategories
+      this.selectedCategories = newFilters.categories || []
+      this.allQuizzesSelected = this.selectedCategories.length === 0
       this.applyFilters(newFilters)
+    },
+    updateQueryParams(newParams) {
+      const currentQuery = { ...this.$route.query, ...newParams }
+      this.$router.replace({ query: currentQuery }).catch((err) => {
+        if (err.name !== 'NavigationDuplicated') {
+          console.error(err)
+        }
+      })
     }
   },
   watch: {
     searchQuery(newQuery) {
       this.$router.push({ query: { ...this.$route.query, search: newQuery } }).catch((err) => {})
       this.debouncedSearch(newQuery)
+    },
+    isMyQuizzesChecked(newVal) {
+      this.updateQueryParams({ my_quizzes: newVal })
+    },
+    isNotCompletedChecked(newVal) {
+      this.updateQueryParams({ not_completed: newVal })
     }
   },
   computed: {
@@ -393,6 +430,16 @@ export default {
         'border-transparent': !this.isSelected(categoryId),
         'border-black': this.isSelected(categoryId)
       })
+    },
+    filterCount() {
+      const { categories, difficulties, sort, my_quizzes, not_completed } = this.$route.query
+      const arrayTotal = []
+      if (categories) arrayTotal.push(...categories.split(','))
+      if (difficulties) arrayTotal.push(...difficulties.split(','))
+      if (sort) arrayTotal.push(sort)
+      if (my_quizzes && my_quizzes === 'true') arrayTotal.push(my_quizzes)
+      if (not_completed && not_completed === 'true') arrayTotal.push(not_completed)
+      return arrayTotal.length
     }
   }
 }

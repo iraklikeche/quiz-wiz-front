@@ -235,12 +235,9 @@ export default {
 
     async resend() {
       await getCsrfCookie()
-      console.log(this.$route.query.verify_url)
       const id = this.extractIDFromURL(this.$route.query.verify_url)
-      console.log(id)
       try {
         const data = await resendVerificationLink(id)
-        console.log('resend', data)
       } catch (error) {
         if (error.response && error.response.status === 403) {
           //
