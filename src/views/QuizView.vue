@@ -293,7 +293,6 @@ export default {
       }
 
       try {
-
         const response = await submitQuizAnswers(this.quiz.id, payload)
         this.showModal = true
         this.right = response.data.correctQuestionsCount
@@ -312,6 +311,7 @@ export default {
           question.selectedAnswerIds = []
         })
         this.quiz = quizData
+        console.log(this.quiz)
         this.totalTime = quizData.totalTime * 60
         this.startTime = quizData.totalTime * 60
         this.startTimer()

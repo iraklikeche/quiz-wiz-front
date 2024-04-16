@@ -264,8 +264,10 @@ export default {
         filters = { ...filters, page: this.pagination.currentPage + 1 }
       }
       filters = { ...filters, page: this.pagination.currentPage }
+      filters.search = this.searchQuery
 
       let queryString = Object.keys(filters)
+        .filter((key) => filters[key] !== undefined && filters[key] !== null)
         .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
         .join('&')
 
@@ -307,6 +309,8 @@ export default {
       })
       this.allQuizzesSelected = true
       this.selectedCategoriesCount = 0
+      this.searchQuery = ''
+
       localStorage.removeItem('selectedCategoriesCount')
     },
 
