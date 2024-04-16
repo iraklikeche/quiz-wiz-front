@@ -33,7 +33,7 @@
           <SliderArrow />
         </button>
         <ul
-          class="flex items-center gap-8 overflow-hidden border-b border-gray-300 max-w-[26rem] sm:max-w-[71rem] overflow-x-scroll sm:overflow-x-auto px-4"
+          class="flex items-center gap-8 overflow-hidden border-b border-gray-300 max-w-[26rem] sm:max-w-[71rem] overflow-x-scroll sm:overflow-x-hidden px-4"
           ref="scrollContainer"
         >
           <li
