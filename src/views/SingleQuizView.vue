@@ -6,7 +6,7 @@
   >
     <div>
       <div class="flex gap-10 sm:gap-4 sm:mt-10 justify-between">
-        <div class="mt-4 sm:mt-0 px-4 sm:px-0 flex flex-col gap-4 sm:gap-8">
+        <div class="mt-4 sm:mt-0 px-4 sm:px-0 flex flex-col gap-4 sm:gap-8 max-w-[28rem]">
           <div class="flex flex-col gap-4">
             <div class="flex gap-2 sm:hidden">
               <p
@@ -18,7 +18,7 @@
               </p>
             </div>
             <h1 class="text-4xl font-bold font-raleway">{{ quiz.title }}</h1>
-            <div class="sm:flex gap-2 hidden">
+            <div class="sm:flex gap-2 hidden flex-wrap">
               <p
                 class="text-custom-blue text-sm font-semibold"
                 v-for="category in quiz.categories"
@@ -69,7 +69,7 @@
           </RouterLink>
           <p class="text-red-500 font-semibold" v-else>You have already done this quiz.</p>
         </div>
-        <div class="hidden sm:block max-w-80">
+        <div class="hidden sm:block max-w-80 min-w-80">
           <img :src="quiz.image" class="rounded-xl" />
         </div>
       </div>
