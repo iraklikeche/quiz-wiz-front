@@ -6,7 +6,7 @@
       <img :src="quiz.image" class="max-w-60 max-h-60 min-h-60" />
     </div>
     <div class="flex flex-col gap-4 mt-12">
-      <div class="flex gap-6">
+      <div class="flex gap-6 flex-wrap">
         <p
           class="text-custom-blue text-sm font-semibold relative"
           v-for="(category, index) in quiz.categories"

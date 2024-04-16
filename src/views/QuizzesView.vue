@@ -33,7 +33,7 @@
           <SliderArrow />
         </button>
         <ul
-          class="flex items-center gap-8 overflow-hidden border-b border-gray-300 max-w-[26rem] sm:max-w-[71rem] overflow-x-scroll sm:overflow-x-auto px-4"
+          class="flex items-center gap-8 overflow-hidden border-b border-gray-300 max-w-[26rem] sm:max-w-[71rem] overflow-x-scroll sm:overflow-x-hidden px-4"
           ref="scrollContainer"
         >
           <li
@@ -264,8 +264,10 @@ export default {
         filters = { ...filters, page: this.pagination.currentPage + 1 }
       }
       filters = { ...filters, page: this.pagination.currentPage }
+      filters.search = this.searchQuery
 
       let queryString = Object.keys(filters)
+        .filter((key) => filters[key] !== undefined && filters[key] !== null)
         .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
         .join('&')
 
@@ -307,6 +309,8 @@ export default {
       })
       this.allQuizzesSelected = true
       this.selectedCategoriesCount = 0
+      this.searchQuery = ''
+
       localStorage.removeItem('selectedCategoriesCount')
     },
 
