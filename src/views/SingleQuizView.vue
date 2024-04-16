@@ -6,23 +6,31 @@
   >
     <div>
       <div class="flex gap-10 sm:gap-4 sm:mt-10 justify-between">
-        <div class="mt-4 sm:mt-0 px-4 sm:px-0 flex flex-col gap-4 sm:gap-8">
+        <div class="mt-4 sm:mt-0 px-4 sm:px-0 flex flex-col gap-4 sm:gap-8 max-w-[28rem]">
           <div class="flex flex-col gap-4">
-            <div class="flex gap-2 sm:hidden">
+            <div class="flex gap-6 sm:hidden flex-wrap">
               <p
-                class="text-custom-blue text-sm font-semibold"
-                v-for="category in quiz.categories"
+                class="text-custom-blue text-sm font-semibold relative"
+                v-for="(category, index) in quiz.categories"
                 :key="category.id"
+                :class="{
+                  'before:absolute before:w-1 before:h-1 before:rounded-full  before:top-1/2 before:-translate-y-1/2 before:left-full before:ml-2.5 before:bg-[#d0d5dd]':
+                    index !== quiz.categories.length - 1
+                }"
               >
                 {{ category.name }}
               </p>
             </div>
             <h1 class="text-4xl font-bold font-raleway">{{ quiz.title }}</h1>
-            <div class="sm:flex gap-2 hidden">
+            <div class="sm:flex gap-6 hidden flex-wrap">
               <p
-                class="text-custom-blue text-sm font-semibold"
-                v-for="category in quiz.categories"
+                class="text-custom-blue text-sm font-semibold relative"
+                v-for="(category, index) in quiz.categories"
                 :key="category.id"
+                :class="{
+                  'before:absolute before:w-1 before:h-1 before:rounded-full  before:top-1/2 before:-translate-y-1/2 before:left-full before:ml-2.5 before:bg-[#d0d5dd]':
+                    index !== quiz.categories.length - 1
+                }"
               >
                 {{ category.name }}
               </p>
@@ -69,7 +77,7 @@
           </RouterLink>
           <p class="text-red-500 font-semibold" v-else>You have already done this quiz.</p>
         </div>
-        <div class="hidden sm:block max-w-80">
+        <div class="hidden sm:block max-w-80 min-w-80">
           <img :src="quiz.image" class="rounded-xl" />
         </div>
       </div>
