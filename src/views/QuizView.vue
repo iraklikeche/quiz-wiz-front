@@ -80,18 +80,29 @@
       <h1 class="text-4xl font-bold text-center">{{ quiz.title }}</h1>
       <div class="text-sm text-gray-600 text-center mt-2">
         <ul class="flex sm:justify-center flex-wrap gap-4 mt-8">
-          <li class="flex items-center gap-2">
+          <li class="flex items-center gap-2 gap-x-6 flex-wrap sm:border-r border-gray-400 pr-2">
             <ThePin />
-            <span v-for="category in quiz.categories" :key="category.id" class="flex"
-              >{{ category.name }} </span
-            >•
+            <span
+              class="flex relative"
+              v-for="(category, index) in quiz.categories"
+              :key="category.id"
+              :class="{
+                'before:absolute before:w-1 before:h-1 before:rounded-full  before:top-1/2 before:-translate-y-1/2 before:left-full before:ml-2.5 before:bg-[#d0d5dd]':
+                  index !== quiz.categories.length - 1
+              }"
+              >{{ category.name }}
+            </span>
           </li>
-          <li class="flex items-center gap-2">
+          <li class="flex items-center gap-2 border-r border-gray-400 pr-2">
             <Question /> {{ quiz.numberOfQuestions }} Questions
           </li>
 
-          <li class="flex items-center gap-2"><Points /> {{ quiz.totalPoints }} Points</li>
-          <li class="flex items-center gap-2"><Time /> {{ quiz.totalTime }}m</li>
+          <li class="flex items-center gap-2 border-r border-gray-400 pr-2">
+            <Points /> {{ quiz.totalPoints }} Points
+          </li>
+          <li class="flex items-center gap-2 border-r border-gray-400 pr-2">
+            <Time /> {{ quiz.totalTime }}m
+          </li>
           <li class="flex items-center gap-2"><Plays /> {{ quiz.totalAttempts }} plays</li>
         </ul>
       </div>
@@ -121,14 +132,14 @@
             <label
               v-for="answer in question.answers"
               :key="answer.id"
-              class="relative flex justify-between items-center mb-2 px-4 py-4 rounded-xl border border-custom-gray border-opacity-20 cursor-pointer"
+              class="relative flex gap-4 justify-between items-center mb-2 px-4 py-4 rounded-xl border border-custom-gray border-opacity-20 cursor-pointer text-sm"
               :class="{
                 'border-custom-blue bg-blue-100 border-opacity-50 text-custom-blue text-opacity-80':
                   question.selectedAnswerId === answer.id
               }"
               :for="'customStyle-' + answer.id"
             >
-              <span>
+              <span class="w-4/5">
                 {{ answer.text }}
               </span>
               <input
