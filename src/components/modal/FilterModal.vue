@@ -87,25 +87,41 @@
       >
         <p class="hidden sm:block px-6 mt-4 text-custom-blue font-bold">Filter by</p>
         <div v-if="isLogged" class="flex items-center mb-8 sm:mb-4 mt-12 sm:mt-4 px-6 gap-2">
-          <label for="my-quizzes" class="text-[#101828] font-semibold">My quizzes</label>
-          <input
-            id="my-quizzes"
-            type="checkbox"
-            class="mr-2 scale-125"
-            v-model="filterState.myQuizzesChecked.current"
-            @change="checkLocalChanges"
-          />
+          <label for="my-quizzes" class="text-[#101828] font-semibold">My quizzes </label>
+          <div class="relative flex items-center">
+            <input
+              id="my-quizzes"
+              type="checkbox"
+              class="peer appearance-none h-4 w-4 border-2 border-[#7F56D9] sm:border-black rounded-sm sm:checked:bg-black checked:bg-[#7F56D9]/10"
+              v-model="filterState.myQuizzesChecked.current"
+              @change="checkLocalChanges"
+            />
+            <label
+              for="my-quizzes"
+              class="absolute peer-checked:block hidden left-1/2 -translate-x-1/2"
+            >
+              <SortSelected class="sm:text-white text-[#7F56D9] w-3 sm:w-4" />
+            </label>
+          </div>
         </div>
 
         <div v-if="isLogged" class="flex items-center mb-4 px-6 gap-2">
           <label for="not-completed" class="text-[#101828] font-semibold">Not completed</label>
-          <input
-            id="not-completed"
-            type="checkbox"
-            class="mr-2 scale-125"
-            v-model="filterState.notCompletedChecked.current"
-            @change="checkLocalChanges"
-          />
+          <div class="relative flex items-center">
+            <input
+              id="not-completed"
+              type="checkbox"
+              class="peer appearance-none h-4 w-4 border-2 border-[#7F56D9] sm:border-black rounded-sm sm:checked:bg-black checked:bg-[#7F56D9]/10"
+              v-model="filterState.notCompletedChecked.current"
+              @change="checkLocalChanges"
+            />
+            <label
+              for="not-completed"
+              class="absolute peer-checked:block hidden left-1/2 -translate-x-1/2"
+            >
+              <SortSelected class="sm:text-white text-[#7F56D9] w-3 sm:w-4" />
+            </label>
+          </div>
         </div>
 
         <!-- *********************** LEVELS ******************************** -->
@@ -195,13 +211,15 @@ import TheModal from './TheModal.vue'
 import CloseModalBtn from '../icons/CloseModalBtn.vue'
 import Search from '../icons/Search.vue'
 import SortList from './SortList.vue'
+import SortSelected from '../icons/quiz/SortSelected.vue'
 
 export default {
   components: {
     TheModal,
     CloseModalBtn,
     Search,
-    SortList
+    SortList,
+    SortSelected
   },
   props: {
     showModal: Boolean,
