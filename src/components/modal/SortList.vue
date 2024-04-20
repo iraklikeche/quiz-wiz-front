@@ -14,7 +14,9 @@
       <span class="text-custom-gray text-sm font-semibold">
         {{ sortOption.label }}
       </span>
-      <SortSelected v-if="isSelectedSort(sortOption.key)" class="ml-auto" />
+      <div class="text-[#12B76A]">
+        <SortSelected v-if="isSelectedSort(sortOption.key)" class="ml-auto" />
+      </div>
     </li>
   </ul>
 </template>
