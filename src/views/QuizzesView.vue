@@ -1,27 +1,11 @@
 <template>
   <Header :isFocused="isFocused">
-    <div class="relative bg-[#f9fafb] rounded-xl">
-      <div class="absolute left-2 top-1/2 transform -translate-y-1/2">
-        <Search />
-      </div>
-      <div class="flex items-center border rounded-xl">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search"
-          @focus="isFocused = true"
-          @blur="isFocused = false"
-          class="outline-none pl-8 py-2 rounded-xl bg-transparent w-32 transition-all duration-300 focus:w-[21rem] sm:focus:w-[21.5rem]"
-        />
-        <button
-          class="bg-white py-[0.9rem] px-4 rounded-r-xl border-l"
-          @mousedown="closeInput"
-          v-show="isFocused"
-        >
-          <Close />
-        </button>
-      </div>
-    </div>
+    <SearchBar
+      :searchQuery="searchQuery"
+      @update:searchQuery="searchQuery = $event"
+      @focus="isFocused = true"
+      @blur="isFocused = false"
+    />
   </Header>
   <div class="sm:px-20">
     <div class="sm:flex items-center">
@@ -119,16 +103,7 @@
         <Card :quiz="quiz" />
       </RouterLink>
     </div>
-    <div class="flex items-center justify-center mt-12 mb-24">
-      <button
-        v-if="pagination.currentPage < pagination.lastPage"
-        @click="loadMoreQuizzes"
-        class="bg-[#4B69FD] bg-opacity-10 py-3 px-5 rounded-lg text-custom-blue font-semibold flex gap-2 items-center"
-      >
-        <ArrowDown />
-        <span> Load more </span>
-      </button>
-    </div>
+    <Pagination :pagination="pagination" @load-more="loadMoreQuizzes" />
   </div>
 
   <Footer :customClass="'border-t border-border-gray pt-8 '" />
@@ -141,11 +116,10 @@ import SliderArrow from '@/components/icons/SliderArrow.vue'
 import Filter from '@/components/icons/Filter.vue'
 import resetImage from '@/assets/imgs/sessions/reset.png'
 import Card from '@/components/Card.vue'
-import ArrowDown from '@/components/icons/ArrowDown.vue'
-import Search from '@/components/icons/Search.vue'
-import Close from '@/components/icons/Close.vue'
 import FilterModal from '@/components/modal/FilterModal.vue'
 import { getQuizzes, getAllCategories, getAllDifficultyLevels } from '@/services/quizService.js'
+import SearchBar from '@/components/SearchBar.vue'
+import Pagination from '@/components/Pagination.vue'
 
 export default {
   components: {
@@ -155,9 +129,8 @@ export default {
     SliderArrow,
     Filter,
     Card,
-    ArrowDown,
-    Search,
-    Close
+    SearchBar,
+    Pagination
   },
   data() {
     return {
