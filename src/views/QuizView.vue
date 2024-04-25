@@ -322,12 +322,11 @@ export default {
           question.selectedAnswerIds = []
         })
         this.quiz = quizData
-        console.log(this.quiz)
         this.totalTime = quizData.totalTime * 60
         this.startTime = quizData.totalTime * 60
         this.startTimer()
       } catch (err) {
-        console.log(err)
+        // 
       }
     },
     goBack() {

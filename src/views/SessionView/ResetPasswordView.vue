@@ -148,11 +148,7 @@ export default {
       try {
         const data = await resendPasswordResetLink(this.$route.query.email)
       } catch (error) {
-        if (error.response && error.response.status === 403) {
-          //
-        } else {
-          console.log(error)
-        }
+        //
       }
     },
     async onSubmit(values, { resetForm, setFieldError }) {

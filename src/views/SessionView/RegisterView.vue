@@ -61,6 +61,7 @@
               name="agreed_to_terms"
               type="checkbox"
               value="true"
+              id="customStyle"
               class="before:content[''] peer relative h-6 w-6 cursor-pointer appearance-none rounded-full border border-gray-900/20 bg-gray-900/10 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:scale-105 hover:before:opacity-0"
             />
             <span
@@ -135,8 +136,6 @@ export default {
           this.showToast = false
         }, 4000)
       } catch (error) {
-        console.log(error)
-
         for (const fieldName in error.response.data.errors) {
           setFieldError(fieldName, error.response.data.errors[fieldName])
         }

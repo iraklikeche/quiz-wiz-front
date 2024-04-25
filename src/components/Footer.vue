@@ -66,7 +66,7 @@ export default {
         const response = await getCompanyDetails()
         this.details = response.data
       } catch (err) {
-        console.log(err)
+        //
       }
     }
   }

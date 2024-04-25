@@ -93,6 +93,7 @@ import AccountLinks from '@/components/AccountLinks.vue'
 import CustomInput from '@/components/form/CustomInput.vue'
 import TheToast from '@/components/TheToast.vue'
 import Checkbox from '@/components/icons/Checkbox.vue'
+import { errorConfigMap } from '@/config/errorConfig.js'
 
 import { Form, Field } from 'vee-validate'
 import {
@@ -137,7 +138,7 @@ export default {
   methods: {
     timeout() {
       setTimeout(() => {
-        this.showToast = false
+        this.errorConfig.showToast = false
       }, 4000)
     },
 
@@ -152,29 +153,6 @@ export default {
     },
 
     getErrorConfig(status) {
-      const errorConfigMap = {
-        200: {
-          header: 'Success!',
-          msg: 'Email has been successfully verified.',
-          type: 'success'
-        },
-        403: {
-          header: 'Token is expired',
-          msg: 'Please click button to re-send token',
-          showResendBtn: true,
-          type: 'warning'
-        },
-        422: {
-          header: 'Verified',
-          msg: 'You have already verified your account.',
-          type: 'warning'
-        },
-        default: {
-          header: 'Error',
-          msg: 'Oops, something went wrong.'
-        }
-      }
-
       return errorConfigMap[status] || errorConfigMap.default
     },
     updateStateFromError(errorConfig) {
@@ -239,11 +217,7 @@ export default {
       try {
         const data = await resendVerificationLink(id)
       } catch (error) {
-        if (error.response && error.response.status === 403) {
-          //
-        } else {
-          console.log(error)
-        }
+        //
       }
     }
   }

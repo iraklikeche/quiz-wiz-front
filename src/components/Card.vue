@@ -70,7 +70,7 @@ import DifficultyLevel from '@/components/icons/quiz/DifficultyLevel.vue'
 import Points from './icons/quiz/Points.vue'
 import PointsMainCard from '@/components/icons/quiz/PointsMainCard.vue'
 import NotCompleted from './icons/quiz/NotCompleted.vue'
-
+import { months } from '@/constants/months'
 export default {
   components: {
     InfoDisplay,
@@ -96,20 +96,6 @@ export default {
     formattedCompletionDate() {
       if (!this.quiz.hasUserCompletedQuiz) return 'Date, Time'
 
-      const months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec'
-      ]
       const date = new Date(this.quiz.completedAt)
       const day = date.getDate()
       const monthIndex = date.getMonth()

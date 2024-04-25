@@ -147,7 +147,7 @@ export default {
           await this.getSimilarQuiz(categoryIds, this.quiz.id)
         }
       } catch (err) {
-        console.log(err)
+        //
       }
     },
 
@@ -156,7 +156,7 @@ export default {
         const res = await getSimilarQuizzes(categoryIds, excludeQuizId)
         this.similarQuiz = res.data.data
       } catch (err) {
-        console.log(err)
+        //
       }
     },
 
