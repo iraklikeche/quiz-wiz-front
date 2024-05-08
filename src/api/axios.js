@@ -25,4 +25,15 @@ apiClient.interceptors.response.use(
   }
 )
 
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('isLoggedIn')
+      router.push('/login')
+    }
+    return Promise.reject(error)
+  }
+)
+
 export default apiClient
