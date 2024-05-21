@@ -45,21 +45,21 @@
           <ul class="flex flex-col sm:flex-row gap-4">
             <QuizInfoList
               :text="`${quiz.numberOfQuestions} Questions`"
-              class="border-r border-gray-400 pr-2"
+              class="sm:border-r border-gray-400 pr-2 border-b pb-2 sm:pb-0 border-opacity-30"
             >
               <Question />
             </QuizInfoList>
 
             <QuizInfoList
               :text="`${quiz.totalPoints} Points`"
-              class="border-r border-gray-400 pr-2"
+              class="sm:border-r border-gray-400 pr-2 border-b pb-2 sm:pb-0 border-opacity-30"
             >
               <Points />
             </QuizInfoList>
 
             <QuizInfoList
               :text="`${quiz.totalAttempts} plays`"
-              class="border-r border-gray-400 pr-2"
+              class="sm:border-r border-gray-400 pr-2 border-b pb-2 sm:pb-0 border-opacity-30"
             >
               <Plays />
             </QuizInfoList>

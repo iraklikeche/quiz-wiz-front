@@ -21,7 +21,7 @@
         <a :href="details.facebook_link">Facebook</a>
       </li>
       <li class="text-custom-gray text-xs">
-        <a :href="details.facebook_link">LinkedIn</a>
+        <a :href="details.linkedIn">LinkedIn</a>
       </li>
     </FooterList>
   </div>
@@ -65,6 +65,7 @@ export default {
       try {
         const response = await getCompanyDetails()
         this.details = response.data
+        console.log(this.details)
       } catch (err) {
         //
       }
